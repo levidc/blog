@@ -1,7 +1,7 @@
 const moment = require('moment');
 moment.locale("zh-cn")
 module.exports = {
-    base: '/blog/',
+    base: '/',
     title: 'その日々は夢のように',
     description: '那些时光就像是一场梦',
     theme: 'reco',
