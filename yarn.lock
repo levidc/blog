@@ -1367,6 +1367,20 @@
     vuepress-plugin-mailchimp "^1.4.1"
     vuepress-plugin-sitemap "^2.3.1"
 
+"@vuepress/plugin-blog@^1.9.4":
+  version "1.9.4"
+  resolved "https://registry.nlark.com/@vuepress/plugin-blog/download/@vuepress/plugin-blog-1.9.4.tgz#34636d0387d28221c9f2564b6255786da0dd186a"
+  integrity sha1-NGNtA4fSgiHJ8lZLYlV4baDdGGo=
+  dependencies:
+    "@vssue/api-github-v3" "^1.1.2"
+    "@vssue/vuepress-plugin-vssue" "^1.2.0"
+    dayjs "^1.10.3"
+    vuejs-paginate "^2.1.0"
+    vuepress-plugin-disqus "^0.2.0"
+    vuepress-plugin-feed "^0.1.8"
+    vuepress-plugin-mailchimp "^1.4.1"
+    vuepress-plugin-sitemap "^2.3.1"
+
 "@vuepress/plugin-last-updated@1.8.2":
   version "1.8.2"
   resolved "https://registry.nlark.com/@vuepress/plugin-last-updated/download/@vuepress/plugin-last-updated-1.8.2.tgz#7ce689f8d5050cf0213949bc2e5aa879c09ff4b1"
@@ -3066,7 +3080,7 @@ date-fns@^1.29.0:
   resolved "https://registry.npmmirror.com/date-fns/download/date-fns-1.30.1.tgz?cache=0&sync_timestamp=1633421799894&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fdate-fns%2Fdownload%2Fdate-fns-1.30.1.tgz#2e71bf0b119153dbb4cc4e88d9ea5acfb50dc05c"
   integrity sha1-LnG/CxGRU9u0zE6I2epaz7UNwFw=
 
-dayjs@^1.8.19:
+dayjs@^1.10.3, dayjs@^1.8.19:
   version "1.10.7"
   resolved "https://registry.nlark.com/dayjs/download/dayjs-1.10.7.tgz?cache=0&sync_timestamp=1631266519235&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fdayjs%2Fdownload%2Fdayjs-1.10.7.tgz#2cf5f91add28116748440866a0a1d26f3a6ce468"
   integrity sha1-LPX5Gt0oEWdIRAhmoKHSbzps5Gg=

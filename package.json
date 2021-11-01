@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@vuepress-reco/vuepress-plugin-kan-ban-niang": "^1.0.5",
+    "@vuepress/plugin-blog": "^1.9.4",
     "init": "^0.1.2",
     "moment": "^2.29.1",
     "rimraf": "^3.0.2",

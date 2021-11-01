@@ -1,16 +1,23 @@
 const moment = require('moment');
 moment.locale("zh-cn")
 module.exports = {
-    base: '/',
+    base: '/blog/',
     title: 'その日々は夢のように',
     description: '那些时光就像是一场梦',
     theme: 'reco',
     head: [
+        ["script", {
+            "src": "https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"
+        }],
+        // 引入鼠标点击脚本
+        ["script", {
+            "src": "/js/MouseClickEffect.js"
+        }],
         ['link', { rel: 'icon', href: '/favicon.ico' }],
         ['meta', { name: 'viewport', content: 'width=device-width,initial-scale=1,user-scalable=no' }],
         ['meta', { name: 'keywords', content: 'その日々は夢のように|那些时光就像是一场梦' }],
         ['meta', { name: 'description', content: 'その日々は夢のように|那些时光就像是一场梦' }],
-        ['meta', { name: 'author', content: 'levidc' }]
+        ['meta', { name: 'author', content: 'levidc' }],
     ],
     plugins: [
         [
@@ -34,9 +41,9 @@ module.exports = {
             "dynamic-title",
             {
                 // Icon 建议根据自身需求选择
-                showIcon: "/favicon.ico",
+                showIcon: "/blog/favicon.ico",
                 showText: "",
-                hideIcon: "/failure.ico",
+                hideIcon: "/blog/favicon.ico",
                 hideText: "(●—●)不要走啊，再看看！",
                 recoverTime: 2000,
             },
@@ -96,11 +103,14 @@ module.exports = {
     themeConfig: {
         type: 'blog',
         lastUpdated: '最后更新于',
-        logo: '/assets/img/logo.png',
+        logo: '/assets/img/avatar.jpg',
         author: 'levidc',
         authorAvatar: '/assets/img/logo.png',
         search: true,
         searchMaxSuggestions: 10,
+        subSidebar: 'auto',
+        sidebarDepth: 1,
+        displayAllHeaders: false,
         blogConfig: {
             category: {
                 location: 2,     // 在导航栏菜单中所占的位置，默认2
@@ -128,6 +138,7 @@ module.exports = {
                 ],
                 icon: 'reco-Coding'
             },
+            { text: '时间轴', link: '/timeline/', icon: 'reco-date' },
             {
                 text: '关于',
                 icon: 'reco-message',
