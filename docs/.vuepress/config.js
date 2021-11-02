@@ -144,11 +144,11 @@ module.exports = {
                 icon: 'reco-message',
                 items: [
                     { text: 'GitHub', link: 'https://github.com/levidc', icon: 'reco-github' },
-                    { text: '博客园', link: 'https://cnblogs.com/glassysky', icon: 'reco-bokeyuan' },
-                    { text: '掘金', link: 'https://juejin.im', icon: 'reco-juejin' },
+                    // { text: '博客园', link: 'https://cnblogs.com/glassysky', icon: 'reco-bokeyuan' },
+                    // { text: '掘金', link: 'https://juejin.im', icon: 'reco-juejin' },
+                    { text: '码云', link: 'https://gitee.com/levidc', icon: 'reco-mayun' },
                     { text: '哔哩哔哩', link: 'https://space.bilibili.com/6654841', icon: 'reco-bilibili' },
-                    { text: '码云', link: 'https://gitee.com/glassyskyforgame', icon: 'reco-mayun' },
-                    { text: 'Twitter', link: 'https://twitter.com/GLASSYSKY113', icon: 'reco-twitter' }
+                    // { text: 'Twitter', link: 'https://twitter.com/GLASSYSKY113', icon: 'reco-twitter' }
                 ]
             },
 

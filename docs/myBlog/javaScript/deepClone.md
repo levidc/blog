@@ -1,5 +1,5 @@
 ---
-title: 【深拷贝】js
+title: 深拷贝
 date: 2021-11-01
 categories:
  - 前端
@@ -9,7 +9,7 @@ tags:
  - 深拷贝
 ---
 
-屌丝版
+青春版
 ```js
   function deepClone(obj) {
     if (!typeof obj === 'object') return
@@ -72,7 +72,7 @@ tags:
     let keys = [...Object.keys(obj), ...Object.getOwnPropertySymbols(obj)]
     let res = new ctrl()
     for (let key of keys) {
-      res[key] = deepClone(obj[key])
+      res[key] = deepClone(obj[key],cache)
     }
     return res
   }
