@@ -7,7 +7,9 @@ tags:
  - js
  - 数据结构
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/12.jpg)
 
+<!-- more -->
 ```js
     let arr = [{
             id: 1,

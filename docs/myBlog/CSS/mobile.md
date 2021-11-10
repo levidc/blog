@@ -7,7 +7,9 @@ tags:
  - css
  - 移动端
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/24.jpg)
 
+<!-- more -->
 ```css
     如何让1rem=10px 但浏览器最小显示单位为12px 默认1rem=16px 设置 {
         font-size: '67.5%'1/1.6

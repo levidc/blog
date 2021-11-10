@@ -9,7 +9,9 @@ tags:
  - 面试
  - 原型
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/13.jpg)
 
+<!-- more -->
 ```js
       /**
        * @description: es5方法获取实例原型，直到找到null

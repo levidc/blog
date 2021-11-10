@@ -10,7 +10,9 @@ tags:
  - js 
  - 技巧
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/14.jpg)
 
+<!-- more -->
 ```js
     ["1", "2", "3"].map(parseInt)
     parseInt方法接受map传递的回调函数callback(item, index, array)

@@ -8,7 +8,9 @@ tags:
  - js原生
  - ES6
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/8.jpg)
 
+<!-- more -->
 ## Map和Set数据结构
 
 ### Map和数组相互转化

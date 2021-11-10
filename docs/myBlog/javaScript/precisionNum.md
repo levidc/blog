@@ -8,7 +8,9 @@ tags:
  - js 
  - js技巧
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/9.jpg)
 
+<!-- more -->
 ```js
   function precision(num){
     let arr =num.toString().split('.')

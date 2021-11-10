@@ -8,7 +8,9 @@ tags:
  - vue
  - element ui
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/28.jpg)
 
+<!-- more -->
 
 ```js
     v-show和v-if

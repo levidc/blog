@@ -1,19 +1,19 @@
 ---
-title: 【BFC】
+title: BFC
 date: 2019-05-03
 categories:
  - 前端
 tags:
  - css
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/21.jpg)
 
-
-## 123
-
-:::info
-    Block Formatting Context
-    块级格式上下文：BFC是一个独立的布局环境，其中的元素布局是不受外界的影响，并且在一个BFC中，块盒与行盒（行盒由一行中所有的内联元素所组成）都会垂直的沿着其父元素的边框排列。
-    只有块级元素会参与到BFC，只会在其内部定义如何渲染，不会影响到外部区域
+<!-- more -->
+##  BFC定义
+::: tip
+Block Formatting Context
+块级格式上下文：BFC是一个独立的布局环境，其中的元素布局是不受外界的影响，并且在一个BFC中，块盒与行盒（行盒由一行中所有的内联元素所组成）都会垂直的沿着其父元素的边框排列。
+只有块级元素会参与到BFC，只会在其内部定义如何渲染，不会影响到外部区域
 :::
 ```js
     一：解决的问题

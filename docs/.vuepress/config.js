@@ -21,6 +21,26 @@ module.exports = {
     ],
     plugins: [
         [
+            '@vuepressplugin-medium-zoom', {
+              selector: '.page img',
+              delay: 1000,
+              options: {
+                margin: 24,
+                background: 'rgba(25,18,25,0.9)',
+                scrollOffset: 40
+              }
+            }
+        ],
+        [
+            "vuepress-plugin-nuggets-style-copy",
+            {
+              copyText: "copy",
+              tip: {
+                content: "ok!",
+              },
+            },
+        ],
+        [
             '@vuepress/last-updated',
             {
                 transformer: (timestamp) => {
@@ -68,7 +88,7 @@ module.exports = {
                     // 歌曲栏折叠
                     listFolded: true,
                     // 颜色
-                    theme: "#f9bcdd",
+                    theme: "#A95AF5",
                     // 播放顺序为随机
                     order: "random",
                     // 初始音量
@@ -116,10 +136,10 @@ module.exports = {
                 location: 2,     // 在导航栏菜单中所占的位置，默认2
                 text: 'Category' // 默认文案 “分类”
             },
-            tag: {
-                location: 3,     // 在导航栏菜单中所占的位置，默认3
-                text: 'Tag'      // 默认文案 “标签”
-            },
+            // tag: {
+            //     location: 3,     // 在导航栏菜单中所占的位置，默认3
+            //     text: 'Tag'      // 默认文案 “标签”
+            // },
             socialLinks: [     // 信息栏展示社交信息
                 { icon: 'reco-github', link: 'https://github.com/recoluan' },
                 { icon: 'reco-npm', link: 'https://www.npmjs.com/~reco_luan' }
@@ -128,19 +148,29 @@ module.exports = {
         nav: [
             { text: 'Home', link: '/', icon: 'reco-home' },
             {
-                text: '前端',
+                text: 'tag',
                 items: [
                     { text: 'javaScript', link: '/tag/js/' },
                     { text: 'CSS', link: '/tag/css/' },
                     { text: 'Vue', link: '/tag/vue/' },
                     { text: 'Game', link: '/tag/game/' },
-                    { text: '生活', link: '/tag/life/' },
+                    { text: '日常', link: '/tag/日常/' },
                 ],
-                icon: 'reco-Coding'
+                icon: 'reco-tag'
+            },
+            {
+                text: 'HELP',
+                items: [
+                    { text: 'vuepress', link: 'https://vuepress.vuejs.org/zh/' },
+                    { text: 'can i use', link: 'https://caniuse.com/'},
+                    { text: 'MDN', link: 'https://developer.mozilla.org/zh-CN/' },
+                    { text: 'PS', link: 'https://ps.gaoding.com/#/' },
+                ],
+                icon: 'reco-coding'
             },
             { text: '时间轴', link: '/timeline/', icon: 'reco-date' },
             {
-                text: '关于',
+                text: 'mine',
                 icon: 'reco-message',
                 items: [
                     { text: 'GitHub', link: 'https://github.com/levidc', icon: 'reco-github' },

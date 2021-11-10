@@ -9,7 +9,9 @@ tags:
  - 闭包
  - vue
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/6.jpg)
 
+<!-- more -->
 ## 闭包实现
 
 ```js

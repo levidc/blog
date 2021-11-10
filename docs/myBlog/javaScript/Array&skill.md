@@ -9,7 +9,9 @@ tags:
  - js数组方法
  - 技巧
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/2.jpg)
 
+<!-- more -->
 ```js
     原数组添加元素可以同push
     添加其他数组元素concat或者[...]但都返回新数组

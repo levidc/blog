@@ -7,7 +7,9 @@ tags:
  - axios
  - 网络请求
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/25.jpg)
 
+<!-- more -->
 ```js
     axios中断请求
     import axios from 'axios'

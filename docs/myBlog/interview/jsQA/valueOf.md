@@ -8,7 +8,9 @@ tags:
  - js原生
  - 面试题
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/15.jpg)
 
+<!-- more -->
 ```js
     如何使得等式成立
     let a = {}

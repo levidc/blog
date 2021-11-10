@@ -8,7 +8,9 @@ tags:
  - css
  - 面试题
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/22.jpg)
 
+<!-- more -->
 ```css
     /* css绘制一个三角形 */
     div{

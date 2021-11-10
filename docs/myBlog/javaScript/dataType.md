@@ -8,7 +8,9 @@ tags:
  - js原生
  - 面试题
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/5.jpg)
 
+<!-- more -->
 
 ```js
     js数据类型分为基本数据类型&&复杂数据类型

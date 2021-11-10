@@ -9,6 +9,9 @@ tags:
  - 深拷贝
 ---
 
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/7.jpg)
+
+<!-- more -->
 青春版
 ```js
   function deepClone(obj) {

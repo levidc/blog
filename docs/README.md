@@ -14,7 +14,7 @@ heroImageStyle: {
 isShowTitleInHome: false
 bgImage: '/back.jpg'
 bgImageStyle: {
-  height: '600px'
+  height: '700px'
 }
 ---
 <previewFont/>

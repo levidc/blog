@@ -7,7 +7,9 @@ categories:
 tags:
  - css
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/23.jpg)
 
+<!-- more -->
 ```css
       Ⅰ /* 需要知道元素的宽高  */
       position:absolute left:50%;

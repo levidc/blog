@@ -11,7 +11,9 @@ tags:
  - 技巧
  - prototype原型
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/3.jpg)
 
+<!-- more -->
 ```js
     call
     Function.prototype.callM = function(context = window, ...params) {

@@ -8,7 +8,9 @@ tags:
  - js 
  - prototype原型
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/10.jpg)
 
+<!-- more -->
 ```js
     Object.__proto__ === Function.prototype,
         Object.__proto__ === Function.__proto__,

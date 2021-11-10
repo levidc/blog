@@ -40,9 +40,14 @@ a.sidebar-link.active {
     opacity: 0.5;
 }
 
+//顶部栏透明，全图使用
+// .navbar { background:transparent }
+.home-blog .hero div h1{
+  display:none;
+}
 // 去除左上角标题，作者，标签等
 .page .page-title {
-    // display: none;
+    // float:left;
     div{
         i{
             color: #7F7F7F!important
@@ -50,6 +55,41 @@ a.sidebar-link.active {
         }
     }
 }
+.page section .theme-reco-content p img[alt='']{
+  display:none;
+}
+
+
+
+ #bulin {
+  background-image: url(https://patchwiki.biligame.com/images/blhx/5/5a/iyji9nxgx7mqj9w34ch16x393g78x6q.png);
+  background-repeat: no-repeat;
+  animation-name: bulinfly;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-timing-function: steps(7);
+  Z-INDEX: 100;
+  LEFT: 2px;
+  WIDTH: 8.125rem;
+  HEIGHT: 8.375rem;
+  POSITION: absolute;
+  TOP: 43px;
+}
+@keyframes bulinfly {
+    100% {
+        background-position-x: -56.875rem;
+    }
+}
+// .page section{
+//   transition: none!important;
+//   transform: none!important;
+// }
+// .page section .theme-reco-content.content__default{
+//   transition: transform 0.25s ease-in-out 0.08s, opacity 0.25s ease-in-out 0.08s; 
+//   transform: translateY(0px); 
+//   opacity: 1;
+// }
 .home-blog .hero h1{
   display:none;
 }
@@ -130,7 +170,7 @@ blockquote {
 
 //主页，评论偏左
 .page, .password-wrapper-in {
-    margin-left: 8rem !important;
+    margin-left: 18rem !important;
 }
 .comments-wrapper {
     padding: 2rem 2rem 2rem 10rem !important;
@@ -196,12 +236,28 @@ $mobileSidebarWidth = $sidebarWidth * 0.82
 //标签列表样式
 .abstract-item {
 //   background-color: #ccc !important;
+  // display:flex;
   transition: all .5s;
+}
+.abstract-item div:nth-of-type(3){
+  bottom: 6rem;
+  position: absolute;
+  right: 2rem;
+}
+.abstract-item .title{
+  right: -1rem;
+  top: 5.6rem;
+}
+.abstract-item .abstract{
+  width: 23rem;
+  float: left;
 }
 .abstract-item:hover {
     transform:  scale(1.02);
     transition: all .5s;
 }
+theme-reco-content content__default
+
 
 //滚动条样式
 ::-webkit-scrollbar

@@ -10,10 +10,12 @@ tags:
  - 闭包
 ---
 
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/4.jpg)
+
+<!-- more -->
 ::: danger
     特殊情景
 :::
-
 ```js
     Function创建的函数不会形成闭包
     var x = 10;

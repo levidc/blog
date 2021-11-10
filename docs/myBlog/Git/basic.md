@@ -7,6 +7,9 @@ categories:
 tags:
  - git 
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/16.jpg)
+
+<!-- more -->
 ```js
     git clone url
     

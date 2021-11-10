@@ -8,7 +8,9 @@ tags:
  - js 
  - 编程思想
 ---
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/1.jpg)
 
+<!-- more -->
 ```js
   Function.prototype.before = function (callback) {
     let self = this
