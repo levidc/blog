@@ -2,10 +2,10 @@
 title: Git
 date: 2017-01-01
 categories:
-    - 编程
+  - 编程
 
 tags:
-    - git
+  - git
 ---
 
 ![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/16.jpg)
@@ -23,7 +23,8 @@ tags:
     git status 查看状态，绿色在暂存区，红色工作区
     git add . 添加所有文件
     git commit -m "msg"
-
+    git reset HEAD 撤销上次add内容
+    git reset HEAD xxx文件名.js/xxx文件夹名 撤销制定文件或者文件夹
     git reset --hard<版本号> 版本回溯
     git branch 查看分支
     git branch '分支名' 创建分支
