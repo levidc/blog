@@ -2,19 +2,21 @@
 title: 数据类型转换
 date: 2019-1-3
 categories:
- - 面试题
+  - 面试题
 
 tags:
- - js原生
- - 面试题
+  - js原生
+  - 面试题
 ---
+
 ![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/15.jpg)
 
 <!-- more -->
+
 ```js
-    如何使得等式成立
-    let a = {}
-    a == 1 && a == 2 && a == 3
+如何使得等式成立
+let a = {}
+a == 1 && a == 2 && a == 3
 ```
 
 ```js
@@ -25,25 +27,23 @@ tags:
             return this.value++
         }
     }
-    
+
     let a = [1, 2, 3]
     a.valueOf = a.shift
 ```
 
 ```js
-    如何使得等式成立
-    let a = {}
-    a === 1 && a === 2 && a === 3
+如何使得等式成立
+let a = {}
+a === 1 && a === 2 && a === 3
 ```
 
 ```js
-    let value = 1
-    Object.defineProperty(window, 'a', {
-        get() {
-            return value++
-        }
-    })
-    console.log(
-        a === 1 && a === 2 && a === 3
-    );
+let value = 1
+Object.defineProperty(window, 'a', {
+	get() {
+		return value++
+	},
+})
+console.log(a === 1 && a === 2 && a === 3)
 ```
