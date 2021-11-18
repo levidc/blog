@@ -132,7 +132,7 @@ jQuery(document).ready(function ($) {
 	}
 	function changePos() {
 		width = document.body.clientWidth //body width
-		let asideHeight = document.getElementsByTagName('aside')[0].offsetHeight
+		let asideHeight = document.getElementsByTagName('aside')[0]?.offsetHeight
 		height =
 			document.body.clientHeight > asideHeight
 				? document.body.clientHeight
