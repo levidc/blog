@@ -89,7 +89,7 @@ module.exports = {
 				showIcon: '/blog/favicon.ico',
 				showText: '',
 				hideIcon: '/blog/favicon.ico',
-				hideText: '(●—●)不要走啊，再看看！',
+				hideText: 'talk is cheap, show me the code',
 				recoverTime: 2000,
 			},
 		],
