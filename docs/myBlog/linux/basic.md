@@ -12,6 +12,8 @@ tags:
 
 <!-- more -->
 
+## linux 操作
+
 ```js
   $ sudo dpkg -i  xxx文件名   安装对应的linux版本文件如.deb格式
   // 可以找到对应安装文件的位置，直接拖动到终端、直接获取文件名
@@ -24,7 +26,8 @@ tags:
   设置桌面快捷启动方式及桌面小标
   最快方式 找到如下目录 cd /usr/share/applications/
   拖动快捷方式到桌面即可，图标需要找到相应的png图片手动设置即可
-
+  远程登录ssh root@ip地址  登出logout
+  scp -r xxx 文件夹名   将对应目录下所有文件拷贝到对应的目录
 ```
 
 ## 安装 node

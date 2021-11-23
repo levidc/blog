@@ -33,6 +33,8 @@ tags:
 
 ```
 
+![git指令](/assets/studyImg/git.png)
+
 git 问题学习
 [git-book](https://git-scm.com/book/zh/v2/)
 
