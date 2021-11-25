@@ -34,9 +34,16 @@ str.replace(p, '$1 $2 $3 $4 $5')
 ```js
 function camelize(attr) {
 	return attr.replace(/\-(\w)/g, function (all, letter) {
+		console.log(letter)
 		return letter.toUpperCase()
 	})
 }
+```
+
+## 截取 img 下 src
+
+```js
+str.match(/src="(\S*)"/)[1]
 ```
 
 ## console.log 打印

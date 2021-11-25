@@ -39,6 +39,7 @@ tags:
 }
 ```
 
-![效果图](/assets/studyImg/hr.jpg)
+效果图如下
+![效果图](/blog/assets/studyImg/hr.jpg)
 
-![其他效果参考](https://www.haorooms.com/post/css_hr_line)
+[其他效果参考](https://www.haorooms.com/post/css_hr_line)
