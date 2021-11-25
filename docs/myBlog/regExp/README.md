@@ -12,12 +12,31 @@ tags:
 
 <!-- more -->
 
-## 特殊正则替换
+## 常用正则案例
+
+## 省市区
 
 ```js
 var str = '广东省深圳市龙华新区金龙路逸秀新村华富锦大厦'
 var p = /^(.+省)(.+市)(.+区)(.+路)(.*)$/
 str.replace(p, '$1 $2 $3 $4 $5')
+```
+
+## textarea 换行
+
+```js
+    textarea.vaue.replace(/\n/g,';') => 字符串带';'
+    split(';').filter(item=>item) 输出文本对应的数组格式的数据
+```
+
+## 驼峰命名
+
+```js
+function camelize(attr) {
+	return attr.replace(/\-(\w)/g, function (all, letter) {
+		return letter.toUpperCase()
+	})
+}
 ```
 
 ## console.log 打印

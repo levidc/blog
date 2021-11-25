@@ -28,10 +28,6 @@ $('标签名|#id名|.class名'|*)等等
 
 ```
 
-::: tip
-
-:::
-
 ## jQ 对象转为 dom 对象
 
 ```js
@@ -185,18 +181,43 @@ prop(key,value) 设置checkbox或者radio的勾选状态
 获取 $("input[type='radio']").prop("checked") => true|false
 
 设置 $("input[type='checkbox']").prop({checked:true})
-                               .prop("checked",false)
+                                                .prop("checked",false)
 
 
-attr(key)    获取元素的对应属性的属性值,设置disable相关的ie兼容性不好使,使用prop('disabled')
+attr(key)    获取标签自带元素的对应属性的属性值,设置disable相关的ie兼容性不好使,使用prop('disabled')
+            如html标签内联style，外部style获取不到
     如获取img的src 属性img $('#img').attr('src')
     设置img的src等属性  $("#img").attr("src",'img.png')
-                               .attr({src:'1.png',alt:'233'})
-
+                                            .attr({src:'1.png',alt:'233'})
+                                            .attr('class')  //获取class类名
 
 css(key)        返回匹配元素的样式属性
-    设置同attr   .css('key','value')
-                .css({key:'value',key:'value'})
+    获取多个css传递数组.css(['position','display'])
+设置同attr   .css('key','value')
+                        .css({key:'value',key:'value'})
 ```
 
-## position/scrollTOP/scrollLeft/width/height
+## offset/position/scrollTop/scrollLeft/width/height
+
+```js
+offset() 返回元素相当当前视口的横纵方向,left、top的偏移量 {top:xxxx,left:xxx} 无px单位
+
+position()  返回元素相当自身父元素的横纵方向,left、top的偏移量{top:xxxx,left:xxx} 无px单位
+
+scrollTop() 获取匹配元素相对滚动条顶部的偏移。
+            例如获取页面滚动条的位置或者 回到顶部设置0即可
+            即js中window.pageYOffset||document.documentElement.scrollTop||document.body.scrollTop
+
+```
+
+:::danger
+仅支持可见元素 ：offset、position、
+
+支持可见和不可见元素：scrollTop、
+:::
+
+## this
+
+```js指向
+jQuery事件回调函数中的this指向dom对象，通过$()包装this 操作jQ对象
+```
