@@ -5,6 +5,8 @@ categories:
   - 前端
 tags:
   - jQuery
+
+sticky: 2
 ---
 
 ![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/35.jpg)
@@ -216,8 +218,8 @@ scrollTop() 获取匹配元素相对滚动条顶部的偏移。
 支持可见和不可见元素：scrollTop、
 :::
 
-## this
+## this 指向
 
-```js指向
+```js
 jQuery事件回调函数中的this指向dom对象，通过$()包装this 操作jQ对象
 ```

@@ -6,6 +6,8 @@ categories:
 tags:
   - 日常
 
+sticky: 1
+
 keys:
   - 'ef205c81732d0183c2b855100d823643'
 ---
@@ -13,13 +15,6 @@ keys:
 ![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/29.jpg)
 
 <!-- more -->
-
-::: theorem keyword
-你的名字+生日+年龄
-
-::: right
-来自 本人用到现在的密码
-:::
 
 ## no time to watse
 
