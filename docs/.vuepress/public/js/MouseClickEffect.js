@@ -172,12 +172,12 @@ jQuery(document).ready(function ($) {
 			bulin.style.transform = 'rotateY(360deg)'
 		}
 	}
-	// function start() {
-	// 	bulin.visibility = 'visible'
-	// 	interval = setInterval(() => {
-	// 		changePos()
-	// 	}, delay)
-	// }
+	function start() {
+		bulin.visibility = 'visible'
+		interval = setInterval(() => {
+			changePos()
+		}, delay)
+	}
 	function pause_resume() {
 		if (pause) {
 			clearInterval(interval)
