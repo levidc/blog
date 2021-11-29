@@ -8,7 +8,7 @@ tags:
   - echarts
 ---
 
-![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/13.jpg)
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/37.jpg)
 
 <!-- more -->
 

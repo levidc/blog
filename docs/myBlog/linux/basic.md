@@ -8,7 +8,7 @@ tags:
   - linux
 ---
 
-![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/15.jpg)
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/38.jpg)
 
 <!-- more -->
 
