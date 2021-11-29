@@ -10,7 +10,7 @@ tags:
  - js 
  - 技巧
 ---
-![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/14.jpg)
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/42.jpg)
 
 <!-- more -->
 ```js

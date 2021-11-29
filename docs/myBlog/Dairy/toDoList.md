@@ -12,7 +12,7 @@ keys:
   - 'ef205c81732d0183c2b855100d823643'
 ---
 
-![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/29.jpg)
+![](https://cdn.jsdelivr.net/gh/levidc/blogImg@master/img/29.jpg)
 
 <!-- more -->
 
