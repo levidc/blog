@@ -5,8 +5,6 @@ categories:
   - 前端
 tags:
   - jQuery
-
-sticky: 2
 ---
 
 ![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/40.jpg)
@@ -33,41 +31,41 @@ $('标签名|#id名|.class名'|*)等等
 ## jQ 对象转为 dom 对象
 
 ```js
-let jq = $('#jq') //jq对象
+let jq = $("#jq"); //jq对象
 
-let dom = jq.get(0) || jq[0] //dom对象
+let dom = jq.get(0) || jq[0]; //dom对象
 ```
 
 ## 获取兄弟节点等
 
 ```js
-$('#test1').parent() // 父节点
+$("#test1").parent(); // 父节点
 
-$('#test1').parents() // 全部父节点
+$("#test1").parents(); // 全部父节点
 
-$('#test1').parents('.mui-content')
+$("#test1").parents(".mui-content");
 
-$('#test').children() // 全部子节点
+$("#test").children(); // 全部子节点
 
-$('#test').children('#test1')
+$("#test").children("#test1");
 
-$('#test').contents() // 返回#test里面的所有内容，包括节点和文本
+$("#test").contents(); // 返回#test里面的所有内容，包括节点和文本
 
-$('#test').contents('#test1')
+$("#test").contents("#test1");
 
-$('#test1').prev() // 上一个兄弟节点
+$("#test1").prev(); // 上一个兄弟节点
 
-$('#test1').prevAll() // 之前所有兄弟节点
+$("#test1").prevAll(); // 之前所有兄弟节点
 
-$('#test1').next() // 下一个兄弟节点
+$("#test1").next(); // 下一个兄弟节点
 
-$('#test1').nextAll() // 之后所有兄弟节点
+$("#test1").nextAll(); // 之后所有兄弟节点
 
-$('#test1').siblings() // 所有兄弟节点
+$("#test1").siblings(); // 所有兄弟节点
 
-$('#test1').siblings('#test2') //指定标签名
+$("#test1").siblings("#test2"); //指定标签名
 
-$('#test').find('#test1')
+$("#test").find("#test1");
 ```
 
 ## dom 元素创建
@@ -142,20 +140,20 @@ $('xx').hide()
 ## animate
 
 ```js
-$('').animate(params, [speed], [easing][fn])
+$("").animate(params, [speed], [easing][fn]);
 
-例如
-$('.son').animate(
-	{
-		left: '1000px',
-		top: '100px',
-	},
-	2000,
-	'linear',
-	function () {
-		alert('下班啦')
-	}
-)
+例如;
+$(".son").animate(
+  {
+    left: "1000px",
+    top: "100px",
+  },
+  2000,
+  "linear",
+  function () {
+    alert("下班啦");
+  }
+);
 ```
 
 ## hasClass/addClass/removeClass/toggleClass
