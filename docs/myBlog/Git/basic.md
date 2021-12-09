@@ -22,13 +22,15 @@ tags:
     git commit -m "msg"
     git reset HEAD 撤销上次add内容
     git reset HEAD xxx文件名.js/xxx文件夹名 撤销制定文件或者文件夹
-    git reset --hard<版本号> 版本回溯
+    git reset HEAD^ 撤销上次commit提交
+    git reset --hard<版本号commit> 版本回溯
     git branch 查看分支
     git branch '分支名' 创建分支
     git checkout -b "分支名" 创建并切换到分支
     git checkout '分支名' 切换分支
     git push origin '分支名' 推送到指定分支
-    git merge '分支名' master合并其他分支
+    git push origin --delete '分支名'删除远端分支
+    git merge '分支名' 将该分支合并到当前分支,即当前所在分支被合并
     git checkout master 切换到master
 
 ```
