@@ -22,6 +22,7 @@ tags:
 | \S                  |  匹配所有非空字符,等价于 [^ \f\n\r\t\v]。   |                   /\S/.test('\r')=>false |
 | \w                  | 匹配字母、数字、下划线。等价于 [A-Za-z0-9_] |             /\w/.test('123abc\_') =>true |
 | \d                  |            匹配数字,等价于 [0-9]            |                  /\d/.test('abc')=>false |
+| [^12]               |          匹配 1 或者 2 开头的数字           |                 /[^12]./.test('21')=>true |
 
 ## 特殊字符
 
@@ -44,6 +45,19 @@ tags:
 | ---- | :--------: | ---- |
 | .\*  |  贪婪匹配  | 123  |
 | .\*? | 非贪婪匹配 | 444  |
+
+```js
+(?:pattern)
+非获取匹配，匹配pattern但不获取匹配结果，不进行存储供以后使用。这在使用或字符“(|)”来组合一个模式的各个部分是很有用。例如“industr(?:y|ies)”就是一个比“industry|industries”更简略的表达式。
+(?=pattern)
+非获取匹配，正向肯定预查，在任何匹配pattern的字符串开始处匹配查找字符串，该匹配不需要获取供以后使用。例如，“Windows(?=95|98|NT|2000)”能匹配“Windows2000”中的“Windows”，但不能匹配“Windows3.1”中的“Windows”。预查不消耗字符，也就是说，在一个匹配发生后，在最后一次匹配之后立即开始下一次匹配的搜索，而不是从包含预查的字符之后开始。
+(?!pattern)
+非获取匹配，正向否定预查，在任何不匹配pattern的字符串开始处匹配查找字符串，该匹配不需要获取供以后使用。例如“Windows(?!95|98|NT|2000)”能匹配“Windows3.1”中的“Windows”，但不能匹配“Windows2000”中的“Windows”。
+(?<=pattern)
+非获取匹配，反向肯定预查，与正向肯定预查类似，只是方向相反。例如，“(?<=95|98|NT|2000)Windows”能匹配“2000Windows”中的“Windows”，但不能匹配“3.1Windows”中的“Windows”。
+(?<!pattern)
+非获取匹配，反向否定预查，与正向否定预查类似，只是方向相反。例如“(?<!95|98|NT|2000)Windows”能匹配“3.1Windows”中的“Windows”，但不能匹配“2000Windows”中的“Windows”。这个地方不正确，有问题
+```
 
 ## 常用正则案例
 
@@ -69,10 +83,10 @@ str.replace(p, '$1 $2 $3 $4 $5')
 
 ```js
 function camelize(attr) {
-	return attr.replace(/\-(\w)/g, function (all, letter) {
-		console.log(letter)
-		return letter.toUpperCase()
-	})
+  return attr.replace(/\-(\w)/g, function (all, letter) {
+    console.log(letter);
+    return letter.toUpperCase();
+  });
 }
 ```
 
@@ -85,13 +99,44 @@ str.match(reg)[1]
 => https://cdn.jsdelivr.net/gh/levidc/blogImg/img/7.jpg
 ```
 
+### 取反匹配
+
+```js
+// 中文输入法不被input事件检测到，取之使用compositionstart、compositionend监听中文输入法
+// https://www.ip138.com/ascii/中文ASCii码
+var flag = true;
+$("#txt").on("compositionstart", function () {
+  flag = false;
+});
+$("#txt").on("compositionend", function () {
+  flag = true;
+});
+$("#txt").on("input", function (e) {
+  var _this = this;
+  setTimeout(function () {
+    // \u5357\u4eac\u5e02
+    if (flag) {
+      if (e.target.value.length == 1) {
+        e.target.value = e.target.value.replace(/^((?!\u5357).)*/, "");
+      } else if (e.target.value.length == 2) {
+        e.target.value = e.target.value.replace(/^((?!(\u5357\u4eac)).)*/, "");
+      } else if (e.target.value.length > 2) {
+        e.target.value = e.target.value
+          .substr(0, 3)
+          .replace(/^((?!(\u5357\u4eac\u5e02)).)*/, "");
+      }
+    }
+  }, 0);
+});
+```
+
 ### console.log 打印
 
 ```js
 console.log(
-	'%c vue-aplayer %c v'.concat('2.0.0-beta.5', ' ').concat('dd10c50', ' %c'),
-	'background: #35495e; padding: 1px; border-radius: 3px 0 0 3px; color: #fff',
-	'background: #41b883; padding: 1px; border-radius: 0 3px 3px 0; color: #fff',
-	'background: transparent'
-)
+  "%c vue-aplayer %c v".concat("2.0.0-beta.5", " ").concat("dd10c50", " %c"),
+  "background: #35495e; padding: 1px; border-radius: 3px 0 0 3px; color: #fff",
+  "background: #41b883; padding: 1px; border-radius: 0 3px 3px 0; color: #fff",
+  "background: transparent"
+);
 ```
