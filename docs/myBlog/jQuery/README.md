@@ -39,19 +39,17 @@ let dom = jq.get(0) || jq[0]; //dom对象
 ## 获取兄弟节点等
 
 ```js
-$("#test1").parent(); // 父节点
+$("#test1").parent(); // 上一级的父节点
 
-$("#test1").parents(); // 全部父节点
+$("#test1").parents(); // 全部父节点,会跨越层级直至根节点
 
-$("#test1").parents(".mui-content");
+$("#test").children(); // 下一级子节点，不会透过子节点去匹配
 
-$("#test").children(); // 全部子节点
+$("#test").find("#test1"); //所有子节点、会透过子节点去匹配
 
-$("#test").children("#test1");
 
 $("#test").contents(); // 返回#test里面的所有内容，包括节点和文本
 
-$("#test").contents("#test1");
 
 $("#test1").prev(); // 上一个兄弟节点
 
@@ -65,7 +63,6 @@ $("#test1").siblings(); // 所有兄弟节点
 
 $("#test1").siblings("#test2"); //指定标签名
 
-$("#test").find("#test1");
 ```
 
 ## dom 元素创建
