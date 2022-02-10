@@ -80,5 +80,4 @@ new Date(new Date().getTime() + 15 * 60 * 1000);
 cookie存储最大4M
 
 ```
-
 ## vuei18n
