@@ -26,8 +26,17 @@ tags:
   设置桌面快捷启动方式及桌面小标
   最快方式 找到如下目录 cd /usr/share/applications/
   拖动快捷方式到桌面即可，图标需要找到相应的png图片手动设置即可
-  远程登录ssh root@ip地址  登出logout
+  远程登录ssh root@ip地址  登出logout ctrl + d
+  配置ip别名 cd ~/.ssh 新建config文件
+  写入如下
+  Host alias
+  HostName IP
   scp -r xxx 文件夹名   将对应目录下所有文件拷贝到对应的目录
+  tar -zxvf xxx
+  tomcat/bin/startup.sh | shutdown.sh
+  hostnamectl set-hostname @xxx 设置服务器名
+  mvn clean install 
+
 ```
 
 ## 安装 node
