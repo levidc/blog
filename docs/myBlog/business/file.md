@@ -1,6 +1,6 @@
 ---
 title: 文件类型上传读取等
-date: 2022-03-31
+date: 2022-04-29
 categories:
   - 前端
 
@@ -272,3 +272,19 @@ document.querySelector("." + id).scrollIntoView(true);
 ```
 
 [参考](https://juejin.cn/post/7046313942938812424)
+
+## 下载文件
+```js
+  //下载为json文件
+    var Link = document.createElement('a');
+    Link.download = "机柜信息.json";
+    Link.style.display = 'none';
+    // 字符内容转变成blob地址
+    var blob = new Blob([js]);
+    Link.href = URL.createObjectURL(blob);
+    // 触发点击
+    document.body.appendChild(Link);
+    Link.click();
+    // 然后移除
+    document.body.removeChild(Link);
+```

@@ -1,6 +1,6 @@
 ---
 title: element-ui常用组件及问题
-date: 2022-04-15
+date: 2022-05-16
 categories:
   - 前端
 
@@ -2444,4 +2444,65 @@ export default {
     }
   }
 </style>
+```
+
+
+
+## 表格复选框翻页或其他情形保留上次结果
+```js
+el-table-column type="selection" 添加属性 reverse-selection
+el-table 添加属性 :row-key="function(row){return row[key]}"
+
+// 复选框数据回显 
+@selection-change="function(val)"
+绑定data如multipleSelection[],赋值为val
+this.$refs['table'].clearSelection()
+this.$refs['table'].toggleRowSelection() 如遇弹窗需要$nextTick执行
+视图不刷新 强制视图刷新方法
+
+```
+
+
+## form表单validate校验实现跳转定位到错误
+```js
+  jumpToError () {
+      this.$nextTick(() => {
+        const isError = document.getElementsByClassName('is-error')
+        // console.log(isError[0].getBoundingClientRect().top)
+        document.querySelector('.bucket-detail .el-dialog__wrapper').scrollTo({
+          behavior: 'smooth',
+          top:
+            isError[0].getBoundingClientRect().top +
+            this.$refs['formData'].$el.scrollTop -
+            60
+        })
+      }, 500)
+    },
+```
+
+
+
+## el-dropDown
+```js
+<el-dropdown @command="handleStatus">
+ <el-dropdown-item
+  command="string"
+  :command="changeStatus('string',scope.row)">
+ </el-dropdown-item>
+</el-dropdown>
+
+methods:{
+  // 处理handleStatus接受到的参数,
+  // 处理前只有string,处理后变成{
+    row:scope.row,
+    command:string
+  }
+  changeStatus (string, row) {
+    return {
+      row,
+      command: string
+    }
+  },
+}
+
 ```
