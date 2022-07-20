@@ -130,6 +130,12 @@ $("#txt").on("input", function (e) {
 });
 ```
 
+### 获取文件后缀、即文件类型
+```js
+/\.([0-9a-z]+)(?:[\?#]|$)/i
+```
+
+
 ### console.log 打印
 
 ```js
@@ -140,3 +146,4 @@ console.log(
   "background: transparent"
 );
 ```
+

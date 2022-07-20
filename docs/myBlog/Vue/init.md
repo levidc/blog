@@ -18,3 +18,18 @@ tags:
     控制台选中当前元素,$0.__vue__
     或者{...document.quertSelector('').__vue__}
 ```
+## push跳转新页面
+```js
+  const push = this.$router.resolve({
+      name: 'xxxxx'
+  })
+  window.open(push.href, '_blank')
+```
+
+## routerlink添加禁用
+```js
+<router-link 
+  :is="isDisabled ? 'span' : 'router-link'"
+  to="/link"
+>
+```
