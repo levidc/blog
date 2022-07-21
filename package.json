@@ -4,11 +4,11 @@
   "description": "vuePress",
   "main": "index.js",
   "scripts": {
-    "serve": "vuepress dev docs --open --temp .temp",
+    "serve": "yarn replace && vuepress dev docs --open --temp .temp",
     "docs:build": "vuepress build docs",
     "deploy": "bash deploy.sh",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "replace": "node ./new_node_modules/change-module.js"
+    "replace": "node modules.js"
   },
   "repository": {
     "type": "git",

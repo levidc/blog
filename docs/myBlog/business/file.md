@@ -38,7 +38,7 @@ window.btoa、atob
 | FileReader.abort()              |                      中止读取操作。在返回时，readyState 属性为 DONE。                      |
 | FileReader.readAsArrayBuffer()  |                               将读取的内容转成 ArrayBuffer。                               |
 | FileReader.readAsBinaryString() |                                将读取的内容转成二进制数据。                                |
-| FileReader.readAsDataURL()      | 将读取的内容转成并将其编码为 base64 的 data url。 格式是 data:[<mediatype>][;base64]<data> |
+| FileReader.readAsDataURL()      | 将读取的内容转成并将其编码为 base64 的 data url。 格式是 |
 | FileReader.readAsText()         |                  将数据读取为给定编码（默认为 utf-8 编码）的文本字符串。                   |
 
 ```js
