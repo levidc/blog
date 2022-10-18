@@ -5,7 +5,7 @@ categories:
   - 前端
 
 tags:
-  - vue
+  - vue2
   - npm
 
 sticky: 2
@@ -895,7 +895,7 @@ export default {
 }
 ```
 
-`````js
+```js
 问题
 Q:拖拽的组件，点击添加到所需的区域，拖拽也可添加
 A:@unchoose 鼠标松开事件，单机鼠标松开，添加到末尾，拖拽自身添加到相应区域，拖拽后再次添加一次，因为触发前边的松开事件。
@@ -911,12 +911,92 @@ A:设定完option:{clone:false 之后} 单个组件内自身无法拖拽，但�
 
 Q:选取的样式，自己定义
 A:chosenClass
+```
 
 
 
-## drag
 
-````js
+
+
+
+### 案例2
+```js
+  <draggable v-model="draggableInstance" :group="groupA" animation="300" drag-class="dragClass" ghost-class="ghostClass" chosen-class="chosenClass" :force-fallback="true" @end="end">
+    <transition-group :style="style">
+      <div v-for="(item,index) in draggableInstance" :key="item.instanceId" class="item">
+        <el-tooltip placement="top" style="width:100%" :content="&quot;主机ip:&quot; + item.host + &quot;,&quot; + &quot;端口:&quot; + item.port">
+          <div>
+            <span>
+              {{ item.instanceName }}
+            </span>
+            <i class="fa el-icon-plus" @click="addTo(index)" />
+          </div>
+        </el-tooltip>
+      </div>
+    </transition-group>
+  </draggable>
+
+  <draggable v-model="draggableGroup" group="instance" animation="100" drag-class="dragClass" ghost-class="ghostClass" chosen-class="chosenClass" :force-fallback="true">
+    <transition-group :style="style">
+      <div v-for="(item,index) in draggableGroup" :key="item.instanceId" class="item">
+        <div>
+          <p>
+            {{ item.instanceName }}
+          </p>
+          <p>
+            {{ '主机:' + item.host }}
+          </p>
+          <p>
+            {{ '端口:' + item.port }}
+          </p>
+        </div>
+        <i class="fa fa-trash-o" @click="deleteD(index)" />
+      </div>
+    </transition-group>
+  </draggable>
+
+  // 结构渲染、
+  style绑定 data
+  style:'min-height:120px;display: flex;flex-wrap:wrap;justify-content:space-between',
+
+    copyDraggableInstance（备份数据）
+    deleteD (i) {
+    var temp = this.draggableGroup.splice(i, 1)
+    this.draggableInstance.push(...temp)
+    },
+    addTo (index) {
+      this.draggableGroup.push(this.draggableInstance[index])
+      this.draggableInstance.splice([index], 1)
+    },
+    resetD () {
+      this.draggableGroup.splice(0)
+      this.draggableInstance = JSON.parse(JSON.stringify(this.copyDraggableInstance))
+    },
+
+    .ghostClass {
+      border-radius: 20px;
+      background-color: #fff !important;
+    }
+
+    .chosenClass {
+      background-color: #25363e !important;
+      opacity: 1 !important;
+    }
+
+    .dragClass {
+      overflow: hidden;
+      background-color: #25363e !important;
+      opacity: 1 !important;
+      box-shadow: none !important;
+      outline: none !important;
+      background-image: none !important;
+    }
+```
+
+
+
+### drag 使用v-dialogDrag
+```js
 import Vue from 'vue';
 // v-dialogDrag: 弹窗拖拽属性
 Vue.directive('dialogDrag', {
@@ -995,7 +1075,6 @@ Vue.directive('dialogDrag', {
 		}
 	}
 })
+```
 
-使用v-dialogDrag
 
-`````

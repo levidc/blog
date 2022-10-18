@@ -5,7 +5,7 @@ categories:
  - 前端
 
 tags:
- - vue
+ - vue2
  - 生命周期
 ---
 ![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/27.jpg)

@@ -7,7 +7,7 @@ categories:
 tags:
  - js原生
  - 闭包
- - vue
+ - vue2
 ---
 ![](https://cdn.jsdelivr.net/gh/levidc/blogImg@master/img/6.jpg)
 

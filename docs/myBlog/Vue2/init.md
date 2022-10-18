@@ -5,7 +5,7 @@ categories:
   - 前端
 
 tags:
-  - vue
+  - vue2
 ---
 
 ![](https://cdn.jsdelivr.net/gh/levidc/blogImg/img/26.jpg)

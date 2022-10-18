@@ -5,7 +5,7 @@ categories:
   - 前端
 
 tags:
-  - vue
+  - vue2
   - npm
 
 sticky: 2
