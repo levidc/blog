@@ -1,6 +1,6 @@
 ---
 title: Git
-date: 2017-01-01
+date: 2022-11-18
 categories:
   - 编程
 
@@ -32,7 +32,10 @@ tags:
     git push origin --delete '分支名'删除远端分支
     git merge '分支名' 将该分支合并到当前分支,即当前所在分支被合并
     git checkout master 切换到master
-
+    git stash 临时储藏当前改动代码
+    git stash list 查看stash 记录 @{0}
+    git stash pop && git stash apply 恢复 && 指定恢复何种储藏
+    git remote add origin git@xxxxx.com 添加远端仓库关联
 ```
 
 ![git指令](/assets/studyImg/git.png)
@@ -43,5 +46,6 @@ git 问题学习
 ```js
 
     生成ssh
+    ssh-keygen -o
     ssh-keygen -t rsa -C 'my@xxx.com'
 ```

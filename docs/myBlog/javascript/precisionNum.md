@@ -28,3 +28,10 @@ tags:
     return arr.length>1?handleInt(int)+handleDemi(decimal):handleInt(int)
   }
 ```
+
+正则
+```js
+const reg = /\B(?=(\d{3})+(?!\d))/g
+value => value.replace(reg, ',')
+
+```
