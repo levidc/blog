@@ -180,7 +180,7 @@ module.exports = {
 			//     location: 3,     // 在导航栏菜单中所占的位置，默认3
 			//     text: 'Tag'      // 默认文案 “标签”
 			// },
-      // https://www.photopea.com/
+			// https://www.photopea.com/
 			socialLinks: [
 				// 信息栏展示社交信息
 				{ icon: 'reco-github', link: 'https://github.com/recoluan' },
@@ -214,7 +214,7 @@ module.exports = {
 						text: 'MDN',
 						link: 'https://developer.mozilla.org/zh-CN/',
 					},
-					{ text: 'PS', link: 'https://ps.gaoding.com/#/' },
+					{ text: 'PS', link: 'https://www.photopea.com/' },
 				],
 				icon: 'reco-coding',
 			},
