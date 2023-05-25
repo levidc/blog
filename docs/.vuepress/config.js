@@ -196,6 +196,7 @@ module.exports = {
 					{ text: 'CSS', link: '/tag/css/' },
 					{ text: 'Vue2', link: '/tag/vue2/' },
 					{ text: 'Vue3', link: '/tag/vue3/' },
+					{ text: 'react', link: '/tag/react/' },
 					{ text: 'linux', link: '/tag/linux/' },
 					{ text: 'Game', link: '/tag/game/' },
 					{ text: '日常', link: '/tag/日常/' },

@@ -1,0 +1,5 @@
+{
+  "i18n-ally.localesPaths": [
+    "new_node_modules/vuepress-theme-reco/locales"
+  ]
+}
