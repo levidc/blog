@@ -10,7 +10,7 @@ module.exports = {
 		[
 			'script',
 			{
-				src: 'https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js',
+				src: '/js/jquery.min.js',
 			},
 		],
 		// 引入鼠标点击脚本

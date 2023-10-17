@@ -1,6 +1,6 @@
 ---
 title: case
-date: 2021-12-30
+date: 2023-07-17
 categories:
   - 前端
 
@@ -12,7 +12,7 @@ tags:
 
 <!-- more -->
 
-## 拓扑图
+### 拓扑图
 
 ### option
 
@@ -336,4 +336,169 @@ this.$nextTick(() => {
   this.volumeChart = this.$echarts.init(document.getElementById("volume"));
   this.volumeChart.setOption(this.option);
 });
+```
+
+
+### tooltip展示echart图表
+```js
+设置tooltip
+triggerOn： 'click' || 'null'
+版本支持 echart>=5
+再监听 chart mouseover事件 手动触发tooltip的显示
+		dispatchAction({
+                type: 'showTip',
+                seriesIndex: 0,
+                dataIndex: params.dataIndex
+              })
+
+		dispatchAction({
+      type: 'hideTip'
+    })
+
+
+
+
+<div>
+  <Echarts height="400px" :options="customToolTip()" />
+</div>
+
+renderTooltipChart (data, color) {
+  const chart = document.getElementById('pieT') && this.$echarts.init(document.getElementById('pieT'))
+  const option = {
+    // color: [color, '#ebebeb'],
+    color: [color, '#ebebeb'],
+    title: {
+      text: data + '%',
+      left: '30',
+      top: 'center',
+      // top: 'center',
+      textStyle: {
+        fontSize: 13,
+        color: '#d3d6d8'
+      }
+    },
+    series: [
+      {
+        label: { show: true },
+        name: '进度',
+        type: 'pie',
+        radius: ['60%', '80%'],
+        avoidLabelOverlap: true,
+        center: ['30%', '50%'],
+        labelLine: {
+          show: false
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: '20',
+            fontWeight: 'bold'
+          }
+        },
+        data: [{ value: data / 100 * 100 }, { value: 100 - data }]
+      }
+    ]
+  }
+  chart && chart.setOption(option)
+},
+    customToolTip () {
+      return {
+        title: {
+          text: 'customToolTip'
+        },
+        textStyle: {
+          color: '#d3d6d8',
+          fontSize: '14px',
+          fontWeight: 400
+        },
+        tooltip: {
+          trigger: 'item',
+          // trigger: 'axis',
+          // position: function (pt) {
+          //   return [pt[0], '10%']
+          // },
+          triggerOn: 'none', // 设置none 来主动触发移入时显示
+          borderColor: 'transparent',
+          backgroundColor: 'rgb(60,76,84,.6)',
+          formatter: (type) => {
+            const data = type.data.value
+            const color = data > 90 ? '#EB6452' : Number(data) >= 80 ? '#f6bd16' : '#5B8FF9'
+            const dom = `
+              <div id="pieT" style="width:150px;height:80px;positive:relative;">
+              </div>
+              <div style="width:75px;position:absolute;top:50%;transform:translateY(-50%);right:0;display:flex;flex-direction:column;color:#d3d6d8;align-items:flex-end">
+                  <div style="width:100%;display:flex;justify-content:flex-end;align-items:center;"><p style="display:inline-block;width:13px;height:13px;background:${color}"></p>
+                    <span style="margin-left:5px;">桶用量</span>
+                  </div>
+                  <span>${data} GB</span>
+               </div>
+
+            `
+            setTimeout(() => {
+              this.renderTooltipChart(data, color)
+            })
+            return dom
+          }
+          // axisPointer: {
+          //   type: 'cross',
+          //   label: {
+          //     backgroundColor: '#6a7985'
+          //   }
+          // }
+        },
+        xAxis: { data: this.buckeInfo.statisticsTime },
+        yAxis: { type: 'value' },
+        series: [
+          {
+            type: 'line',
+            name: 'customToolTip',
+            smooth: true,
+            data: [
+              {
+                value: 81,
+                percent: 10
+              },
+              {
+                value: 82,
+                percent: 20
+              },
+              {
+                value: 33,
+                percent: 30
+              },
+              {
+                value: 64,
+                percent: 40
+              },
+              {
+                value: 95,
+                percent: 50
+              },
+
+              {
+                value: 16,
+                percent: 60
+              },
+              {
+                value: 37,
+                percent: 60
+              },
+              {
+                value: 18,
+                percent: 90
+              }
+
+            ]
+          }
+        ]
+      }
+    },
+```
+
+
+
+### 水位图
+```js
+
+
 ```
