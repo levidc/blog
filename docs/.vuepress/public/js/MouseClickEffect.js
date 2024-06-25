@@ -26,7 +26,7 @@ const emojis = [
 	'😰',
 	'😭',
 ]
-function getRandom(max, min) {
+function getRandom (max, min) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
@@ -90,6 +90,7 @@ jQuery(document).ready(function ($) {
 	})
 	let div = document.createElement('div')
 	div.id = 'bulin'
+	// bulin.style.display = 'none'
 	document.body.appendChild(div)
 	bulin.onclick = function (e) {
 		if (accCount >= 1) {
@@ -127,7 +128,7 @@ jQuery(document).ready(function ($) {
 		step += 1
 		accCount += 1
 	}
-	function changePos() {
+	function changePos () {
 		width = document.body.clientWidth //body width
 		let asideHeight = document.getElementsByTagName('aside')[0]?.offsetHeight
 		height =
@@ -172,13 +173,13 @@ jQuery(document).ready(function ($) {
 			bulin.style.transform = 'rotateY(360deg)'
 		}
 	}
-	function start() {
+	function start () {
 		bulin.visibility = 'visible'
 		interval = setInterval(() => {
 			changePos()
 		}, delay)
 	}
-	function pause_resume() {
+	function pause_resume () {
 		if (pause) {
 			clearInterval(interval)
 			pause = false

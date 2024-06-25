@@ -238,7 +238,7 @@ module.exports = {
 					},
 					{
 						text: '哔哩哔哩',
-						link: 'https://space.bilibili.com/6654841',
+						link: 'https://space.bilibili.com/1177475003',
 						icon: 'reco-bilibili',
 					},
 					// { text: 'Twitter', link: 'https://twitter.com/GLASSYSKY113', icon: 'reco-twitter' }

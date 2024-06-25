@@ -1,6 +1,6 @@
 ---
 title: vscode配置、插件及快捷键相关
-date: 2021-11-11
+date: 2024-06-25
 categories:
   - 编程
 
@@ -36,7 +36,73 @@ vetur
 vue
 open in browser
 eslint
+volar
+auto rename tag
+chatGPT-chatMoss
+Date & Time
+GitLens
+i18n Ally
+Iconify IntelliSense
+LeetCode
+LiveServer
+Vue-Offical
+WindiCSS IntelliSense
 ```
+## 用户代码片段
+文件=>首选项=>配置用户代码片段
+```js
+	"Print to explain": {
+		"prefix": "funn",
+		"body": [
+			"/**",
+			" * @func $1",
+			" * @Description $2",
+			" * @Author: your name",
+			" * @param {$3} $4 $5",
+			" * @return {$6} $7",
+			" */"
+		],
+		"description": "a func mode"
+	},
+	"Print to console": {
+		"prefix": "vue",
+		"body": [
+			// "<!--",
+			// "* @Description: $0",
+			// "* @Author: your name",
+			// "* @Date: $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND",
+			// "* @LastEditTime: $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND",
+			// "* @LastEditors: Please set LastEditors",
+			// "-->",
+			"",
+			"<template>",
+			"<div></div>",
+			"</template>",
+			"",
+			"<script>",
+			"export default {",
+			"name: '',",
+			"props: {},",
+			"components: {},",
+			"data() {",
+			"return {",
+			"};",
+			"},",
+			"computed: {},",
+			"watch: {},",
+			"methods: {},",
+			"created() {},",
+			"mounted() {}",
+			"};",
+			"</script>",
+			"<style lang=\"scss\" scoped>",
+			"</style>"
+		],
+		"description": "A vue file template"
+	},
+
+```
+
 
 ## setting 配置
 

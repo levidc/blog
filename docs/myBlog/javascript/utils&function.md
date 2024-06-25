@@ -221,3 +221,131 @@ function(str){
   }
 }
 ```
+
+## 数组合并
+
+```js
+    原数组添加元素可以同push
+    添加其他数组元素concat或者[...]但都返回新数组
+    巧用 Array.prototype.push.apply(a1,a2)
+    可以在原数组上添加数组
+    多个数组使用call(a1,...a2,...a3)
+```
+
+## 数组去重
+
+```js
+target.filter((item) => {
+  return all.every((item1) => {
+		return item.key !== all.key
+	})
+})
+//返回不相等的key、value
+
+
+target.filter((item) => {
+  return all.some((item1) => {
+    return item.key == item1.key
+})
+//返回相等的key、value
+```
+
+## 二维数组最大值
+
+```js
+[[a], [b]].map(Function.prototype.apply.bind(Math.max, null));
+相当于[([a], [b])].map(function (item) {
+  Math.max.apply(null, item);
+});
+apply.bind将Math.max指向了apply，null作为apply第一个参数，后面map遍历 接受item的数组，返回每组最大值，
+最后返回新数组，取决于二维数组的个数
+```
+
+## 导出table
+```js
+  let n = [
+      { key: 'id', title: 'id' },
+      { key: 'name', title: 'name' },
+      { key: 'user.age', title: 'age' }
+    ],
+    m = [
+      { id: 1, name: 2, user: { age: 18 } },
+      { id: 2, name: 3, user: { age: 20 } }
+    ]
+const exportExcel = function p(n = [] as any, m = [] as any, r = '') {
+  let l = [] as any
+  m.forEach((e: any, c: any) => {
+    let x = {}
+    n.forEach(({ key: a }) => {
+      x[a] = a.split('.').reduce((h: { [x: string]: any }, i: string | number) => {
+        try {
+          return h[i]
+        } catch {
+          return
+        }
+      }, e)
+    }),
+      l.push(x)
+  })
+  // l 解析column对应key的value
+  // l => {key:value} column: key l 所有的td、依次按顺序排列d
+  let t = '<tr>'
+  for (let e = 0; e < n.length; e++) t += `<td>${n[e].title + '	'}</td>`
+  ;(t += '</tr>'), (t += '<tr>')
+  // tilte
+  for (let e = 0; e < l.length; e++) {
+    // l[e] {key:'value'}
+    // 科学技术法 数字
+    // style="mso-number-format:'@'"
+    for (let c in l[e])
+      t += `<td  style="mso-number-format:'@'">${(l[e][c] ? l[e][c] : '') + '	'}</td>`
+    t += '</tr>'
+  }
+  console.log(t, '12333')
+  var s,
+    d = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:x="urn:schemas-microsoft-com:office:excel"
+    xmlns="http://www.w3.org/TR/REC-html40">
+    <head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+      <x:Name>${r}</x:Name>
+      <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+      </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+      </head><body><table>${t}</table></body></html>`,
+    o = document.createElement('a')
+  ;(o.href =
+    'data:application/vnd.ms-excel;base64,' +
+    ((s = d), window.btoa(unescape(encodeURIComponent(s))))),
+    (o.download = r ? r + '.xls' : '数据.xls'),
+    document.body.appendChild(o),
+    (o.innerHTML = '点击下载'),
+    o.click(),
+    document.body.removeChild(o)
+}
+
+```
+
+## 复制文本
+```js
+    copyCode (str) {
+      if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+        this.$msg({
+          type: 'success',
+          text: '复制成功'
+        })
+        return navigator.clipboard.writeText(str)
+      } else {
+        const textarea = document.createElement('textarea')
+        textarea.value = str
+        document.body.append(textarea)
+        textarea.select()
+        this.$msg({
+          type: 'success',
+          text: '复制成功'
+        })
+        return new Promise((res, rej) => {
+          document.execCommand('copy') ? res() : rej()
+          textarea.remove()
+        })
+      }
+    },
+```

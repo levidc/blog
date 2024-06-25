@@ -6,7 +6,7 @@ categories:
 tags:
   - 日常
 
-sticky: 1
+sticky: 3
 
 keys:
   - 'ef205c81732d0183c2b855100d823643'
