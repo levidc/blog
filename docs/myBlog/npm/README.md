@@ -1288,3 +1288,152 @@ Vue.directive('dialogDrag', {
 ```
 
 
+### pdf导出屏幕截图
+```js
+import html2canvas from 'html2canvas'
+import jsPDF from 'jspdf'
+import canvg from 'canvg'
+
+
+
+
+    down () {
+      setTimeout(() => {
+        const pdf = new jsPDF()
+        pdf.setProperties({
+          title: 'HTML to PDF',
+          subject: 'Generated PDF file using jsPDF library',
+          author: 'Your Name',
+          keywords: 'html, pdf, javascript',
+          creator: 'Your Name'
+        })
+        const convertToImage = (container, options = {}) => {
+          // 滚动到顶部 实现全图截图
+          // document.body.scrollTop = document.documentElement.scrollTop = 0
+
+          // 替换svg
+          //Svgdom数组
+          // 获取到所有的SVG 得到一个数组
+          // 遍历这个数组
+          var svgElements = document.body.querySelectorAll('svg');
+
+
+          /**
+           * @func
+           * @Description
+           * bug
+           * 1截图文字偏上、定位问题 elementUi字体、
+           * 2svg转换问题，解决方案替换为canvas、svg使用use、赞不行、替代svg用i或者svg路径、得手动指定颜色？
+           * @Author: your name
+           * @param {}
+           * @return {}
+           */
+
+          let svgNodesToRemove = [];
+          // 获取到所有的SVG 得到一个数组
+          //以下是对svg的处理
+          svgElements.forEach(function (node) {
+            //获取svg的父节点
+            var parentNode = node.parentNode;
+            //获取svg的html代码
+            var svg = node.outerHTML.trim();
+            //创建一个<canvas>，用于放置转换后的元素
+            var canvas = document.createElement('canvas');
+            //将svg元素转换为canvas元素
+            console.log(node, '1233', svg)
+            canvg(canvas, svg);
+            //设置新canvas元素的位置
+            if (node.style.position) {
+              canvas.style.position += node.style.position;
+              canvas.style.left += node.style.left;
+              canvas.style.top += node.style.top;
+            }
+
+            //删除svg元素
+            parentNode.removeChild(node);
+            //增加canvas元素
+            parentNode.appendChild(canvas);
+          });
+
+          // 替换svg End  svg 渲染使用<use>标签导致失效
+          document.querySelector('.contentMain').scrollTop = 0
+
+          // window放大缩小比例  0.25~5 最小25%~最大5倍的放大比例
+          const scale = window.devicePixelRatio
+
+          // 传入节点原始宽高
+          const _width = container.scrollWidth
+          const _height = container.scrollHeight
+
+          // 页面产生滚动条 需要选择裁切、
+          let { width, height } = options
+          width = width || _width
+          height = height || _height
+
+          // html2canvas配置项
+          const ops = {
+            scale,
+            width,
+            height,
+            useCORS: false, // 设置跨域
+            allowTaint: false,
+            windoWidth: width,
+            windowHeight: height,
+            ...options
+          }
+
+          return html2canvas(container, ops).then(canvas => {
+            const link = document.createElement('a'); // 创建一个超链接对象实例
+            const event = new MouseEvent('click'); // 创建一个鼠标事件的实例
+            link.download = 'Button.png'; // 设置要下载的图片的名称
+            link.href = canvas.toDataURL('image/png'); // 将图片的URL设置到超链接的href中
+            link.dispatchEvent(event); // 触发超链接的点击事件
+
+            // document.querySelectorAll("canvas").forEach(item => {
+            //   item.remove()
+            // })
+            return
+            // 返回图片的二进制数据
+            console.log(canvas, '12333')
+            var contentWidth = canvas.width
+            var contentHeight = canvas.height
+            // 一页pdf显示html页面生成的canvas高度;
+            var pageHeight = (contentWidth / 595.28) * 841.89
+            // 未生成pdf的html页面高度
+            var leftHeight = contentHeight
+            // 页面偏移
+            var position = 0
+            // a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+            var imgWidth = 595.28
+            var imgHeight = (595.28 / contentWidth) * contentHeight
+            var pageData = canvas.toDataURL('image/png')
+            var pdf = new jsPDF('', 'pt', 'a4')
+            // 有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
+            // 当内容未超过pdf一页显示的范围，无需分页
+            if (leftHeight < pageHeight) {
+              // 在pdf.addImage(pageData, 'JPEG', 左，上，宽度，高度)设置在pdf中显示；
+              pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight)
+              // pdf.addImage(pageData, 'JPEG', 20, 40, imgWidth, imgHeight);
+            } else {
+              // 分页
+              while (leftHeight > 0) {
+                pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
+                leftHeight -= pageHeight
+                position -= 841.89
+                // 避免添加空白页
+                if (leftHeight > 0) {
+                  pdf.addPage()
+                }
+              }
+            }
+            console.log(imgHeight, 'imgHeight', contentWidth, contentHeight, pageHeight)
+            // 保存文件名
+            pdf.save('5')
+          })
+        }
+        convertToImage(document.querySelector('body'))
+      }, 50);
+    },
+
+
+```
