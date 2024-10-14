@@ -149,7 +149,7 @@ jQuery(document).ready(function ($) {
 		} else {
 			yPos = yPos - step
 		}
-		if (yPos < 0) {
+		if (yPos <= 0) {
 			yon = 1
 			yPos = 0
 		}
@@ -162,7 +162,7 @@ jQuery(document).ready(function ($) {
 		} else {
 			xPos = xPos - step
 		}
-		if (xPos < 0) {
+		if (xPos <= 0) {
 			xon = 1
 			xPos = 0
 			bulin.style.transform = 'rotateY(180deg)'
