@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>websocket | その日々は夢のように</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    <script src="/blog/js/jquery.min.js"></script>
+    <script src="/blog/js/MouseClickEffect.js"></script>
+    <link rel="icon" href="/blog/favicon.ico">
+    <meta name="description" content="那些时光就像是一场梦">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <meta name="keywords" content="その日々は夢のように|那些时光就像是一场梦">
+    <meta name="author" content="levidc">
+    
+    <link rel="preload" href="/blog/assets/css/0.styles.ef1dbd44.css" as="style"><link rel="preload" href="/blog/assets/js/app.8ca452fa.js" as="script"><link rel="preload" href="/blog/assets/js/3.1a5a3540.js" as="script"><link rel="preload" href="/blog/assets/js/1.507fae7c.js" as="script"><link rel="preload" href="/blog/assets/js/73.54474a01.js" as="script"><link rel="prefetch" href="/blog/assets/js/10.34460af8.js"><link rel="prefetch" href="/blog/assets/js/11.e838e309.js"><link rel="prefetch" href="/blog/assets/js/12.9b18a7cb.js"><link rel="prefetch" href="/blog/assets/js/13.cdd35e39.js"><link rel="prefetch" href="/blog/assets/js/14.44a641a6.js"><link rel="prefetch" href="/blog/assets/js/15.87b2f913.js"><link rel="prefetch" href="/blog/assets/js/16.79c7ae84.js"><link rel="prefetch" href="/blog/assets/js/17.2f91d934.js"><link rel="prefetch" href="/blog/assets/js/18.579ecf40.js"><link rel="prefetch" href="/blog/assets/js/19.a00f6e77.js"><link rel="prefetch" href="/blog/assets/js/20.e2c62d6f.js"><link rel="prefetch" href="/blog/assets/js/21.43d848bc.js"><link rel="prefetch" href="/blog/assets/js/22.819c7010.js"><link rel="prefetch" href="/blog/assets/js/23.1a8a99f4.js"><link rel="prefetch" href="/blog/assets/js/24.26f8f583.js"><link rel="prefetch" href="/blog/assets/js/25.c5a40591.js"><link rel="prefetch" href="/blog/assets/js/26.da2b6df8.js"><link rel="prefetch" href="/blog/assets/js/27.ce0ed7a6.js"><link rel="prefetch" href="/blog/assets/js/28.c43876ca.js"><link rel="prefetch" href="/blog/assets/js/29.5e3e329e.js"><link rel="prefetch" href="/blog/assets/js/30.22772a49.js"><link rel="prefetch" href="/blog/assets/js/31.5a7f3264.js"><link rel="prefetch" href="/blog/assets/js/32.74534cb7.js"><link rel="prefetch" href="/blog/assets/js/33.d3ca67ad.js"><link rel="prefetch" href="/blog/assets/js/34.d10ee1d8.js"><link rel="prefetch" href="/blog/assets/js/35.48cd0408.js"><link rel="prefetch" href="/blog/assets/js/36.5b4277a7.js"><link rel="prefetch" href="/blog/assets/js/37.55a4e1db.js"><link rel="prefetch" href="/blog/assets/js/38.78e7a573.js"><link rel="prefetch" href="/blog/assets/js/39.21fba826.js"><link rel="prefetch" href="/blog/assets/js/4.5368d36f.js"><link rel="prefetch" href="/blog/assets/js/40.945624cc.js"><link rel="prefetch" href="/blog/assets/js/41.84d15c06.js"><link rel="prefetch" href="/blog/assets/js/42.f3a759bd.js"><link rel="prefetch" href="/blog/assets/js/43.077bea32.js"><link rel="prefetch" href="/blog/assets/js/44.fcce310f.js"><link rel="prefetch" href="/blog/assets/js/45.d700661b.js"><link rel="prefetch" href="/blog/assets/js/46.9c49deb3.js"><link rel="prefetch" href="/blog/assets/js/47.93680df2.js"><link rel="prefetch" href="/blog/assets/js/48.5ed20977.js"><link rel="prefetch" href="/blog/assets/js/49.76a4690c.js"><link rel="prefetch" href="/blog/assets/js/5.da03d6fd.js"><link rel="prefetch" href="/blog/assets/js/50.e1f02faf.js"><link rel="prefetch" href="/blog/assets/js/51.c510f0e8.js"><link rel="prefetch" href="/blog/assets/js/52.76062203.js"><link rel="prefetch" href="/blog/assets/js/53.afd2cab8.js"><link rel="prefetch" href="/blog/assets/js/54.f3ea07d3.js"><link rel="prefetch" href="/blog/assets/js/55.ae93d62d.js"><link rel="prefetch" href="/blog/assets/js/56.ddd83640.js"><link rel="prefetch" href="/blog/assets/js/57.85498770.js"><link rel="prefetch" href="/blog/assets/js/58.763c3d26.js"><link rel="prefetch" href="/blog/assets/js/59.0d5b0ee5.js"><link rel="prefetch" href="/blog/assets/js/6.18904bb1.js"><link rel="prefetch" href="/blog/assets/js/60.2cf2a4d3.js"><link rel="prefetch" href="/blog/assets/js/61.20fb1248.js"><link rel="prefetch" href="/blog/assets/js/62.76bc8eb2.js"><link rel="prefetch" href="/blog/assets/js/63.d4cc9651.js"><link rel="prefetch" href="/blog/assets/js/64.f7e5a0ad.js"><link rel="prefetch" href="/blog/assets/js/65.2abc7482.js"><link rel="prefetch" href="/blog/assets/js/66.4b8afaa6.js"><link rel="prefetch" href="/blog/assets/js/67.8814b2e5.js"><link rel="prefetch" href="/blog/assets/js/68.bd0f1e4f.js"><link rel="prefetch" href="/blog/assets/js/69.d69d2ee5.js"><link rel="prefetch" href="/blog/assets/js/7.7aba1fff.js"><link rel="prefetch" href="/blog/assets/js/70.1c7f45de.js"><link rel="prefetch" href="/blog/assets/js/71.4f2cbb70.js"><link rel="prefetch" href="/blog/assets/js/72.17637456.js"><link rel="prefetch" href="/blog/assets/js/8.3450ac9a.js"><link rel="prefetch" href="/blog/assets/js/9.3ab60312.js">
+    <link rel="stylesheet" href="/blog/assets/css/0.styles.ef1dbd44.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container" data-v-1156296a><div data-v-1156296a><div id="loader-wrapper" class="loading-wrapper" data-v-07195721 data-v-1156296a data-v-1156296a><div id="he" data-v-07195721><ul data-v-07195721><li data-v-07195721></li><li data-v-07195721></li><li data-v-07195721></li><li data-v-07195721></li><li data-v-07195721></li><li data-v-07195721></li><li data-v-07195721></li><li data-v-07195721></li><li data-v-07195721></li></ul></div> <!----> <!----></div> <div class="password-shadow password-wrapper-out" style="display:none;" data-v-5939a40e data-v-1156296a data-v-1156296a><h3 class="title" data-v-5939a40e data-v-5939a40e>その日々は夢のように</h3> <p class="description" data-v-5939a40e data-v-5939a40e>那些时光就像是一场梦</p> <label id="box" class="inputBox" data-v-5939a40e data-v-5939a40e><input type="password" value="" data-v-5939a40e> <span data-v-5939a40e>你的名字+生日+年龄</span> <button data-v-5939a40e>OK</button></label> <div class="footer" data-v-5939a40e data-v-5939a40e><span data-v-5939a40e><i class="iconfont reco-theme" data-v-5939a40e></i> <a target="blank" href="https://vuepress-theme-reco.recoluan.com" data-v-5939a40e>vuePress-theme-reco</a></span> <span data-v-5939a40e><i class="iconfont reco-copyright" data-v-5939a40e></i> <a data-v-5939a40e><span data-v-5939a40e>levidc</span>
+            
+          <!---->
+          2024
+        </a></span></div></div> <div class="hide" data-v-1156296a><header class="navbar" data-v-1156296a><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/blog/" class="home-link router-link-active"><img src="/blog/assets/img/avatar.jpg" alt="その日々は夢のように" class="logo"> <span class="site-name">その日々は夢のように</span></a> <div class="links"><div class="color-picker"><a class="color-button"><i class="iconfont reco-color"></i></a> <div class="color-picker-menu" style="display:none;"><div class="mode-options"><h4 class="title">Choose mode</h4> <ul class="color-mode-options"><li class="dark">dark</li><li class="auto active">auto</li><li class="light">light</li></ul></div></div></div> <div class="search-box"><i class="iconfont reco-search"></i> <input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/blog/" class="nav-link"><i class="iconfont reco-home"></i>
+  Home
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-category"></i>
+      Category
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/blog/categories/前端/" class="nav-link"><i class="undefined"></i>
+  前端
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/面试/" class="nav-link"><i class="undefined"></i>
+  面试
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/博客/" class="nav-link"><i class="undefined"></i>
+  博客
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/娱乐/" class="nav-link"><i class="undefined"></i>
+  娱乐
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/日常/" class="nav-link"><i class="undefined"></i>
+  日常
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/网络相关/" class="nav-link"><i class="undefined"></i>
+  网络相关
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/编程/" class="nav-link"><i class="undefined"></i>
+  编程
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/js/" class="nav-link"><i class="undefined"></i>
+  js
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/后端/" class="nav-link"><i class="undefined"></i>
+  后端
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/编程思想/" class="nav-link"><i class="undefined"></i>
+  编程思想
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/面试题/" class="nav-link"><i class="undefined"></i>
+  面试题
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-tag"></i>
+      tag
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/blog/tag/js/" class="nav-link"><i class="undefined"></i>
+  javaScript
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/css/" class="nav-link"><i class="undefined"></i>
+  CSS
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/vue2/" class="nav-link"><i class="undefined"></i>
+  Vue2
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/vue3/" class="nav-link"><i class="undefined"></i>
+  Vue3
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/react/" class="nav-link"><i class="undefined"></i>
+  react
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/linux/" class="nav-link"><i class="undefined"></i>
+  linux
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/game/" class="nav-link"><i class="undefined"></i>
+  Game
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/日常/" class="nav-link"><i class="undefined"></i>
+  日常
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-coding"></i>
+      HELP
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://vuepress.vuejs.org/zh/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  vuepress
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://caniuse.com/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  can i use
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://developer.mozilla.org/zh-CN/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  MDN
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://www.photopea.com/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  PS
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div><div class="nav-item"><a href="/blog/timeline/" class="nav-link"><i class="iconfont reco-date"></i>
+  时间轴
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-message"></i>
+      mine
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://github.com/levidc" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="iconfont reco-github"></i>
+  GitHub
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://gitee.com/levidc" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="iconfont reco-mayun"></i>
+  码云
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://space.bilibili.com/1177475003" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="iconfont reco-bilibili"></i>
+  哔哩哔哩
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div> <!----></nav></div></header> <div class="sidebar-mask" data-v-1156296a></div> <aside class="sidebar" data-v-1156296a><div class="personal-info-wrapper" data-v-828910c6 data-v-1156296a><img src="/blog/assets/img/logo.png" alt="author-avatar" class="personal-img" data-v-828910c6> <h3 class="name" data-v-828910c6>
+    levidc
+  </h3> <div class="num" data-v-828910c6><div data-v-828910c6><h3 data-v-828910c6>59</h3> <h6 data-v-828910c6>Articles</h6></div> <div data-v-828910c6><h3 data-v-828910c6>43</h3> <h6 data-v-828910c6>Tags</h6></div></div> <ul class="social-links" data-v-828910c6><li class="social-item" data-v-828910c6><i class="iconfont reco-github" style="color:#f47e60;" data-v-828910c6></i></li><li class="social-item" data-v-828910c6><i class="iconfont reco-npm" style="color:#f8b26a;" data-v-828910c6></i></li></ul> <hr data-v-828910c6></div> <nav class="nav-links"><div class="nav-item"><a href="/blog/" class="nav-link"><i class="iconfont reco-home"></i>
+  Home
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-category"></i>
+      Category
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/blog/categories/前端/" class="nav-link"><i class="undefined"></i>
+  前端
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/面试/" class="nav-link"><i class="undefined"></i>
+  面试
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/博客/" class="nav-link"><i class="undefined"></i>
+  博客
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/娱乐/" class="nav-link"><i class="undefined"></i>
+  娱乐
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/日常/" class="nav-link"><i class="undefined"></i>
+  日常
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/网络相关/" class="nav-link"><i class="undefined"></i>
+  网络相关
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/编程/" class="nav-link"><i class="undefined"></i>
+  编程
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/js/" class="nav-link"><i class="undefined"></i>
+  js
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/后端/" class="nav-link"><i class="undefined"></i>
+  后端
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/编程思想/" class="nav-link"><i class="undefined"></i>
+  编程思想
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/面试题/" class="nav-link"><i class="undefined"></i>
+  面试题
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-tag"></i>
+      tag
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/blog/tag/js/" class="nav-link"><i class="undefined"></i>
+  javaScript
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/css/" class="nav-link"><i class="undefined"></i>
+  CSS
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/vue2/" class="nav-link"><i class="undefined"></i>
+  Vue2
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/vue3/" class="nav-link"><i class="undefined"></i>
+  Vue3
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/react/" class="nav-link"><i class="undefined"></i>
+  react
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/linux/" class="nav-link"><i class="undefined"></i>
+  linux
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/game/" class="nav-link"><i class="undefined"></i>
+  Game
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/日常/" class="nav-link"><i class="undefined"></i>
+  日常
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-coding"></i>
+      HELP
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://vuepress.vuejs.org/zh/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  vuepress
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://caniuse.com/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  can i use
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://developer.mozilla.org/zh-CN/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  MDN
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://www.photopea.com/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  PS
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div><div class="nav-item"><a href="/blog/timeline/" class="nav-link"><i class="iconfont reco-date"></i>
+  时间轴
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-message"></i>
+      mine
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://github.com/levidc" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="iconfont reco-github"></i>
+  GitHub
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://gitee.com/levidc" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="iconfont reco-mayun"></i>
+  码云
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://space.bilibili.com/1177475003" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="iconfont reco-bilibili"></i>
+  哔哩哔哩
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div> <!----></nav> <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Websocket</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/blog/myBlog/websocket/" aria-current="page" class="active sidebar-link">websocket</a></li></ul></section></li></ul> </aside> <div class="password-shadow password-wrapper-in" style="display:none;" data-v-5939a40e data-v-1156296a><h3 class="title" data-v-5939a40e data-v-5939a40e>websocket</h3> <!----> <label id="box" class="inputBox" data-v-5939a40e data-v-5939a40e><input type="password" value="" data-v-5939a40e> <span data-v-5939a40e>你的名字+生日+年龄</span> <button data-v-5939a40e>OK</button></label> <div class="footer" data-v-5939a40e data-v-5939a40e><span data-v-5939a40e><i class="iconfont reco-theme" data-v-5939a40e></i> <a target="blank" href="https://vuepress-theme-reco.recoluan.com" data-v-5939a40e>vuePress-theme-reco</a></span> <span data-v-5939a40e><i class="iconfont reco-copyright" data-v-5939a40e></i> <a data-v-5939a40e><span data-v-5939a40e>levidc</span>
+            
+          <!---->
+          2024
+        </a></span></div></div> <div data-v-1156296a><main class="page"><section><div class="page-title"><h1 class="title">websocket</h1> <div class="page-info" data-v-7d1b7c90><i class="iconfont reco-account" data-v-7d1b7c90><span data-v-7d1b7c90>levidc</span></i> <i class="iconfont reco-date" data-v-7d1b7c90><span data-v-7d1b7c90>2021-11-29</span></i> <i class="iconfont reco-eye" data-v-7d1b7c90><span id="/blog/myBlog/websocket/" data-flag-title="Your Article Title" class="leancloud-visitors" data-v-7d1b7c90><a class="leancloud-visitors-count" style="font-size:.9rem;font-weight:normal;color:#999;"></a></span></i> <i class="iconfont reco-tag tags" data-v-7d1b7c90><span class="tag-item" data-v-7d1b7c90>js</span><span class="tag-item" data-v-7d1b7c90>websocket</span></i></div></div> <div class="theme-reco-content content__default"><p><img src="https://cdn.jsdelivr.net/gh/levidc/blogImg/img/41.jpg" alt=""></p> <h2 id="基本了解"><a href="#基本了解" class="header-anchor">#</a> 基本了解</h2> <div class="language-js extra-class"><pre class="language-js"><code>why：http请求只能有客户端发起，而获取连续状态的变化，起初的方案由ajax轮训来实现，每隔一段时间，重新请求一次，获取最新数据，
+效率低、性能差、故由此诞生了websocket<span class="token punctuation">;</span>
+
+what<span class="token operator">:</span>WebSocket 协议在<span class="token number">2008</span>年诞生，<span class="token number">2011</span>年成为国际标准。所有浏览器都已经支持了。
+最大特点就是，服务器可以主动向客户端推送信息，客户端也可以主动向服务器发送信息，是真正的双向平等对话，属于服务器推送技术的一种。
+其他特点
+（<span class="token number">1</span>）建立在 <span class="token constant">TCP</span> 协议之上，服务器端的实现比较容易。
+（<span class="token number">2</span>）与 <span class="token constant">HTTP</span> 协议有着良好的兼容性。默认端口也是<span class="token number">80</span>和<span class="token number">443</span>，并且握手阶段采用 <span class="token constant">HTTP</span> 协议，因此握手时不容易屏蔽，能通过各种 <span class="token constant">HTTP</span> 代理服务器。
+（<span class="token number">3</span>）数据格式比较轻量，性能开销小，通信高效。
+（<span class="token number">4</span>）可以发送文本，也可以发送二进制数据。
+（<span class="token number">5</span>）没有同源限制，客户端可以与任意服务器通信。
+（<span class="token number">6</span>）协议标识符是ws（如果加密，则为wss），服务器网址就是 <span class="token constant">URL</span>。
+</code></pre></div><h2 id="常用-api"><a href="#常用-api" class="header-anchor">#</a> 常用 api</h2> <h3 id="websocket-构造函数"><a href="#websocket-构造函数" class="header-anchor">#</a> WebSocket 构造函数</h3> <div class="language-js extra-class"><pre class="language-js"><code>WebSocket 对象作为一个构造函数，用于新建 WebSocket 实例。
+<span class="token keyword">var</span> ws <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">WebSocket</span><span class="token punctuation">(</span><span class="token string">'ws://localhost:8080'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><h3 id="websocket-readystate"><a href="#websocket-readystate" class="header-anchor">#</a> webSocket.readyState</h3> <div class="language-js extra-class"><pre class="language-js"><code>readyState属性返回实例对象的当前状态，共有四种。
+<span class="token constant">CONNECTING</span>：值为<span class="token number">0</span>，表示正在连接。
+<span class="token constant">OPEN</span>：值为<span class="token number">1</span>，表示连接成功，可以通信了。
+<span class="token constant">CLOSING</span>：值为<span class="token number">2</span>，表示连接正在关闭。
+<span class="token constant">CLOSED</span>：值为<span class="token number">3</span>，表示连接已经关闭，或者打开连接失败。
+</code></pre></div><h3 id="websocket-onmessage-等"><a href="#websocket-onmessage-等" class="header-anchor">#</a> webSocket.onmessage 等</h3> <div class="language-js extra-class"><pre class="language-js"><code><span class="token number">1</span> webSocket<span class="token punctuation">.</span>onopen
+实例对象的onopen属性，用于指定连接成功后的回调函数。
+
+<span class="token number">2</span> webSocket<span class="token punctuation">.</span>onclose
+实例对象的onclose属性，用于指定连接关闭后的回调函数。
+
+<span class="token number">3</span> webSocket<span class="token punctuation">.</span>onmessage
+实例对象的onmessage属性，用于指定收到服务器数据后的回调函数。
+
+ws<span class="token punctuation">.</span><span class="token function-variable function">onmessage</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+  <span class="token keyword">var</span> data <span class="token operator">=</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>event<span class="token punctuation">.</span>data<span class="token punctuation">)</span>
+  <span class="token comment">// 返回的数据可能是文本也可能是二进制数据（blob对象或Arraybuffer对象）。</span>
+  <span class="token comment">// 判断类型</span>
+  <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token keyword">typeof</span> event<span class="token punctuation">.</span>data <span class="token operator">===</span> String<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">&quot;Received data string&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">if</span><span class="token punctuation">(</span>event<span class="token punctuation">.</span>data <span class="token keyword">instanceof</span> <span class="token class-name">ArrayBuffer</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">var</span> buffer <span class="token operator">=</span> event<span class="token punctuation">.</span>data<span class="token punctuation">;</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">&quot;Received arraybuffer&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+
+<span class="token number">4</span> webSocket<span class="token punctuation">.</span>onerror
+实例对象的onerror属性，用于指定报错时的回调函数。
+
+<span class="token number">5</span> webSocket<span class="token punctuation">.</span>send
+<span class="token function">实例对象的send</span><span class="token punctuation">(</span><span class="token punctuation">)</span>方法用于向服务器发送数据。
+发送文本的例子：
+ws<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'your message'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+发送 Blob 对象的例子。
+<span class="token keyword">var</span> file <span class="token operator">=</span> document
+  <span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'input[type=&quot;file&quot;]'</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span>files<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+ws<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span>file<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+
+发送 ArrayBuffer 对象的例子。
+<span class="token comment">// Sending canvas ImageData as ArrayBuffer</span>
+<span class="token keyword">var</span> img <span class="token operator">=</span> canvas_context<span class="token punctuation">.</span><span class="token function">getImageData</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">400</span><span class="token punctuation">,</span> <span class="token number">320</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> binary <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Uint8Array</span><span class="token punctuation">(</span>img<span class="token punctuation">.</span>data<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">var</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> img<span class="token punctuation">.</span>data<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  binary<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> img<span class="token punctuation">.</span>data<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+ws<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span>binary<span class="token punctuation">.</span>buffer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><h2 id="onclose-断开后错误码"><a href="#onclose-断开后错误码" class="header-anchor">#</a> onclose 断开后错误码</h2> <div class="language-js extra-class"><pre class="language-js"><code>ws<span class="token punctuation">.</span><span class="token function-variable function">onclose</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+  event<span class="token punctuation">.</span>wasClean <span class="token string">'是否正常断开，布尔值，如果非正常断开，则为false'</span>
+  event<span class="token punctuation">.</span>code    <span class="token string">'错误码整数类型'</span>
+  event<span class="token punctuation">.</span>reason <span class="token string">'错误原因'</span>
+<span class="token punctuation">}</span>
+</code></pre></div><table><thead><tr><th>状态码</th> <th style="text-align:center;">名称</th> <th>描述</th></tr></thead> <tbody><tr><td>0–999</td> <td style="text-align:center;"></td> <td>保留段, 未使用.</td></tr> <tr><td>1000</td> <td style="text-align:center;">CLOSE_NORMAL</td> <td>正常关闭; 无论为何目的而创建, 该链接都已成功完成任务.</td></tr> <tr><td>1001</td> <td style="text-align:center;">CLOSE_GOING_AWAY</td> <td>终端离开, 可能因为服务端错误, 也可能因为浏览器正从打开连接的页面跳转离开.</td></tr> <tr><td>1002</td> <td style="text-align:center;">CLOSE_PROTOCOL_ERROR</td> <td>由于协议错误而中断连接.</td></tr> <tr><td>1003</td> <td style="text-align:center;">CLOSE_UNSUPPORTED</td> <td>由于接收到不允许的数据类型而断开连接 (如仅接收文本数据的终端接收到了二进制数据).</td></tr> <tr><td>1004</td> <td style="text-align:center;"></td> <td>保留. 其意义可能会在未来定义.</td></tr> <tr><td>1005</td> <td style="text-align:center;">CLOSE_NO_STATUS</td> <td>保留. 表示没有收到预期的状态码.</td></tr> <tr><td>1006</td> <td style="text-align:center;">CLOSE_ABNORMAL</td> <td>保留. 用于期望收到状态码时连接非正常关闭 (也就是说, 没有发送关闭帧).</td></tr> <tr><td>1007</td> <td style="text-align:center;">Unsupported Data</td> <td>由于收到了格式不符的数据而断开连接 (如文本消息中包含了非 UTF-8 数据).</td></tr> <tr><td>1008</td> <td style="text-align:center;">Policy Violation</td> <td>由于收到不符合约定的数据而断开连接. 这是一个通用状态码, 用于不适合使用 1003 和 1009 状态码的场景.</td></tr> <tr><td>1009</td> <td style="text-align:center;">CLOSE_TOO_LARGE</td> <td>由于收到过大的数据帧而断开连接.</td></tr> <tr><td>1010</td> <td style="text-align:center;">Missing Extension</td> <td>客户端期望服务器商定一个或多个拓展, 但服务器没有处理, 因此客户端断开连接.</td></tr> <tr><td>1011</td> <td style="text-align:center;">Internal Error</td> <td>客户端由于遇到没有预料的情况阻止其完成请求, 因此服务端断开连接.</td></tr> <tr><td>1012</td> <td style="text-align:center;">Service Restart</td> <td>服务器由于重启而断开连接.</td></tr> <tr><td>1013</td> <td style="text-align:center;">Try Again Later</td> <td>服务器由于临时原因断开连接, 如服务器过载因此断开一部分客户端连接.</td></tr> <tr><td>1014</td> <td style="text-align:center;"></td> <td>由 WebSocket 标准保留以便未来使用.</td></tr> <tr><td>1015</td> <td style="text-align:center;">TLS Handshake</td> <td>保留. 表示连接由于无法完成 TLS 握手而关闭 (例如无法验证服务器证书).</td></tr> <tr><td>1016–1999</td> <td style="text-align:center;"></td> <td>由 WebSocket 标准保留以便未来使用.</td></tr> <tr><td>2000–2999</td> <td style="text-align:center;"></td> <td>由 WebSocket 拓展保留使用.</td></tr> <tr><td>3000–3999</td> <td style="text-align:center;"></td> <td>可以由库或框架使用.? 不应由应用使用. 可以在 IANA 注册, 先到先得.</td></tr> <tr><td>4000–4999</td> <td style="text-align:center;"></td> <td>可以由应用使用.</td></tr></tbody></table> <h2 id="websocket-心跳及重连机制"><a href="#websocket-心跳及重连机制" class="header-anchor">#</a> WebSocket 心跳及重连机制</h2> <div class="custom-block tip"><p class="title"></p><p>在使用 websocket 的过程中，有时候会遇到网络断开的情况，但是在网络断开的时候服务器端并没有触发 onclose 的事件。这样会有：服务器会继续向客户端发送多余的链接，并且这些数据还会丢失。所以就需要一种机制来检测客户端和服务端是否处于正常的链接状态。因此就有了 websocket 的心跳了。还有心跳，说明还活着，没有心跳说明已经挂掉了。</p></div><div class="language-js extra-class"><pre class="language-js"><code><span class="token number">1</span>为什么叫心跳包呢
+它就像心跳一样每隔固定的时间发一次，来告诉服务器，我还活着。
+
+<span class="token number">2.</span>心跳机制
+心跳机制是每隔一段时间会向服务器发送一个数据包，告诉服务器自己还活着，同时客户端会确认服务器端是否还活着。
+如果还活着的话，就会回传一个数据包给客户端来确定服务器端也还活着，否则的话，有可能是网络断开连接了。需要重连<span class="token operator">~</span>
+
+<span class="token number">3.</span>如何实现心跳机制
+
+<span class="token keyword">var</span> lockReconnect <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>  <span class="token comment">//避免ws重复连接</span>
+<span class="token keyword">var</span> ws <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>          <span class="token comment">// 判断当前浏览器是否支持WebSocket</span>
+<span class="token keyword">var</span> wsUrl <span class="token operator">=</span> serverConfig<span class="token punctuation">.</span>socketUrl<span class="token punctuation">;</span>
+<span class="token function">createWebSocket</span><span class="token punctuation">(</span>wsUrl<span class="token punctuation">)</span><span class="token punctuation">;</span>   <span class="token comment">//连接ws</span>
+
+<span class="token keyword">function</span> <span class="token function">createWebSocket</span><span class="token punctuation">(</span><span class="token parameter">url</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">try</span><span class="token punctuation">{</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token string">'WebSocket'</span> <span class="token keyword">in</span> window<span class="token punctuation">)</span><span class="token punctuation">{</span>
+            ws <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">WebSocket</span><span class="token punctuation">(</span>url<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token function">initEventHandle</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token keyword">catch</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token function">reconnect</span><span class="token punctuation">(</span>url<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">function</span> <span class="token function">initEventHandle</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    ws<span class="token punctuation">.</span><span class="token function-variable function">onclose</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    	<span class="token keyword">if</span> <span class="token punctuation">(</span>_this<span class="token punctuation">.</span>stopWebsocket<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        _this<span class="token punctuation">.</span>stopWebsocket <span class="token operator">=</span> <span class="token boolean">false</span>
+        console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'llws连接关闭!'</span> <span class="token operator">+</span> <span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toLocaleString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token function">reconnect</span><span class="token punctuation">(</span>wsUrl<span class="token punctuation">)</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    ws<span class="token punctuation">.</span><span class="token function-variable function">onerror</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">reconnect</span><span class="token punctuation">(</span>wsUrl<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">&quot;llws连接错误!&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    ws<span class="token punctuation">.</span><span class="token function-variable function">onopen</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        heartCheck<span class="token punctuation">.</span><span class="token function">reset</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>      <span class="token comment">//心跳检测重置</span>
+        console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">&quot;llws连接成功!&quot;</span><span class="token operator">+</span><span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toLocaleString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        ws<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'data'</span><span class="token punctuation">)</span> <span class="token comment">//发送后端协定的字段、代表可以开始传递数据了</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    ws<span class="token punctuation">.</span><span class="token function-variable function">onmessage</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>    <span class="token comment">//如果获取到消息，心跳检测重置</span>
+        heartCheck<span class="token punctuation">.</span><span class="token function">reset</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>      <span class="token comment">//拿到任何消息都说明当前连接是正常的</span>
+        console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">&quot;llws收到消息啦:&quot;</span> <span class="token operator">+</span>event<span class="token punctuation">.</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span>event<span class="token punctuation">.</span>data<span class="token operator">!=</span><span class="token string">'pong'</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+            <span class="token keyword">let</span> data <span class="token operator">=</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>event<span class="token punctuation">.</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token comment">// 监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。</span>
+window<span class="token punctuation">.</span><span class="token function-variable function">onbeforeunload</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    ws<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">function</span> <span class="token function">reconnect</span><span class="token punctuation">(</span><span class="token parameter">url</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span>lockReconnect<span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+    lockReconnect <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+    <span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>     <span class="token comment">//没连接上会一直重连，设置延迟避免请求过多</span>
+        <span class="token function">createWebSocket</span><span class="token punctuation">(</span>url<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        lockReconnect <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token number">2000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//断开连接按钮点击后，如果再点击连接，导致上一个没及时关闭，仍处在连接状态。</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">//心跳检测</span>
+<span class="token keyword">var</span> heartCheck <span class="token operator">=</span> <span class="token punctuation">{</span>
+    timeout<span class="token operator">:</span> <span class="token number">1000</span><span class="token punctuation">,</span>        <span class="token comment">//1分钟发一次心跳</span>
+    timeoutObj<span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>
+    serverTimeoutObj<span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>
+    <span class="token function-variable function">reset</span><span class="token operator">:</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token function">clearTimeout</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>timeoutObj<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">clearTimeout</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>serverTimeoutObj<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token function-variable function">start</span><span class="token operator">:</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">var</span> self <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>timeoutObj <span class="token operator">=</span> <span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+            <span class="token comment">//这里发送一个心跳，后端收到后，返回一个心跳消息，</span>
+            <span class="token comment">//onmessage拿到返回的心跳就说明连接正常</span>
+            ws<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">&quot;ping&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">&quot;ping!&quot;</span><span class="token punctuation">)</span>
+            self<span class="token punctuation">.</span>serverTimeoutObj <span class="token operator">=</span> <span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><span class="token comment">//如果超过一定时间还没重置，说明后端主动断开了</span>
+                ws<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>     <span class="token comment">//如果onclose会执行reconnect，我们执行ws.close()就行了.如果直接执行reconnect 会触发onclose导致重连两次</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span> self<span class="token punctuation">.</span>timeout<span class="token punctuation">)</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>timeout<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+
+
+<span class="token comment">// 收到客户端消息后调用的方法</span>
+@OnMessage
+<span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">onMessage</span><span class="token punctuation">(</span><span class="token parameter">String message<span class="token punctuation">,</span> Session session</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span><span class="token punctuation">(</span>message<span class="token punctuation">.</span><span class="token function">equals</span><span class="token punctuation">(</span><span class="token string">&quot;ping&quot;</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+  <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
+  <span class="token operator">...</span><span class="token comment">//to do</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">//针对vue中</span>
+<span class="token function">data</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">{</span>
+    stopWebsocket<span class="token operator">:</span><span class="token string">'false'</span> <span class="token comment">//按钮主动关闭连接，</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+methods<span class="token operator">:</span><span class="token punctuation">{</span>
+  <span class="token function">openWeb</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">initwebsockt</span><span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment">//开始连接</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token function">closeWeb</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>ws<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'stop'</span><span class="token punctuation">)</span>  <span class="token comment">//协定的关闭字段出发onclose</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>stopWebsocket <span class="token operator">=</span> <span class="token boolean">true</span>  <span class="token comment">//onclose中关闭重新请求</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="创建聊天室-demo"><a href="#创建聊天室-demo" class="header-anchor">#</a> 创建聊天室 demo</h2> <div class="language-js extra-class"><pre class="language-js"><code>node<span class="token punctuation">.</span>js
+socket<span class="token punctuation">.</span>
+
+</code></pre></div></div></section> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">最后更新于: </span> <span class="time">2022年11月16日 19:31</span></div></footer> <!----> <div class="comments-wrapper"><!----></div> <ul class="side-bar sub-sidebar-wrapper" style="width:12rem;" data-v-70334359><li class="level-2" data-v-70334359><a href="/blog/myBlog/websocket/#基本了解" class="sidebar-link reco-side-基本了解" data-v-70334359>基本了解</a></li><li class="level-2" data-v-70334359><a href="/blog/myBlog/websocket/#常用-api" class="sidebar-link reco-side-常用-api" data-v-70334359>常用 api</a></li><li class="level-3" data-v-70334359><a href="/blog/myBlog/websocket/#websocket-构造函数" class="sidebar-link reco-side-websocket-构造函数" data-v-70334359>WebSocket 构造函数</a></li><li class="level-3" data-v-70334359><a href="/blog/myBlog/websocket/#websocket-readystate" class="sidebar-link reco-side-websocket-readystate" data-v-70334359>webSocket.readyState</a></li><li class="level-3" data-v-70334359><a href="/blog/myBlog/websocket/#websocket-onmessage-等" class="sidebar-link reco-side-websocket-onmessage-等" data-v-70334359>webSocket.onmessage 等</a></li><li class="level-2" data-v-70334359><a href="/blog/myBlog/websocket/#onclose-断开后错误码" class="sidebar-link reco-side-onclose-断开后错误码" data-v-70334359>onclose 断开后错误码</a></li><li class="level-2" data-v-70334359><a href="/blog/myBlog/websocket/#websocket-心跳及重连机制" class="sidebar-link reco-side-websocket-心跳及重连机制" data-v-70334359>WebSocket 心跳及重连机制</a></li><li class="level-2" data-v-70334359><a href="/blog/myBlog/websocket/#创建聊天室-demo" class="sidebar-link reco-side-创建聊天室-demo" data-v-70334359>创建聊天室 demo</a></li></ul></main> <!----></div></div></div></div><div class="global-ui"><div class="back-to-ceiling" style="right:1rem;bottom:6rem;width:2.5rem;height:2.5rem;border-radius:.25rem;line-height:2.5rem;display:none;" data-v-c6073ba8 data-v-c6073ba8><svg t="1574745035067" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5404" class="icon" data-v-c6073ba8><path d="M526.60727968 10.90185116a27.675 27.675 0 0 0-29.21455937 0c-131.36607665 82.28402758-218.69155461 228.01873535-218.69155402 394.07834331a462.20625001 462.20625001 0 0 0 5.36959153 69.94390903c1.00431239 6.55289093-0.34802892 13.13561351-3.76865779 18.80351572-32.63518765 54.11355614-51.75690182 118.55860487-51.7569018 187.94566865a371.06718723 371.06718723 0 0 0 11.50484808 91.98906777c6.53300375 25.50556257 41.68394495 28.14064038 52.69160883 4.22606766 17.37162448-37.73630017 42.14135425-72.50938081 72.80769204-103.21549295 2.18761121 3.04276886 4.15646224 6.24463696 6.40373557 9.22774369a1871.4375 1871.4375 0 0 0 140.04691725 5.34970492 1866.36093723 1866.36093723 0 0 0 140.04691723-5.34970492c2.24727335-2.98310674 4.21612437-6.18497483 6.3937923-9.2178004 30.66633723 30.70611158 55.4360664 65.4791928 72.80769147 103.21549355 11.00766384 23.91457269 46.15860503 21.27949489 52.69160879-4.22606768a371.15156223 371.15156223 0 0 0 11.514792-91.99901164c0-69.36717486-19.13165746-133.82216804-51.75690182-187.92578088-3.42062944-5.66790279-4.76302748-12.26056868-3.76865837-18.80351632a462.20625001 462.20625001 0 0 0 5.36959269-69.943909c-0.00994388-166.08943902-87.32547796-311.81420293-218.6915546-394.09823051zM605.93803103 357.87693858a93.93749974 93.93749974 0 1 1-187.89594924 6.1e-7 93.93749974 93.93749974 0 0 1 187.89594924-6.1e-7z" p-id="5405" data-v-c6073ba8></path><path d="M429.50777625 765.63860547C429.50777625 803.39355007 466.44236686 1000.39046097 512.00932183 1000.39046097c45.56695499 0 82.4922232-197.00623328 82.5015456-234.7518555 0-37.75494459-36.9345906-68.35043303-82.4922232-68.34111062-45.57627738-0.00932239-82.52019037 30.59548842-82.51086798 68.34111062z" p-id="5406" data-v-c6073ba8></path></svg></div><div></div><APlayer audio="" fixed="true" mini="true" autoplay="autoplay" theme="#A95AF5" loop="loop" order="random" preload="auto" volume="0.1" mutex="true" lrc-type="0" list-folded="true" list-max-height="250" storage-name="vuepress-plugin-meting" id="aplayer-fixed"></APlayer></div></div>
+    <script src="/blog/assets/js/app.8ca452fa.js" defer></script><script src="/blog/assets/js/3.1a5a3540.js" defer></script><script src="/blog/assets/js/1.507fae7c.js" defer></script><script src="/blog/assets/js/73.54474a01.js" defer></script>
+  </body>
+</html>

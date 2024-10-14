@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>vuex的使用 | その日々は夢のように</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    <script src="/blog/js/jquery.min.js"></script>
+    <script src="/blog/js/MouseClickEffect.js"></script>
+    <link rel="icon" href="/blog/favicon.ico">
+    <meta name="description" content="那些时光就像是一场梦">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <meta name="keywords" content="その日々は夢のように|那些时光就像是一场梦">
+    <meta name="author" content="levidc">
+    
+    <link rel="preload" href="/blog/assets/css/0.styles.ef1dbd44.css" as="style"><link rel="preload" href="/blog/assets/js/app.8ca452fa.js" as="script"><link rel="preload" href="/blog/assets/js/3.1a5a3540.js" as="script"><link rel="preload" href="/blog/assets/js/1.507fae7c.js" as="script"><link rel="preload" href="/blog/assets/js/37.55a4e1db.js" as="script"><link rel="prefetch" href="/blog/assets/js/10.34460af8.js"><link rel="prefetch" href="/blog/assets/js/11.e838e309.js"><link rel="prefetch" href="/blog/assets/js/12.9b18a7cb.js"><link rel="prefetch" href="/blog/assets/js/13.cdd35e39.js"><link rel="prefetch" href="/blog/assets/js/14.44a641a6.js"><link rel="prefetch" href="/blog/assets/js/15.87b2f913.js"><link rel="prefetch" href="/blog/assets/js/16.79c7ae84.js"><link rel="prefetch" href="/blog/assets/js/17.2f91d934.js"><link rel="prefetch" href="/blog/assets/js/18.579ecf40.js"><link rel="prefetch" href="/blog/assets/js/19.a00f6e77.js"><link rel="prefetch" href="/blog/assets/js/20.e2c62d6f.js"><link rel="prefetch" href="/blog/assets/js/21.43d848bc.js"><link rel="prefetch" href="/blog/assets/js/22.819c7010.js"><link rel="prefetch" href="/blog/assets/js/23.1a8a99f4.js"><link rel="prefetch" href="/blog/assets/js/24.26f8f583.js"><link rel="prefetch" href="/blog/assets/js/25.c5a40591.js"><link rel="prefetch" href="/blog/assets/js/26.da2b6df8.js"><link rel="prefetch" href="/blog/assets/js/27.ce0ed7a6.js"><link rel="prefetch" href="/blog/assets/js/28.c43876ca.js"><link rel="prefetch" href="/blog/assets/js/29.5e3e329e.js"><link rel="prefetch" href="/blog/assets/js/30.22772a49.js"><link rel="prefetch" href="/blog/assets/js/31.5a7f3264.js"><link rel="prefetch" href="/blog/assets/js/32.74534cb7.js"><link rel="prefetch" href="/blog/assets/js/33.d3ca67ad.js"><link rel="prefetch" href="/blog/assets/js/34.d10ee1d8.js"><link rel="prefetch" href="/blog/assets/js/35.48cd0408.js"><link rel="prefetch" href="/blog/assets/js/36.5b4277a7.js"><link rel="prefetch" href="/blog/assets/js/38.78e7a573.js"><link rel="prefetch" href="/blog/assets/js/39.21fba826.js"><link rel="prefetch" href="/blog/assets/js/4.5368d36f.js"><link rel="prefetch" href="/blog/assets/js/40.945624cc.js"><link rel="prefetch" href="/blog/assets/js/41.84d15c06.js"><link rel="prefetch" href="/blog/assets/js/42.f3a759bd.js"><link rel="prefetch" href="/blog/assets/js/43.077bea32.js"><link rel="prefetch" href="/blog/assets/js/44.fcce310f.js"><link rel="prefetch" href="/blog/assets/js/45.d700661b.js"><link rel="prefetch" href="/blog/assets/js/46.9c49deb3.js"><link rel="prefetch" href="/blog/assets/js/47.93680df2.js"><link rel="prefetch" href="/blog/assets/js/48.5ed20977.js"><link rel="prefetch" href="/blog/assets/js/49.76a4690c.js"><link rel="prefetch" href="/blog/assets/js/5.da03d6fd.js"><link rel="prefetch" href="/blog/assets/js/50.e1f02faf.js"><link rel="prefetch" href="/blog/assets/js/51.c510f0e8.js"><link rel="prefetch" href="/blog/assets/js/52.76062203.js"><link rel="prefetch" href="/blog/assets/js/53.afd2cab8.js"><link rel="prefetch" href="/blog/assets/js/54.f3ea07d3.js"><link rel="prefetch" href="/blog/assets/js/55.ae93d62d.js"><link rel="prefetch" href="/blog/assets/js/56.ddd83640.js"><link rel="prefetch" href="/blog/assets/js/57.85498770.js"><link rel="prefetch" href="/blog/assets/js/58.763c3d26.js"><link rel="prefetch" href="/blog/assets/js/59.0d5b0ee5.js"><link rel="prefetch" href="/blog/assets/js/6.18904bb1.js"><link rel="prefetch" href="/blog/assets/js/60.2cf2a4d3.js"><link rel="prefetch" href="/blog/assets/js/61.20fb1248.js"><link rel="prefetch" href="/blog/assets/js/62.76bc8eb2.js"><link rel="prefetch" href="/blog/assets/js/63.d4cc9651.js"><link rel="prefetch" href="/blog/assets/js/64.f7e5a0ad.js"><link rel="prefetch" href="/blog/assets/js/65.2abc7482.js"><link rel="prefetch" href="/blog/assets/js/66.4b8afaa6.js"><link rel="prefetch" href="/blog/assets/js/67.8814b2e5.js"><link rel="prefetch" href="/blog/assets/js/68.bd0f1e4f.js"><link rel="prefetch" href="/blog/assets/js/69.d69d2ee5.js"><link rel="prefetch" href="/blog/assets/js/7.7aba1fff.js"><link rel="prefetch" href="/blog/assets/js/70.1c7f45de.js"><link rel="prefetch" href="/blog/assets/js/71.4f2cbb70.js"><link rel="prefetch" href="/blog/assets/js/72.17637456.js"><link rel="prefetch" href="/blog/assets/js/73.54474a01.js"><link rel="prefetch" href="/blog/assets/js/8.3450ac9a.js"><link rel="prefetch" href="/blog/assets/js/9.3ab60312.js">
+    <link rel="stylesheet" href="/blog/assets/css/0.styles.ef1dbd44.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container" data-v-1156296a><div data-v-1156296a><div id="loader-wrapper" class="loading-wrapper" data-v-07195721 data-v-1156296a data-v-1156296a><div id="he" data-v-07195721><ul data-v-07195721><li data-v-07195721></li><li data-v-07195721></li><li data-v-07195721></li><li data-v-07195721></li><li data-v-07195721></li><li data-v-07195721></li><li data-v-07195721></li><li data-v-07195721></li><li data-v-07195721></li></ul></div> <!----> <!----></div> <div class="password-shadow password-wrapper-out" style="display:none;" data-v-5939a40e data-v-1156296a data-v-1156296a><h3 class="title" data-v-5939a40e data-v-5939a40e>その日々は夢のように</h3> <p class="description" data-v-5939a40e data-v-5939a40e>那些时光就像是一场梦</p> <label id="box" class="inputBox" data-v-5939a40e data-v-5939a40e><input type="password" value="" data-v-5939a40e> <span data-v-5939a40e>你的名字+生日+年龄</span> <button data-v-5939a40e>OK</button></label> <div class="footer" data-v-5939a40e data-v-5939a40e><span data-v-5939a40e><i class="iconfont reco-theme" data-v-5939a40e></i> <a target="blank" href="https://vuepress-theme-reco.recoluan.com" data-v-5939a40e>vuePress-theme-reco</a></span> <span data-v-5939a40e><i class="iconfont reco-copyright" data-v-5939a40e></i> <a data-v-5939a40e><span data-v-5939a40e>levidc</span>
+            
+          <!---->
+          2024
+        </a></span></div></div> <div class="hide" data-v-1156296a><header class="navbar" data-v-1156296a><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/blog/" class="home-link router-link-active"><img src="/blog/assets/img/avatar.jpg" alt="その日々は夢のように" class="logo"> <span class="site-name">その日々は夢のように</span></a> <div class="links"><div class="color-picker"><a class="color-button"><i class="iconfont reco-color"></i></a> <div class="color-picker-menu" style="display:none;"><div class="mode-options"><h4 class="title">Choose mode</h4> <ul class="color-mode-options"><li class="dark">dark</li><li class="auto active">auto</li><li class="light">light</li></ul></div></div></div> <div class="search-box"><i class="iconfont reco-search"></i> <input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/blog/" class="nav-link"><i class="iconfont reco-home"></i>
+  Home
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-category"></i>
+      Category
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/blog/categories/前端/" class="nav-link"><i class="undefined"></i>
+  前端
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/面试/" class="nav-link"><i class="undefined"></i>
+  面试
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/博客/" class="nav-link"><i class="undefined"></i>
+  博客
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/娱乐/" class="nav-link"><i class="undefined"></i>
+  娱乐
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/日常/" class="nav-link"><i class="undefined"></i>
+  日常
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/网络相关/" class="nav-link"><i class="undefined"></i>
+  网络相关
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/编程/" class="nav-link"><i class="undefined"></i>
+  编程
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/js/" class="nav-link"><i class="undefined"></i>
+  js
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/后端/" class="nav-link"><i class="undefined"></i>
+  后端
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/编程思想/" class="nav-link"><i class="undefined"></i>
+  编程思想
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/面试题/" class="nav-link"><i class="undefined"></i>
+  面试题
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-tag"></i>
+      tag
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/blog/tag/js/" class="nav-link"><i class="undefined"></i>
+  javaScript
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/css/" class="nav-link"><i class="undefined"></i>
+  CSS
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/vue2/" class="nav-link"><i class="undefined"></i>
+  Vue2
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/vue3/" class="nav-link"><i class="undefined"></i>
+  Vue3
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/react/" class="nav-link"><i class="undefined"></i>
+  react
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/linux/" class="nav-link"><i class="undefined"></i>
+  linux
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/game/" class="nav-link"><i class="undefined"></i>
+  Game
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/日常/" class="nav-link"><i class="undefined"></i>
+  日常
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-coding"></i>
+      HELP
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://vuepress.vuejs.org/zh/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  vuepress
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://caniuse.com/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  can i use
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://developer.mozilla.org/zh-CN/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  MDN
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://www.photopea.com/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  PS
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div><div class="nav-item"><a href="/blog/timeline/" class="nav-link"><i class="iconfont reco-date"></i>
+  时间轴
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-message"></i>
+      mine
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://github.com/levidc" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="iconfont reco-github"></i>
+  GitHub
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://gitee.com/levidc" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="iconfont reco-mayun"></i>
+  码云
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://space.bilibili.com/1177475003" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="iconfont reco-bilibili"></i>
+  哔哩哔哩
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div> <!----></nav></div></header> <div class="sidebar-mask" data-v-1156296a></div> <aside class="sidebar" data-v-1156296a><div class="personal-info-wrapper" data-v-828910c6 data-v-1156296a><img src="/blog/assets/img/logo.png" alt="author-avatar" class="personal-img" data-v-828910c6> <h3 class="name" data-v-828910c6>
+    levidc
+  </h3> <div class="num" data-v-828910c6><div data-v-828910c6><h3 data-v-828910c6>59</h3> <h6 data-v-828910c6>Articles</h6></div> <div data-v-828910c6><h3 data-v-828910c6>43</h3> <h6 data-v-828910c6>Tags</h6></div></div> <ul class="social-links" data-v-828910c6><li class="social-item" data-v-828910c6><i class="iconfont reco-github" style="color:#f47e60;" data-v-828910c6></i></li><li class="social-item" data-v-828910c6><i class="iconfont reco-npm" style="color:#f8b26a;" data-v-828910c6></i></li></ul> <hr data-v-828910c6></div> <nav class="nav-links"><div class="nav-item"><a href="/blog/" class="nav-link"><i class="iconfont reco-home"></i>
+  Home
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-category"></i>
+      Category
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/blog/categories/前端/" class="nav-link"><i class="undefined"></i>
+  前端
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/面试/" class="nav-link"><i class="undefined"></i>
+  面试
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/博客/" class="nav-link"><i class="undefined"></i>
+  博客
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/娱乐/" class="nav-link"><i class="undefined"></i>
+  娱乐
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/日常/" class="nav-link"><i class="undefined"></i>
+  日常
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/网络相关/" class="nav-link"><i class="undefined"></i>
+  网络相关
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/编程/" class="nav-link"><i class="undefined"></i>
+  编程
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/js/" class="nav-link"><i class="undefined"></i>
+  js
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/后端/" class="nav-link"><i class="undefined"></i>
+  后端
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/编程思想/" class="nav-link"><i class="undefined"></i>
+  编程思想
+</a></li><li class="dropdown-item"><!----> <a href="/blog/categories/面试题/" class="nav-link"><i class="undefined"></i>
+  面试题
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-tag"></i>
+      tag
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/blog/tag/js/" class="nav-link"><i class="undefined"></i>
+  javaScript
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/css/" class="nav-link"><i class="undefined"></i>
+  CSS
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/vue2/" class="nav-link"><i class="undefined"></i>
+  Vue2
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/vue3/" class="nav-link"><i class="undefined"></i>
+  Vue3
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/react/" class="nav-link"><i class="undefined"></i>
+  react
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/linux/" class="nav-link"><i class="undefined"></i>
+  linux
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/game/" class="nav-link"><i class="undefined"></i>
+  Game
+</a></li><li class="dropdown-item"><!----> <a href="/blog/tag/日常/" class="nav-link"><i class="undefined"></i>
+  日常
+</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-coding"></i>
+      HELP
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://vuepress.vuejs.org/zh/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  vuepress
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://caniuse.com/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  can i use
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://developer.mozilla.org/zh-CN/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  MDN
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://www.photopea.com/" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  PS
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div><div class="nav-item"><a href="/blog/timeline/" class="nav-link"><i class="iconfont reco-date"></i>
+  时间轴
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-message"></i>
+      mine
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://github.com/levidc" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="iconfont reco-github"></i>
+  GitHub
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://gitee.com/levidc" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="iconfont reco-mayun"></i>
+  码云
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://space.bilibili.com/1177475003" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="iconfont reco-bilibili"></i>
+  哔哩哔哩
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div> <!----></nav> <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Vue2</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/blog/myBlog/Vue2/Liftcircle.html" class="sidebar-link">【vue】生命周期</a></li><li><a href="/blog/myBlog/Vue2/components.html" class="sidebar-link">vue组件化</a></li><li><a href="/blog/myBlog/Vue2/init.html" class="sidebar-link">【vue】了解</a></li><li><a href="/blog/myBlog/Vue2/v-if&amp;&amp;v-show.html" class="sidebar-link">v-if&amp;&amp;v-show</a></li><li><a href="/blog/myBlog/Vue2/vuex.html" aria-current="page" class="active sidebar-link">vuex的使用</a></li><li><a href="/blog/myBlog/Vue2/watch.html" class="sidebar-link">watch模拟</a></li></ul></section></li></ul> </aside> <div class="password-shadow password-wrapper-in" style="display:none;" data-v-5939a40e data-v-1156296a><h3 class="title" data-v-5939a40e data-v-5939a40e>vuex的使用</h3> <!----> <label id="box" class="inputBox" data-v-5939a40e data-v-5939a40e><input type="password" value="" data-v-5939a40e> <span data-v-5939a40e>你的名字+生日+年龄</span> <button data-v-5939a40e>OK</button></label> <div class="footer" data-v-5939a40e data-v-5939a40e><span data-v-5939a40e><i class="iconfont reco-theme" data-v-5939a40e></i> <a target="blank" href="https://vuepress-theme-reco.recoluan.com" data-v-5939a40e>vuePress-theme-reco</a></span> <span data-v-5939a40e><i class="iconfont reco-copyright" data-v-5939a40e></i> <a data-v-5939a40e><span data-v-5939a40e>levidc</span>
+            
+          <!---->
+          2024
+        </a></span></div></div> <div data-v-1156296a><main class="page"><section><div class="page-title"><h1 class="title">vuex的使用</h1> <div class="page-info" data-v-7d1b7c90><i class="iconfont reco-account" data-v-7d1b7c90><span data-v-7d1b7c90>levidc</span></i> <i class="iconfont reco-date" data-v-7d1b7c90><span data-v-7d1b7c90>2021-12-02</span></i> <i class="iconfont reco-eye" data-v-7d1b7c90><span id="/blog/myBlog/Vue2/vuex.html" data-flag-title="Your Article Title" class="leancloud-visitors" data-v-7d1b7c90><a class="leancloud-visitors-count" style="font-size:.9rem;font-weight:normal;color:#999;"></a></span></i> <i class="iconfont reco-tag tags" data-v-7d1b7c90><span class="tag-item" data-v-7d1b7c90>vue2</span></i></div></div> <div class="theme-reco-content content__default"><p><img src="https://cdn.jsdelivr.net/gh/levidc/blogImg/img/43.jpg" alt=""></p> <h2 id="vuex-属性"><a href="#vuex-属性" class="header-anchor">#</a> vuex 属性</h2> <div class="language-js extra-class"><pre class="language-js"><code><span class="token operator">/</span>store<span class="token operator">/</span>index<span class="token punctuation">.</span>js
+<span class="token keyword">import</span> Vue <span class="token keyword">from</span> <span class="token string">&quot;vue&quot;</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> Vuex <span class="token keyword">from</span> <span class="token string">&quot;vuex&quot;</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> view <span class="token keyword">from</span> <span class="token string">&quot;./modules/view&quot;</span><span class="token punctuation">;</span>
+Vue<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>Vuex<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">new</span> <span class="token class-name">Vuex<span class="token punctuation">.</span>Store</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  state<span class="token operator">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+  mutations<span class="token operator">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+  actions<span class="token operator">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+  modules<span class="token operator">:</span> <span class="token punctuation">{</span>
+    user<span class="token punctuation">,</span>
+    view<span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  getters<span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+
+<span class="token comment">// modules文件夹下模块化单独js文件</span>
+<span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span>
+<span class="token keyword">const</span> view <span class="token operator">=</span> <span class="token punctuation">{</span>
+  namespaced<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+  state<span class="token operator">:</span> <span class="token punctuation">{</span>
+    isFullScren<span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+    testView<span class="token operator">:</span> <span class="token string">'view'</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  mutations<span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token function">SET_FUllSCREEN</span><span class="token punctuation">(</span><span class="token parameter">state<span class="token punctuation">,</span> value</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      state<span class="token punctuation">.</span>isFullScren <span class="token operator">=</span> value
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  actions<span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token function">ChangeFullScreen</span><span class="token punctuation">(</span><span class="token parameter"><span class="token punctuation">{</span> commit<span class="token punctuation">,</span> state <span class="token punctuation">}</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">commit</span><span class="token punctuation">(</span><span class="token string">'SET_FUllSCREEN'</span><span class="token punctuation">,</span> <span class="token operator">!</span><span class="token punctuation">(</span>state<span class="token punctuation">.</span>isFullScren<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> view
+<span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">--</span><span class="token operator">-</span>
+
+<span class="token comment">//main.js中引入 import store from './store'</span>
+<span class="token keyword">new</span> <span class="token class-name">Vue</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  router<span class="token punctuation">,</span>
+  store<span class="token punctuation">,</span>
+  <span class="token function-variable function">render</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">h</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token function">h</span><span class="token punctuation">(</span>App<span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">$mount</span><span class="token punctuation">(</span><span class="token string">'#app'</span><span class="token punctuation">)</span>
+</code></pre></div><h3 id="state"><a href="#state" class="header-anchor">#</a> state</h3> <div class="language-js extra-class"><pre class="language-js"><code>基础的状态值
+<span class="token keyword">this</span><span class="token punctuation">.</span>$store<span class="token punctuation">.</span>state<span class="token punctuation">.</span><span class="token string">'属性名'</span>
+直接赋值或修改也是响应式的，不过不推荐、
+通过<span class="token operator">...</span><span class="token function">mapState</span><span class="token punctuation">(</span><span class="token punctuation">)</span>函数映射
+
+
+当映射的计算属性的名称与 state 的子节点名称相同时，我们也可以给 mapState 传一个字符串数组。
+<span class="token operator">...</span><span class="token function">mapState</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">'state'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+</code></pre></div><h3 id="getters"><a href="#getters" class="header-anchor">#</a> getters</h3> <div class="language-js extra-class"><pre class="language-js"><code>相当于computed，引入到页面中，不能直接更改，
+<span class="token keyword">import</span> <span class="token punctuation">{</span> mapGetters <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'vuex'</span>
+computed<span class="token operator">:</span><span class="token punctuation">{</span>
+  <span class="token operator">...</span><span class="token function">mapGetters</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">'value'</span><span class="token punctuation">,</span><span class="token string">'value'</span><span class="token punctuation">,</span><span class="token operator">...</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token operator">/</span>store<span class="token operator">/</span>getters<span class="token punctuation">.</span>js
+<span class="token keyword">const</span> getters <span class="token operator">=</span> <span class="token punctuation">{</span>
+  <span class="token comment">// 模块下的state的映射</span>
+  <span class="token function-variable function">fullScreen</span><span class="token operator">:</span> <span class="token parameter">state</span> <span class="token operator">=&gt;</span> state<span class="token punctuation">.</span>view<span class="token punctuation">.</span>isFullScren<span class="token punctuation">,</span>
+  <span class="token function-variable function">name</span><span class="token operator">:</span> <span class="token parameter">state</span> <span class="token operator">=&gt;</span> state<span class="token punctuation">.</span>user<span class="token punctuation">.</span>name
+<span class="token punctuation">}</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> getters
+<span class="token keyword">import</span> getters <span class="token keyword">from</span> <span class="token string">'./getters'</span>
+<span class="token keyword">new</span> <span class="token class-name">Vuex<span class="token punctuation">.</span>Store</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token punctuation">{</span>
+    getters
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre></div><h3 id="mutations"><a href="#mutations" class="header-anchor">#</a> mutations</h3> <div class="language-js extra-class"><pre class="language-js"><code>mutations触发state的改变，必须是同步的
+<span class="token keyword">this</span><span class="token punctuation">.</span>store<span class="token punctuation">.</span><span class="token function">commit</span><span class="token punctuation">(</span><span class="token string">'mutation'</span><span class="token punctuation">,</span>payload<span class="token punctuation">)</span>
+<span class="token function">mutation</span><span class="token punctuation">(</span><span class="token parameter">state<span class="token punctuation">,</span>payload</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+  state<span class="token punctuation">.</span>xxx <span class="token operator">=</span> payload<span class="token operator">...</span><span class="token punctuation">.</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="actions"><a href="#actions" class="header-anchor">#</a> actions</h3> <div class="language-js extra-class"><pre class="language-js"><code>actions调用mutations从而改变state，本身是异步的
+通过结合接口进行使用，如存储登录信息等
+<span class="token keyword">this</span><span class="token punctuation">.</span>$store<span class="token punctuation">.</span><span class="token function">dispatch</span><span class="token punctuation">(</span><span class="token string">'actionName'</span><span class="token punctuation">,</span>payload<span class="token punctuation">)</span>
+<span class="token function">actionName</span><span class="token punctuation">(</span><span class="token parameter"><span class="token punctuation">{</span>commit<span class="token punctuation">,</span>state<span class="token punctuation">}</span><span class="token punctuation">,</span>payload</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+  <span class="token function">commit</span><span class="token punctuation">(</span><span class="token string">'mutationName'</span><span class="token punctuation">,</span>payload<span class="token operator">...</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">//第一个参数context可以接收一个与store实例具有相同方法的属性context，</span>
+<span class="token comment">//通过使用es6解构赋值取得相应属性，这个属性中包括下面几部分</span>
+context<span class="token operator">:</span><span class="token punctuation">{</span>
+  state<span class="token punctuation">,</span> 等同于store<span class="token punctuation">.</span>$state，若在模块中则为局部状态
+  rootState<span class="token punctuation">,</span> 等同于store<span class="token punctuation">.</span>$state<span class="token punctuation">,</span>只存在模块中
+  commit<span class="token punctuation">,</span> 等同于store<span class="token punctuation">.</span>$commit
+  dispatch<span class="token punctuation">,</span> 等同于store<span class="token punctuation">.</span>$dispatch
+  getters  等同于store<span class="token punctuation">.</span>$getters
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="modules"><a href="#modules" class="header-anchor">#</a> modules</h3> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">import</span> xxx <span class="token keyword">from</span> <span class="token string">'./modules/xxx'</span>
+<span class="token operator">/</span>store<span class="token operator">/</span>index<span class="token punctuation">.</span>js
+<span class="token keyword">new</span> <span class="token class-name">Vuex<span class="token punctuation">.</span>Store</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    modules<span class="token operator">:</span> <span class="token punctuation">{</span>
+    xxx
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre></div><h2 id="页面引用"><a href="#页面引用" class="header-anchor">#</a> 页面引用</h2> <h3 id="开启命名空间"><a href="#开启命名空间" class="header-anchor">#</a> 开启命名空间</h3> <div class="language-js extra-class"><pre class="language-js"><code>modules下单个模块添加namespaced后，可以开启命名空间
+mapGetters、mapState、mapMutations、mapActions、注入到页面中的方式也需要添加模块名
+例如
+modules<span class="token operator">/</span>view<span class="token punctuation">.</span>js
+namespaced<span class="token operator">:</span><span class="token boolean">true</span><span class="token punctuation">,</span>
+
+store<span class="token operator">/</span>index<span class="token punctuation">.</span>js
+<span class="token keyword">import</span> view <span class="token keyword">from</span> <span class="token string">'/modules/view'</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">new</span> <span class="token class-name">Vuex<span class="token punctuation">.</span>Store</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+<span class="token operator">...</span><span class="token punctuation">.</span><span class="token punctuation">,</span>
+<span class="token comment">//使用modules</span>
+  modules<span class="token operator">:</span><span class="token punctuation">{</span>
+    view
+    <span class="token operator">...</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token operator">...</span><span class="token function">mapMutations</span><span class="token punctuation">(</span><span class="token string">'view'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    SET_FUllSCREEN<span class="token operator">:</span> <span class="token string">'SET_FUllSCREEN'</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token comment">// 开启命名空间后，不设置模块名，直接map函数映射值，无法读取到相应的方法</span>
+<span class="token function">即使同名也不好使用简写，格式为</span><span class="token punctuation">(</span><span class="token string">'模块名'</span><span class="token punctuation">,</span><span class="token punctuation">{</span>
+  <span class="token string">'引入页面中的别名'</span><span class="token operator">:</span><span class="token string">'模块中的名'</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre></div><h3 id="无命名空间"><a href="#无命名空间" class="header-anchor">#</a> 无命名空间</h3> <div class="language-js extra-class"><pre class="language-js"><code>mapGetters、mapState、mapMutations、mapActions直接注入，直接使用
+computed<span class="token operator">:</span><span class="token punctuation">{</span>
+  <span class="token operator">...</span><span class="token function">mapGetters</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">'value'</span><span class="token punctuation">,</span><span class="token string">'value2'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  <span class="token operator">...</span><span class="token function">mapState</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">'value'</span><span class="token punctuation">,</span><span class="token string">'value2'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+methods<span class="token operator">:</span><span class="token punctuation">{</span>
+  <span class="token operator">...</span><span class="token function">mapMutations</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">'value'</span><span class="token punctuation">,</span><span class="token string">'value2'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  <span class="token operator">...</span><span class="token function">mapActions</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">'value'</span><span class="token punctuation">,</span><span class="token string">'value2'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+或者不映射方式
+直接通过 <span class="token keyword">this</span><span class="token punctuation">.</span>$store<span class="token punctuation">.</span>getters<span class="token operator">/</span>state<span class="token operator">/</span><span class="token function">commit</span><span class="token punctuation">(</span><span class="token string">'mutations名'</span><span class="token punctuation">)</span><span class="token operator">/</span><span class="token function">dispatch</span><span class="token punctuation">(</span><span class="token string">'actions名'</span><span class="token punctuation">)</span>
+mapState映射的
+
+</code></pre></div><div class="custom-block danger"><p class="title"></p><p>1 重名的 mutation、actions 等需要注意，都会执行;</p> <p>2 mapState 映射的变量名如果和 modules 设置的模块名一样，取模块名下所有的{...state},反之则为 根目录下 index.js 下的 state</p></div></div></section> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">最后更新于: </span> <span class="time">2022年11月16日 19:31</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev"><a href="/blog/myBlog/Vue2/v-if&amp;&amp;v-show.html" class="prev">
+            v-if&amp;&amp;v-show
+          </a></span> <span class="next"><a href="/blog/myBlog/Vue2/watch.html">
+            watch模拟
+          </a></span></p></div> <div class="comments-wrapper"><!----></div> <ul class="side-bar sub-sidebar-wrapper" style="width:12rem;" data-v-70334359><li class="level-2" data-v-70334359><a href="/blog/myBlog/Vue2/vuex.html#vuex-属性" class="sidebar-link reco-side-vuex-属性" data-v-70334359>vuex 属性</a></li><li class="level-3" data-v-70334359><a href="/blog/myBlog/Vue2/vuex.html#state" class="sidebar-link reco-side-state" data-v-70334359>state</a></li><li class="level-3" data-v-70334359><a href="/blog/myBlog/Vue2/vuex.html#getters" class="sidebar-link reco-side-getters" data-v-70334359>getters</a></li><li class="level-3" data-v-70334359><a href="/blog/myBlog/Vue2/vuex.html#mutations" class="sidebar-link reco-side-mutations" data-v-70334359>mutations</a></li><li class="level-3" data-v-70334359><a href="/blog/myBlog/Vue2/vuex.html#actions" class="sidebar-link reco-side-actions" data-v-70334359>actions</a></li><li class="level-3" data-v-70334359><a href="/blog/myBlog/Vue2/vuex.html#modules" class="sidebar-link reco-side-modules" data-v-70334359>modules</a></li><li class="level-2" data-v-70334359><a href="/blog/myBlog/Vue2/vuex.html#页面引用" class="sidebar-link reco-side-页面引用" data-v-70334359>页面引用</a></li><li class="level-3" data-v-70334359><a href="/blog/myBlog/Vue2/vuex.html#开启命名空间" class="sidebar-link reco-side-开启命名空间" data-v-70334359>开启命名空间</a></li><li class="level-3" data-v-70334359><a href="/blog/myBlog/Vue2/vuex.html#无命名空间" class="sidebar-link reco-side-无命名空间" data-v-70334359>无命名空间</a></li></ul></main> <!----></div></div></div></div><div class="global-ui"><div class="back-to-ceiling" style="right:1rem;bottom:6rem;width:2.5rem;height:2.5rem;border-radius:.25rem;line-height:2.5rem;display:none;" data-v-c6073ba8 data-v-c6073ba8><svg t="1574745035067" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5404" class="icon" data-v-c6073ba8><path d="M526.60727968 10.90185116a27.675 27.675 0 0 0-29.21455937 0c-131.36607665 82.28402758-218.69155461 228.01873535-218.69155402 394.07834331a462.20625001 462.20625001 0 0 0 5.36959153 69.94390903c1.00431239 6.55289093-0.34802892 13.13561351-3.76865779 18.80351572-32.63518765 54.11355614-51.75690182 118.55860487-51.7569018 187.94566865a371.06718723 371.06718723 0 0 0 11.50484808 91.98906777c6.53300375 25.50556257 41.68394495 28.14064038 52.69160883 4.22606766 17.37162448-37.73630017 42.14135425-72.50938081 72.80769204-103.21549295 2.18761121 3.04276886 4.15646224 6.24463696 6.40373557 9.22774369a1871.4375 1871.4375 0 0 0 140.04691725 5.34970492 1866.36093723 1866.36093723 0 0 0 140.04691723-5.34970492c2.24727335-2.98310674 4.21612437-6.18497483 6.3937923-9.2178004 30.66633723 30.70611158 55.4360664 65.4791928 72.80769147 103.21549355 11.00766384 23.91457269 46.15860503 21.27949489 52.69160879-4.22606768a371.15156223 371.15156223 0 0 0 11.514792-91.99901164c0-69.36717486-19.13165746-133.82216804-51.75690182-187.92578088-3.42062944-5.66790279-4.76302748-12.26056868-3.76865837-18.80351632a462.20625001 462.20625001 0 0 0 5.36959269-69.943909c-0.00994388-166.08943902-87.32547796-311.81420293-218.6915546-394.09823051zM605.93803103 357.87693858a93.93749974 93.93749974 0 1 1-187.89594924 6.1e-7 93.93749974 93.93749974 0 0 1 187.89594924-6.1e-7z" p-id="5405" data-v-c6073ba8></path><path d="M429.50777625 765.63860547C429.50777625 803.39355007 466.44236686 1000.39046097 512.00932183 1000.39046097c45.56695499 0 82.4922232-197.00623328 82.5015456-234.7518555 0-37.75494459-36.9345906-68.35043303-82.4922232-68.34111062-45.57627738-0.00932239-82.52019037 30.59548842-82.51086798 68.34111062z" p-id="5406" data-v-c6073ba8></path></svg></div><div></div><APlayer audio="" fixed="true" mini="true" autoplay="autoplay" theme="#A95AF5" loop="loop" order="random" preload="auto" volume="0.1" mutex="true" lrc-type="0" list-folded="true" list-max-height="250" storage-name="vuepress-plugin-meting" id="aplayer-fixed"></APlayer></div></div>
+    <script src="/blog/assets/js/app.8ca452fa.js" defer></script><script src="/blog/assets/js/3.1a5a3540.js" defer></script><script src="/blog/assets/js/1.507fae7c.js" defer></script><script src="/blog/assets/js/37.55a4e1db.js" defer></script>
+  </body>
+</html>
