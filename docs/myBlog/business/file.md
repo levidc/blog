@@ -1,6 +1,6 @@
 ---
 title: 文件类型上传读取等
-date: 2022-04-29
+date: 2024-12-18
 categories:
   - 前端
 
@@ -182,6 +182,35 @@ file.onload = function () {
   _this.result = this.result;
 };
 ```
+## base64 转义string
+```js
+export const base64ToString = (base64) => {
+  // 移除 Base64 字符串中的空白字符
+  const cleanBase64 = base64.replace(/\s+/g, '');
+
+  // 解码 Base64 得到二进制字符串
+  const binaryString = atob(cleanBase64);
+
+  // 将二进制字符串转换为字节数组
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+
+  // 使用 TextDecoder 将字节解码为 UTF-8 字符串
+  return new TextDecoder().decode(bytes);
+}
+
+```
+
+## md5加密
+```js
+pnpm i crypto-js
+
+const CryptoJS = require("crypto-js");
+
+```
+
 
 ## window.URL.createObjectURL && FileReader.readAsDataURL
 
@@ -208,7 +237,7 @@ FileReader.readAsDataURL则返回包含很多字符的base64，并会比blob url
 
 ## 图片上传校验尺寸大小
 
-window.URL.createObjectURL  
+window.URL.createObjectURL
 可以用于在浏览器上预览本地图片或者视频
 
 ```js
@@ -275,6 +304,38 @@ document.querySelector("." + id).scrollIntoView(true);
 
 ## 下载文件
 ```js
+    reader.onload = (e) => {
+      // 获取二进制数组
+      const binaryData = new Uint8Array(e.target.result);
+      this.form.data = Array.from(binaryData)
+      console.log(binaryData, '==== this.form.data')
+    };
+    reader.readAsArrayBuffer(change.raw);
+    // 请求 字节数组
+    // 返回二进制数据、指定返回arraybuffer
+    {...responseType: 'arraybuffer'}
+    let fileName = res.headers['content-disposition'] && res.headers['content-disposition'].split(';')
+    for (let i = 0, l = fileName.length; i < l; i++) {
+      let temp = fileName[i].split('*=UTF-8')
+      if (temp.length > 1 && temp[0] === 'filename') {
+        fileName = temp[1]
+        break
+      }
+    }
+    fileName = decodeURIComponent(fileName.replace(/''/g, '')).substring(1)
+    // res 设置responseType: arrayBuffer
+    const blob = new Blob([res.data])
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+
+
   //下载为json文件
     var Link = document.createElement('a');
     Link.download = "机柜信息.json";
@@ -288,3 +349,4 @@ document.querySelector("." + id).scrollIntoView(true);
     // 然后移除
     document.body.removeChild(Link);
 ```
+
