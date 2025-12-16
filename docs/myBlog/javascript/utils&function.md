@@ -292,11 +292,13 @@ export const exportExcel = function (n = [], m = [], r = '') {
       // 标题行样式（12号字）
       for (let e = 0; e < n.length; e++)
         t += `<th style="
+      font-family:宋体;
       font-size:12pt;
       text-align:center;
       font-weight:bold;
-      background-color:#ccc;
-      vertical-align:bottom
+      color:#fff;
+      background-color:#0078d7;
+      vertical-align:middle;
     ">${n[e].title + '	'}</th>`
       t += '</tr>'
 
@@ -307,7 +309,6 @@ export const exportExcel = function (n = [], m = [], r = '') {
           t += `<td style="
         mso-number-format:'@';
         vertical-align:bottom;
-        font-size:11pt
       ">${(item[c]) + '	'}</td>`
         }
         t += '</tr>'
@@ -359,7 +360,6 @@ export const exportExcel = function (n = [], m = [], r = '') {
     }
   })
 }
-
 
 ```
 ## 复制文本
@@ -437,4 +437,139 @@ export const thousandthSeparator = (value) => {
   const reg = /\B(?=(\d{3})+(?!\d))/g
   return value.replace(reg, ',')
 }
+```
+
+
+## 中文数字转换
+```js
+/**
+ * 格式化数字为中文单位表示（万、亿、兆、京等）
+ * @param {number|string} num - 要格式化的数字
+ * @param {number} decimals - 保留的小数位数，默认1位（仅对非整数有效）
+ * @returns {string} 格式化后的字符串
+ */
+function formatChineseNumber(num, decimals = 1) {
+  // 检查输入并转换为数字
+  if (num === null || num === undefined || isNaN(Number(num))) {
+    return '0';
+  }
+
+  let number = Number(num);
+  const absNum = Math.abs(number);
+  let prefix = number < 0 ? '-' : '';
+
+  // 对于低于1万的数字，直接返回完整数字
+  if (absNum < 10000) {
+    // 检查是否为整数
+    if (Number.isInteger(absNum)) {
+      return prefix + absNum.toString();
+    } else {
+      return prefix + absNum.toFixed(decimals);
+    }
+  }
+
+  // 定义中文数字单位及其对应的量级（从大到小排列）
+  const units = [
+    { value: 1e44, symbol: '载' },       // 10^44
+    { value: 1e40, symbol: '正' },       // 10^40
+    { value: 1e36, symbol: '涧' },       // 10^36
+    { value: 1e32, symbol: '沟' },       // 10^32
+    { value: 1e28, symbol: '穰' },       // 10^28
+    { value: 1e24, symbol: '秭' },       // 10^24
+    { value: 1e20, symbol: '垓' },       // 10^20
+    { value: 1e16, symbol: '京' },       // 10^16
+    { value: 1e12, symbol: '兆' },       // 10^12
+    { value: 1e8, symbol: '亿' },        // 10^8
+    { value: 1e4, symbol: '万' }         // 10^4
+  ];
+
+  // 查找合适的单位
+  for (const unit of units) {
+    if (absNum >= unit.value) {
+      const convertedValue = absNum / unit.value;
+
+      // 检查是否为整数
+      if (Number.isInteger(convertedValue)) {
+        return prefix + convertedValue.toString() + unit.symbol;
+      } else {
+        // 非整数时保留指定小数位数
+        let formatted = convertedValue.toFixed(decimals);
+        // 移除末尾的0和小数点（如果是整数）
+        formatted = parseFloat(formatted).toString();
+        return prefix + formatted + unit.symbol;
+      }
+    }
+  }
+
+  // 对于其他情况，直接返回数字
+  return prefix + absNum.toString();
+}
+
+
+```
+
+
+## 复制文本
+
+```js
+import Vue from 'vue'
+import Clipboard from 'clipboard'
+
+function clipboardSuccess () {
+  Vue.prototype.$msg({
+    type: 'success',
+    text: '已复制',
+    duration: 1500
+  })
+}
+
+function clipboardError () {
+  Vue.prototype.$msg({
+    text: 'Copy failed',
+    type: 'error'
+  })
+}
+
+export default function handleClipboard (text, event) {
+  const clipboard = new Clipboard(event.target, {
+    text: () => text
+  })
+  clipboard.on('success', () => {
+    clipboardSuccess()
+    clipboard.destroy()
+  })
+  clipboard.on('error', () => {
+    clipboardError()
+    clipboard.destroy()
+  })
+  clipboard.onClick(event)
+}
+
+///使用页面引入
+
+import clip from '@/utils/clipboard'
+
+
+
+//methods
+    handleCopy (val, event) {
+      clip(val, event)
+    },
+
+```
+
+
+## 加密解密
+
+```js
+
+import CryptoJS from 'crypto-js'
+
+export const getMd5 = (str) => {
+  const hash = CryptoJS.MD5(str)
+  const encrypto = hash.toString(CryptoJS.enc.Hex)
+  return encrypto
+}
+
+
 ```

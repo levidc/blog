@@ -88,105 +88,107 @@ jQuery(document).ready(function ($) {
 			}
 		)
 	})
-	let div = document.createElement('div')
-	div.id = 'bulin'
+	// let div = document.createElement('div')
+	// div.id = 'bulin'
 	// bulin.style.display = 'none'
-	document.body.appendChild(div)
-	bulin.onclick = function (e) {
-		if (accCount >= 1) {
-			let rocket = $('<span/>').text('🚀')
-			$('body').append(rocket)
-			rocket.css({
-				'z-index': 999999999999999999999999999999999999999999999999999999999999999999999,
-				left: 0,
-				bottom: 0,
-				position: 'absolute',
-				'font-weight': 'bold',
-				color: `rgb(${getRandom(255, 0)},${getRandom(255, 0)},${getRandom(
-					255,
-					0
-				)})`,
-				'user-select': 'none',
-				cursor: 'default',
-				'z-index': '999999',
-				'font-size': '5rem',
-			})
-			$('body').append(rocket)
-			rocket.animate(
-				{
-					bottom: document.documentElement.clientHeight + 'px',
-					left: document.body.clientWidth + 'px',
-					// "opacity": 0,
-					zoom: '2',
-				},
-				2000,
-				function () {
-					rocket.remove()
-				}
-			)
-		}
-		step += 1
-		accCount += 1
-	}
-	function changePos () {
-		width = document.body.clientWidth //body width
-		let asideHeight = document.getElementsByTagName('aside')[0]?.offsetHeight
-		height =
-			document.body.clientHeight > asideHeight
-				? document.body.clientHeight
-				: asideHeight
-		if (width < 1200) {
-			//    bulin.style.zoom='.5'
-		} else {
-			bulin.style.zoom = '1'
-		}
-		Hoffset = bulin.offsetHeight // height
-		Woffset = bulin.offsetWidth // width
-		bulin.style.left = xPos + 'px'
-		bulin.style.top = yPos + 'px'
-		if (yon) {
-			yPos = yPos + step
-		} else {
-			yPos = yPos - step
-		}
-		if (yPos <= 0) {
-			yon = 1
-			yPos = 0
-		}
-		if (yPos >= height - Hoffset) {
-			yon = 0
-			yPos = height - Hoffset
-		}
-		if (xon) {
-			xPos = xPos + step
-		} else {
-			xPos = xPos - step
-		}
-		if (xPos <= 0) {
-			xon = 1
-			xPos = 0
-			bulin.style.transform = 'rotateY(180deg)'
-		}
-		if (xPos >= width - Woffset) {
-			xon = 0
-			xPos = width - Woffset
-			bulin.style.transform = 'rotateY(360deg)'
-		}
-	}
-	function start () {
-		bulin.visibility = 'visible'
-		interval = setInterval(() => {
-			changePos()
-		}, delay)
-	}
-	function pause_resume () {
-		if (pause) {
-			clearInterval(interval)
-			pause = false
-		} else {
-			interval = setInterval(changePos(), delay)
-			pause = true
-		}
-	}
-	start()
+	// document.body.appendChild(div)
+	// bulin.onclick = function (e) {
+	// 	if (accCount >= 1) {
+	// 		let rocket = $('<span/>').text('🚀')
+	// 		$('body').append(rocket)
+	// 		rocket.css({
+	// 			'z-index': 999999999999999999999999999999999999999999999999999999999999999999999,
+	// 			left: 0,
+	// 			bottom: 0,
+	// 			position: 'absolute',
+	// 			'font-weight': 'bold',
+	// 			color: `rgb(${getRandom(255, 0)},${getRandom(255, 0)},${getRandom(
+	// 				255,
+	// 				0
+	// 			)})`,
+	// 			'user-select': 'none',
+	// 			cursor: 'default',
+	// 			'z-index': '999999',
+	// 			'font-size': '5rem',
+	// 		})
+	// 		$('body').append(rocket)
+	// 		rocket.animate(
+	// 			{
+	// 				bottom: document.documentElement.clientHeight + 'px',
+	// 				left: document.body.clientWidth + 'px',
+	// 				// "opacity": 0,
+	// 				zoom: '2',
+	// 			},
+	// 			2000,
+	// 			function () {
+	// 				rocket.remove()
+	// 			}
+	// 		)
+	// 	}
+	// 	step += 1
+	// 	accCount += 1
+	// }
+	// function changePos () {
+	// 	width = document.body.clientWidth //body width
+	// 	let asideHeight = document.getElementsByTagName('aside')[0]?.offsetHeight
+	// 	height =
+	// 		document.body.clientHeight > asideHeight
+	// 			? document.body.clientHeight
+	// 			: asideHeight
+	// 	if (width < 1200) {
+	// 		//    bulin.style.zoom='.5'
+	// 	} else {
+	// 		bulin.style.zoom = '1'
+	// 	}
+	// 	Hoffset = bulin.offsetHeight // height
+	// 	Woffset = bulin.offsetWidth // width
+	// 	bulin.style.left = xPos + 'px'
+	// 	bulin.style.top = yPos + 'px'
+	// 	// yon 0 上移 1 下移
+	// 	// xon 0 左移 1 右移
+	// 	if (yon) {
+	// 		yPos = yPos + step
+	// 	} else {
+	// 		yPos = yPos - step
+	// 	}
+	// 	if (yPos <= 0) {
+	// 		yon = 1
+	// 		yPos = 0
+	// 	}
+	// 	if (yPos >= height - Hoffset) {
+	// 		yon = 0
+	// 		yPos = height - Hoffset
+	// 	}
+	// 	if (xon) {
+	// 		xPos = xPos + step
+	// 	} else {
+	// 		xPos = xPos - step
+	// 	}
+	// 	if (xPos <= 0) {
+	// 		xon = 1
+	// 		xPos = 0
+	// 		bulin.style.transform = 'rotateY(180deg)'
+	// 	}
+	// 	if (xPos >= width - Woffset) {
+	// 		xon = 0
+	// 		xPos = width - Woffset
+	// 		bulin.style.transform = 'rotateY(360deg)'
+	// 	}
+	// }
+	// function start () {
+	// 	bulin.visibility = 'hidden'
+	// 	interval = setInterval(() => {
+	// 		changePos()
+	// 	}, delay)
+	// }
+	// function pause_resume () {
+	// 	if (pause) {
+	// 		clearInterval(interval)
+	// 		pause = false
+	// 	} else {
+	// 		interval = setInterval(changePos(), delay)
+	// 		pause = true
+	// 	}
+	// }
+	// start()
 })

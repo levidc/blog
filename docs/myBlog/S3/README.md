@@ -1,6 +1,6 @@
 ---
 title: 对象上传及大文件分段
-date: 2024-05-08
+date: 2025-12-14
 categories:
   - js
 
@@ -14,89 +14,118 @@ tags:
 
 
 
-## 文件上传（文件拖拽、文件夹上传）
-
+## 页面上传
 ```js
 <template>
   <div>
     <el-row>
       <el-col :span="24" class="manage-area-title">
-        <h2>备份</h2>
+        <h2>数据网关</h2>
+        <div class="selectConfig">
+          <el-select v-model="selform" class="config" @change="handleFillForm" filterable>
+            <el-option v-for="({ location, endpoint, accessKeyId, id }) in localConfigList"
+              :label="`${location} —— ${endpoint} —— ${accessKeyId}`" :value="id" :key="id">
+              <span style="float: left;margin-right: 20px;"> Manager: ({{ location }})</span>
+              <span style="float: right;margin-right: 20px;"> accessKeyId: ({{ accessKeyId }})</span>
+              <span style="float: right;margin-right: 20px;"> endpoint: ({{ endpoint }})</span>
+            </el-option>
+          </el-select>
+          <el-tooltip content="添加配置" placement="top">
+            <svg class="icon add" @click="addConfig">
+              <use xlink:href="#icon-btn_add" />
+            </svg>
+          </el-tooltip>
+          <el-tooltip content="移除配置" placement="top">
+            <svg class="icon del" @click="delConfig" v-if="selform">
+              <use xlink:href="#icon-btn_delete" />
+            </svg>
+          </el-tooltip>
+        </div>
       </el-col>
     </el-row>
     <!-- <BreadCrumbs /> -->
-    <div v-loading="getHostLoading" class="page_content_wrap">
-      <el-form ref="form" class="form" :model="form" style="width: 40%;" label-width="150px" :rules="rules">
-        <el-form-item label="hostName">
-          <el-input v-model="form.hostName" placeholder="请输入hostName" readonly />
+    <div class="page_content_wrap">
+      <el-form ref="form" class="form" :model="form" style="width: 40%;" label-width="150px" :rules="rules"
+        :disabled="optType !== 'add' && optType !== 'modify'">
+        <el-form-item label="Manager" prop="location">
+          <el-input v-model="form.location" placeholder="请输入服务地址" style="width: 80%;" />
+          <el-button class="blue" style="position: absolute; right: 0;top:8px" @click="initManager()">连接</el-button>
         </el-form-item>
-        <el-form-item label="endpoint" prop="endpoint">
-          <el-input v-model="form.endpoint" clearable placeholder="请输入endpoint" />
-        </el-form-item>
-        <el-form-item label="Access Key" prop="accessKeyId">
-          <el-input v-model="form.accessKeyId" clearable placeholder="请输入Access Key" />
-        </el-form-item>
-        <el-form-item label="Secret Key" prop="secretAccessKey">
-          <el-input v-model="form.secretAccessKey" type="password" show-password clearable placeholder="请输入Secret Key" style="width: 80%;" />
-          <el-button style="position: absolute; right: 0;top:8px" @click="getBucketList">连接</el-button>
-        </el-form-item>
-        <el-form-item v-if="bucketList&&bucketList.length" label="bucket" prop="Bucket">
+
+        <template v-if="checkManager">
+          <el-form-item label="Endpoint" prop="endpoint">
+            <el-select v-model="form.endpoint" clearable placeholder="请选择endpoint" filterable>
+              <el-option v-for="x in endPointList" :key="x.endpoint" :value="x.endpoint" :label="x.endpoint" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Access Key" prop="accessKeyId">
+            <el-input v-model="form.accessKeyId" clearable placeholder="请输入Access Key" style="width: 80%;" />
+            <el-button type="primary" class="golden" style="position: absolute; right: -15px;top:8px"
+              @click="getBucketList(true)">连接S3</el-button>
+          </el-form-item>
+        </template>
+
+        <!-- {{ form.secretAccessKey }} -->
+        <!-- <el-form-item label="Secret Key" prop="secretAccessKey">
+          <el-input v-model="form.secretAccessKey" type="password" show-password clearable placeholder="请输入Secret Key"
+            style="width: 80%;" />
+        </el-form-item> -->
+        <!-- <el-form-item v-if="bucketList && bucketList.length" label="bucket" prop="Bucket">
           <el-select v-model="form.Bucket" clearable placeholder="请选择一个bucket" filterable>
             <el-option v-for="x in bucketList" :key="x" :value="x" :label="x" />
           </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button class="golden" @click="validateBucket()">备份</el-button>
-          <el-button class="blue" @click="resetForm('form')">重置</el-button>
+        </el-form-item> -->
+        <el-form-item v-if="checkFlag">
+          <!-- <el-button class="golden" @click="validateBucket()">上传</el-button> -->
+          <el-button class="blue" @click="saveConfig">{{ selform === '' ? '保存' : '修改' }}</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <el-dialog title="备份" :visible.sync="dirFlag" width="65%" destroy-on-close>
-      <el-form ref="createForm" :model="createForm" size="mini" label-width="150px" style="padding:0 5%">
+    <Bucket :bucketList="bucketList" @refreshTable="refreshBucket"></Bucket>
+    <!-- <bucketList v-if="form.Bucket" :bucket-name="form.Bucket"></bucketList> -->
+    <!-- <div
+      id="loadChart"
+      style="width:400px;height:300px"
+    /> -->
+
+    <el-dialog title="上传" :visible.sync="dirFlag" width="65%" destroy-on-close :close-on-press-escape="false"
+      :close-on-click-modal="false">
+      <el-form ref="createForm" :model="createForm" size="mini" label-width="150px"
+        style="padding:0 5%;position:relative">
         <!-- :before-upload="validateFileRule" -->
         <!-- :accept=",,拼接可接受文件类型 image/* 任意图片文件" -->
         <!-- :http-request="uploadFile"  覆盖原生action上传方法-->
         <!-- var formData = new FormData();  //  用FormData存放上传文件 -->
         <!-- formData.append('paramsName','file') -->
-        <el-row>
-          <el-col :span="3">
-            <el-upload
-              ref="uploadFile"
-              action="#"
-              multiple
-              :show-file-list="false"
-              :http-request="handleRequest"
-              :before-upload="handleSizeValidate"
-              :on-change="changeFile"
-            >
-              <!-- <el-button size="small" class="golden" @click="postFolder('file')">上传文件</el-button> -->
-              <el-button size="small" class="golden" @click="postFolder('folder')">上传文件夹</el-button>
-            </el-upload>
-          </el-col>
-          <el-col :span="3">
-            <el-button class="blue" @click="cleafFile">清空</el-button>
-          </el-col>
+        <el-row class="uploadMenu">
+          <el-upload ref="uploadFile" action="#" multiple :show-file-list="false" :http-request="handleRequest"
+            :before-upload="handleSizeValidate">
+            <!-- <el-button
+                size="small"
+                class="golden"
+                @click="postFolder('file')"
+              >上传文件</el-button> -->
+            <el-button size="small" class="golden" @click="postFolder('folder')">上传</el-button>
+          </el-upload>
+          <el-button class="blue" :disabled="!fileListArr.length" @click="cleafFile">清空</el-button>
         </el-row>
         <!-- <input type="file" id="upload" ref="inputer" name="file" multiple /> -->
-        <div
-          draggable="true"
-          class="drag tableBox"
-          @dragover="(e)=>e.preventDefault()"
-          @drop="onDrop"
-        >
+        <div draggable="true" class="drag tableBox" :style="renderPadding">
           <div v-show="!fileListArr.length" class="el-upload__text">
-            <i class="el-icon-upload" style="margin-right: 6px" />拖拽文件夹到此处
+            <i class="el-icon-upload" style="margin-right: 6px" />点击上传或拖拽文件夹到此处
             <!-- <el-button type="text" @click="addFiles">添加文件</el-button> -->
           </div>
           <div v-show="!fileListArr.length" class="el-upload__text">
             <!-- 文件上传数量不能超过100个，总大小不超过5GB -->
             单个文件大小不超过50GB
           </div>
-          <el-table v-show="fileListArr.length" :data="fileListArr.slice((currentPage - 1) * pageSize, currentPage * pageSize)">
+          <el-table v-show="fileListArr.length"
+            :data="fileListArr.slice((currentPage - 1) * pageSize, currentPage * pageSize)">
             <el-table-column label="对象key" prop="name" min-width="120px" />
             <el-table-column label="目录" min-width="120px">
               <template slot-scope="scope">
-                {{ (scope.row.webkitRelativePath ? form.hostName +'/'+ scope.row.webkitRelativePath : form.hostName +'/'+ scope.row.relativePath) | renderPath }}
+                {{ (scope.row.webkitRelativePath ? form.hostName + '/' + scope.row.webkitRelativePath : form.hostName
+                  + '/' + scope.row.relativePath) | renderPath }}
               </template>
             </el-table-column>
             <el-table-column label="类型" width="180px">
@@ -111,37 +140,74 @@ tags:
             </el-table-column>
             <el-table-column label="移除" width="100px">
               <template slot-scope="scope">
-                <svg class="icon" aria-hidden="true" @click="removeItem(scope)">
+                <svg class="icon" @click="removeItem(scope)">
                   <use xlink:href="#icon-trash" />
                 </svg>
               </template>
             </el-table-column>
           </el-table>
-          <el-pagination
-            v-show="fileListArr.length"
-            :current-page="currentPage"
-            :page-sizes="[5, 10, 50, 100]"
-            :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="fileListArr.length"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
+          <el-pagination v-show="fileListArr.length" :current-page="currentPage" :page-sizes="[5, 10, 50, 100]"
+            :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="fileListArr.length"
+            @size-change="handleSizeChange" @current-change="handleCurrentChange" />
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button class="golden" :disabled="fileListArr.length==0" @click="confirmPut()">{{ $trans('button.confirm') }}</el-button>
-        <el-button @click="dirFlag = false;">{{ $trans('button.cancel') }}</el-button>
+        <el-button class="golden" :disabled="fileListArr.length == 0" @click="confirmPut()">{{ $ts('button.confirm')
+        }}</el-button>
+        <el-button @click="dirFlag = false;">{{ $ts('button.cancel') }}</el-button>
       </div>
-    </el-dialog></div>
+      <div id="loadChart" style="width:400px;height:300px;display:none" />
+    </el-dialog>
+    <div v-if="showDrop" class="picker__drop-zone" @dragover="(e) => e.preventDefault()" @drop="onDrop">
+      <div class="drop-arrow">
+        <div class="arrow anim-floating" />
+        <div class="base" />
+      </div>
+      <div data-v-6a50ffaa="" class="picker__drop-zone-label">拖拽文件夹到此处</div>
+    </div>
+  </div>
 </template>
 <script>
 import {
-  upload,
-  hostname
+  // upload,
+  // getHostname,
+  getServer,
+  getUser
 } from '@/api/agent'
 const AWS = require('aws-sdk')
+// AWS.config.logger = console;  // 关键配置
+// AWS.config.logLevel = 'warn';  // 仅警告和错误
+// import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
+// const { S3Client, ListBucketsCommand } = require("@aws-sdk/client-s3");
+
+
 // const FileSaver = require('file-saver')
+//  AWS 设置超时时间 默认2min、当前60min
+// const initialTime = 5000
+AWS.config.update({
+  s3ForcePathStyle: true,
+  httpOptions: {
+    timeout: 1000 * 60 * 10 // 保证超时时间、不会因为时间超时导致失败
+  },
+  maxRetries: 0
+  // maxRetries: 1, // 无重试、断网自动添加判断续传
+  // retryDelayOptions: {
+  //   // base 默认100ms
+  //   customBackoff: (count, err) => {
+  //     console.log(err, '123')
+  //     return count * 1000 + 5000
+  //     // console.log(count, initialTime)
+  //     // 重试时间间隔、默认5000，线性增长、最大增长5min、总重试时间12h
+  //     // y= kx+b k、b为常数、by轴的偏移量
+  //     // an = a1+(n-1) sn = n(a1+an)/2
+  //     // 420=>24h
+  //   }
+  // }
+})
+// console.log(AWS.config, 'AWWWWs')
+// import bucketList from '../Bucket/bucketListObject'
+// import JSZip from 'jszip'
+import Bucket from '@/components/page/Bucket/Bucket.vue'
 import moment from 'moment'
 export default {
   filters: {
@@ -151,20 +217,46 @@ export default {
       return path.substr(0, lastIndex)
     }
   },
+  components: {
+    Bucket,
+    // bucketList
+  },
   data () {
     return {
+      checkManager: false,
+      checkFlag: false,
+      endPointList: [],
+      localConfigList: [],
+      optType: '',
+      selform: '',
+      connectingFlag: false,
+      timerFail: null,
+      netWorkFail: false,
+      continueArr: [],
+      loadingBg: null,
+      timer: null,
+      myecharts: null,
+      datas_outer: [],
+      mockPutSize: 0,
+      needMock: false,
+      putSize: 0,
+      totalSize: 0,
       createForm: {
         folderName: ''
       },
       dirFlag: false,
       form: {
-        hostName: '',
+        // selectConfig: '',
+        // hostName: 'TestDC',
+        id: '',
+        location: '',
         accessKeyId: '',
         secretAccessKey: '',
-        // endpoint: 'http://10.0.2.154:8300',
+        // minioadmin
         endpoint: '',
-        path: '',
-        Bucket: ''
+        // endpoint: '',
+        // path: '',
+        // Bucket: ''
       },
       bucketList: [],
       pageSize: 10,
@@ -173,43 +265,481 @@ export default {
       fileListArr: [],
       executeTime: '',
       rules: {
-        // hostName: { required: true, message: '请输入hostName' },
+        location: { required: true, message: '请输入location' },
         accessKeyId: { required: true, message: '请输入accessKeyId' },
         secretAccessKey: { required: true, message: '请输入secretAccessKey' },
-        endpoint: { required: true, message: '请输入endpoint' },
+        endpoint: {
+          required: true,
+          validator: (_, val, cb) => {
+            const reg = /^(http:\/\/)?(.)*/
+            if (!val) {
+              return cb('请输入endpoint')
+            } else if (reg.test(val)) {
+              if (val.indexOf('http://') === -1) {
+                return cb()
+                // 匹配http://替换
+                // const regPrefix = /(h)?(t)?(t)?(p)?(:)?(\/)?(\/)?/
+                // const matchStr = val.match(regPrefix)?.[0]
+                // this.form.endpoint = 'http://' + val.substring(matchStr.length)
+              } else {
+                return cb()
+              }
+            } else {
+              return cb()
+            }
+          }
+        },
         Bucket: { required: true, message: '请选择bucket' }
       },
       S3: null,
       noBucket: false,
       getHostLoading: false,
-      uploadSizeLimt: 1024 ** 4, // 上传文件大小限制 1T
+      uploadSizeLimt: 5 * 1024 ** 3, // 上传文件大小限制 1T
       uploadPartSize: 1024 * 1024 * 5, // 分段大小&&文件启用分段大小
       sizeError: [],
       enableReUpload: true,
-      readFileList: []
+      readFileList: [],
+      showDrop: false,
+      finList: []
+    }
+  },
+  computed: {
+    jsonConfigList () {
+      return JSON.stringify(this.localConfigList)
+    },
+    renderPadding () {
+      return this.fileListArr.length ? {
+        padding: '50px 10px'
+      } : {
+        padding: '150px 20px'
+      }
+    },
+    options () {
+      return {
+        tooltip: {
+          show: false
+        },
+        title: {
+          // text超出最大数字16位
+          text: this.renderLoadingText(),
+          x: 'center',
+          y: 'center',
+          textStyle: {
+            color: '#fff',
+            fontSize: '30px' // 中间标题文字大小设置
+          }
+        },
+        series: [
+          {
+            name: '完成情况外层',
+            type: 'pie',
+            padAngle: 5,
+            // radius: ['40%', '60%'],
+            radius: ['52%', '75%'],
+            center: ['50%', '50%'],
+            clockwise: false,
+            data: this.datas_outer,
+            // startAngle: 100,
+            hoverAnimation: false,
+            legendHoverLink: false,
+            label: {
+              show: false
+            },
+            labelLine: {
+              show: false
+            }
+          }
+        ]
+      }
     }
   },
   watch: {
+    'form.location' (val) {
+      this.checkManager = false
+    },
+    jsonConfigList () {
+      this.updateConfigList()
+    },
     dirFlag (val) {
       if (val) {
         this.$nextTick(() => {
           this.$refs['uploadFile'].clearFiles()
         })
+        this.enableDrop()
         this.fileListArr = []
+        this.datas_outer = []
+        for (let i = 30; i > 0; i--) {
+          this.datas_outer.push({
+            value: 1, // 占位用
+            name: '未完成',
+            itemStyle: { color: '#19272e' }
+          })
+        }
       } else {
+        this.currentPage = 1
+        this.pageSize = 10
+        this.mockPutSize = 0
+        // this.needMock = false
+        this.myecharts = null
+        this.continueArr = []
+        this.putSize = 0 // 记录进度
+        this.totalSize = 0
+        this.readFileList = [] // 记录大文件上传
+        this.finList = []
+        clearTimeout(this.timer)
         this.releaseDisable()
-        this.doClearFileLog()
+        this.disableDrop()
+        // this.doClearFileLog()
       }
     }
   },
   mounted () {
-    // get HostName、默认传递
-    this.init()
-    // setTimeout(() => {
-    //   this.getBucketList()
+    this.loadConfigList()
+    // window.addEventListener('online', function () {
+    //   console.log('网络连接恢复！')
     // })
+    // window.addEventListener('offline', function () {
+    //   console.log('网络连接中断！')
+    // })
+    // AWS.events.on('send', (req) => {
+    //   console.log('req', req)
+    //   if (req.retryCount > 5) {
+    //     this.S3.uploadPart(
+    //       { ...req.request.params }
+    //       , (error, success) => {
+    //         console.log(error, success, req)
+    //       })
+    //   }
+    // })
+    // this.myecharts = this.$echarts.init(document.getElementById('loadChart'))
+    // this.renderChartPart()
+    // setTimeout(async () => {
+    //   await this.renderLoadingChart(5)
+    // }, 1000)
+    // document.addEventListener('keydown', function (event) {
+    //   if (event.code === 'Escape') {
+    //     event.preventDefault() // 取消默认行为
+    //   }
+    // })
+    // const { accessKeyId = '', endpoint = '', secretAccessKey = '' } = JSON.parse(localStorage.getItem('s3Client')) || {}
+
+    // this.form.endpoint = endpoint || 'http://10.0.2.174:9000'
+    // this.form.accessKeyId = accessKeyId || 'minioadmin'
+    // this.form.secretAccessKey = secretAccessKey || 'minioadmin'
+
+
+
+    // jsZip
+
+    // const zip = new JSZip()
+    // // 指定文件夹名称、文件内容
+    // zip.file("text/file.txt", "content");
+    // zip.forEach(function (relativePath, file) {
+    //   console.log(`path: ${relativePath}, file: ${file.name}`)
+    //   // 输出：path: text/file.txt, file: text/file.txt
+    // });
+
+    // 文件名可以是目录的名称、要是多个目录或者其他混合文件的文件名按时间 file_list构建
+    // 打包输出blob数据、
+    // zip.generateAsync({ type: "blob" }).then(function (content) {
+    //   document.body.appendChild(document.createElement("a"));
+    //   document.querySelector("a").href = URL.createObjectURL(content);
+    //   document.querySelector("a").download = "test.zip";
+    //   document.querySelector("a").click();
+    // });
+
+
+    // this.init()
+  },
+  destroyed () {
+    clearTimeout(this.timer)
   },
   methods: {
+    initManager () {
+      const loading = this.$loading({
+        lock: true,
+        text: 'loading...',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      // 返回 Promise，确保调用者可以使用 .then()
+      return getServer(this.form.location).then(res => {
+        // res.planMsg[0].gatewayEndpoints[1] = '1.2.3.4'
+        // res.planMsg[1] = {
+        //   gatewayEndpoints: [
+        //     '10.0.2.179:83001',
+        //     '3.12.1.3'
+        //   ],
+        //   location:
+        //     "000000-0000-00000-179",
+        //   resId: '123'
+        // }
+        this.endPointList = (res.planMsg || []).reduce((pre, cur) => {
+          // gatewayEndpoints 扁平化且 合入cur的属性
+          pre.push(...cur.gatewayEndpoints.map(item => ({ endpoint: item, ...cur })))
+          return pre
+        }, [])
+        this.checkManager = true
+      }).finally(() => {
+        loading.close()
+      })
+    },
+    handleFillForm (val) {
+      this.optType = 'modify'
+      const index = this.localConfigList.findIndex(x => x.id === val)
+      Object.assign(this.form, {
+        ...this.localConfigList[index === -1 ? 0 : index]
+      })
+      const {
+        accessKeyId,
+        secretAccessKey,
+        endpoint,
+        location,
+        id
+      } = this.form
+      localStorage.setItem('s3Client', JSON.stringify({
+        accessKeyId,
+        secretAccessKey,
+        endpoint,
+        location,
+        id
+      }))
+      // 有效配置执行，确保顺序执行
+      this.initManager().then(() => {
+        this.getBucketList()
+      })
+      // 加载配置后连接S3
+    },
+    resetConifg () {
+      this.checkManager = false
+      this.checkFlag = false
+      this.form = {
+        location: '',
+        // location: 'http://10.0.2.179:29084',
+        endpoint: '',
+        // endpoint: 'http://10.0.2.173:9000',
+        accessKeyId: '',
+        // secretAccessKey: 'minioadmin',
+        secretAccessKey: '',
+        id: ''
+      }
+      this.selform = ''
+      this.bucketList = []
+      this.$nextTick(() => {
+        this.$refs['form'].clearValidate()
+      })
+    },
+    addConfig () {
+      this.optType = 'add'
+      this.resetConifg()
+    },
+    delConfig () {
+      this.optType = 'del'
+      // 删除条件 有选择的配置
+      if (this.selform) {
+        this.$confirm('确定删除当前配置,请确认!', '', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          dangerouslyUseHTMLString: true
+        })
+          .then(() => {
+            this.$msg({
+              type: 'success',
+              text: '配置已删除'
+            })
+            // toDo selform 保留id
+            // 删除匹配
+            const index = this.localConfigList.findIndex(x => x.id === this.selform)
+            this.localConfigList.splice(index, 1)
+            this.optType = ''
+            this.resetConifg()
+            localStorage.removeItem('s3Client')
+          })
+          .catch(() => {
+            this.optType = 'modify'
+          })
+        // doConfirm
+      }
+    },
+    saveConfig () {
+      // this.optType = 'save'
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          const {
+            location,
+            endpoint,
+            accessKeyId,
+            secretAccessKey,
+          } = this.form
+          if (!this.selform) {
+
+            // 新增配置
+            const id = Date.now()
+            this.localConfigList.push({
+              location,
+              endpoint,
+              accessKeyId,
+              secretAccessKey,
+              id
+            })
+            this.selform = id
+            this.$msg({
+              type: 'success',
+              text: '配置已保存'
+            })
+            localStorage.setItem('s3Client', JSON.stringify({
+              accessKeyId,
+              secretAccessKey,
+              endpoint,
+              location,
+              id: this.selform
+            }))
+          } else {
+            // 覆盖原先配置
+            const index = this.localConfigList.findIndex(x => x.id === this.selform)
+            Object.assign(
+              this.localConfigList[index],
+              {
+                location,
+                endpoint,
+                accessKeyId,
+                secretAccessKey,
+              }
+            )
+            localStorage.setItem('s3Client', JSON.stringify({
+              accessKeyId,
+              secretAccessKey,
+              endpoint,
+              location,
+              id: this.selform
+            }))
+            // this.$msg({
+            //   type: 'success',
+            //   text: '配置已修改'
+            // })
+            // 修改缓存配置
+          }
+          // this.getBucketList()
+        }
+      })
+      // 保存并且校验通过之后、自动切换select到当前
+    },
+    loadConfigList () {
+      const configList = JSON.parse(localStorage.getItem('localConfigList') || '[]')
+      this.localConfigList = configList
+      // 加载配置(无缓存则空)
+      const localConfig = JSON.parse(localStorage.getItem('s3Client') || '{}')
+      if (JSON.stringify(localConfig) !== '{}') {
+        // console.log(localConfig, 'ReadConfigS3Client')
+        this.handleFillForm(localConfig.id)
+        this.selform = localConfig.id
+      }
+    },
+    updateConfigList () {
+      localStorage.setItem('localConfigList', JSON.stringify(this.localConfigList))
+    },
+    doCheckNetWork () {
+      // 检测网络
+      return new Promise((resolve, reject) => {
+        this.connectingFlag = true
+        this.S3.listBuckets((err, data) => {
+          this.connectingFlag = false
+          if (err && (err.code === 'NetworkingError' || err.code === 'TimeoutError')) {
+            reject(err)
+            // console.log(err, 'ConnectTest')
+          } else {
+            resolve()
+          }
+        })
+      })
+    },
+    dragEnterHandler (e) {
+      e.preventDefault()
+      if (!this.showDrop) {
+        this.showDrop = true
+      }
+    },
+    dragLeaveHandler (e) {
+      e.preventDefault()
+      e.relatedTarget || (this.showDrop = false)
+      // e.relatedTarget有效值仍在界面内
+    },
+    dropHandler (e) {
+      e.preventDefault()
+      this.showDrop = false
+    },
+    renderLoadingText () {
+      // return this.needMock ? String(this.mockPutSize).replace('.00', '') + '%' : Number((this.putSize / this.totalSize) * 100).toFixed(2).replace('.00', '') + '%'
+      return Number((this.putSize / this.totalSize) * 100).toFixed(2).replace('.00', '') + '%'
+    },
+    // 测试上传进度图表
+    async renderLoadingChart (timeSeconds, initialValue = 0) {
+      // console.log(timeSeconds, 123)
+      const totalValue = initialValue ? 100 - initialValue : 100
+      const res = this.getMockTime(timeSeconds, totalValue)
+      this.mockPutSize = initialValue == 100 ? 100 : initialValue + Number(res[0]).toFixed(2)
+      this.renderChartPart()
+      // 比如5s
+      for (let i = 1; i <= timeSeconds; i++) {
+        await new Promise(resolve => {
+          setTimeout(() => {
+            // 这里放置每隔一秒执行的代码
+            this.mockPutSize = Number(res.shift()).toFixed(2)
+            this.renderChartPart()
+            // 进度 xdata 最终是 100
+            resolve(i)
+          }, 1000) // i * 1000 表示每次延迟 i 秒
+        })
+      }
+      return Promise.resolve(true)
+    },
+
+    renderChartPart () {
+      //
+      var num = 30 // 定义小块个数
+      // var rate = this.needMock ? this.mockPutSize / 100 : this.putSize / this.totalSize // 完成率
+      var rate = this.putSize / this.totalSize // 完成率
+      const count = rate * 30
+      // 填充
+      for (let i = 1; i <= num; i++) {
+        if (i <= count) {
+          this.datas_outer[num - i].itemStyle.color = '#ff8746'
+        } else {
+          this.datas_outer[num - i].itemStyle.color = '#19272e'
+        }
+      }
+      this.myecharts && this.myecharts.setOption(this.options)
+      this.timer = setTimeout(() => {
+        this.renderChartPart()
+      }, 1000)
+      // if (this.needMock) {
+      //   clearTimeout(this.timer)
+      // } else {
+      //   this.timer = setTimeout(() => {
+      //     this.renderChartPart()
+      //   }, 1000)
+      // }
+    },
+    getMockTime (totalTime, count) {
+      const res = []
+      count = count || 100
+      function nonLinearIncrease (currentTime, totalTime) {
+        // 非线性增长函数，这里使用了sin函数作为示例
+        const progress = Math.sin((Math.PI / 2) * (currentTime / totalTime))
+        const result = progress * count
+        return result
+      }
+      // 测试函数，模拟从0到100的非线性增长过程
+      function testNonLinearIncrease (totalTime) {
+        for (let t = 1; t <= totalTime; t++) {
+          const value = nonLinearIncrease(t, totalTime)
+          res.push(value)
+          // console.log(`Time: ${t}, Value: ${value}`)
+        }
+        return res
+      }
+      return testNonLinearIncrease(totalTime)
+    },
     handlePutPath (file) {
       const {
         webkitRelativePath,
@@ -227,37 +757,32 @@ export default {
     },
     handleSizeValidate (file) {
       const size = file.size
-      if (size > this.uploadSizeLimt) {
-        this.sizeError.push(file.name)
-        return false
-      } else {
-        // put到上传列表
-        // 此处去重、判断Key和目录同时一致、就移除之前的旧文件、替代新文件（暂无提示）
-        const isExist = this.fileListArr.findIndex(x => x.name === file.name && x.webkitRelativePath === file.webkitRelativePath)
-        if (isExist > -1) {
-          this.fileListArr.splice(isExist, 1)
-        }
-        this.fileListArr.push(file)
-      }
-    },
-    init () {
-      // const { accessKeyId = '', endpoint = '' } = JSON.parse(localStorage.getItem('form')) || {}
-      // this.form.accessKeyId = accessKeyId
-      // this.form.endpoint = endpoint
-      // this.form.hostName = 'Dc'
-
-      this.getHostLoading = true
-      hostname().then(res => {
-        this.form.hostName = res.data || ''
-      }).finally(() => {
-        this.getHostLoading = false
-        const { accessKeyId = '', endpoint = '' } = JSON.parse(localStorage.getItem('form')) || {}
-        this.form.accessKeyId = accessKeyId
-        this.form.endpoint = endpoint
+      const isExist = this.fileListArr.findIndex(x => {
+        return x.name === file.name && (x.webkitRelativePath || x.relativePath) === (file.webkitRelativePath || file.relativePath)
       })
+      if (isExist > -1 || size > this.uploadSizeLimt) {
+        return false
+      }
+      this.fileListArr.push(file)
     },
+    // init () {
+    //   // const { accessKeyId = '', endpoint = '' } = JSON.parse(localStorage.getItem('form')) || {}
+    //   // this.form.accessKeyId = accessKeyId
+    //   // this.form.endpoint = endpoint
+    //   // this.form.hostName = 'Dc'
+
+    //   this.getHostLoading = this.$loading(this.loadingOption)
+    //   getHostname().then(res => {
+    //     this.form.hostName = res.data || ''
+    //   }).finally(() => {
+    //     this.getHostLoading.close()
+    //     const { accessKeyId = '', endpoint = '' } = JSON.parse(localStorage.getItem('form')) || {}
+    //     this.form.accessKeyId = accessKeyId
+    //     this.form.endpoint = endpoint
+    //   })
+    // },
     removeItem (row) {
-      const index = this.fileListArr.findIndex(x => x.uid === row.row.uid)
+      const index = this.fileListArr.findIndex(x => x.relativePath === row.row.relativePath && x.name === row.row.name)
       this.fileListArr.splice(index, 1)
       // 最后一页删除后、切到1
       if (this.fileListArr.length / this.pageSize <= 1) {
@@ -272,191 +797,135 @@ export default {
     handleCurrentChange (val) {
       this.currentPage = val
     },
-    changeFile (file, fileList) {
-      // console.log(file, fileList, 12333)
-      // this.fileListArr = fileList
-      // this.total = this.fileListArr.length
-      // 本地记录分段上传文件 abortMultiple
-      return
-      var blob = file.raw
-      // 测试大文件分片
-      const fileSize = file.raw.size
-      const chunkSize = this.uploadPartSize
-      const chunks = Math.ceil(fileSize / chunkSize)
-      const {
-        Bucket,
-        hostName,
-        endpoint,
-        accessKeyId
-      } = this.form
-      const Key = hostName + '/' + file.raw.webkitRelativePath
-      this.S3.createMultipartUpload({
-        Bucket,
-        Key
-      }, (err, data) => {
-        if (err) {
-          console.error('Error creating multipart upload:', err)
-          return
-        } else {
-          const keyList = JSON.parse(localStorage.getItem('keyList')) || []
-          const UploadId = data.UploadId
-          keyList.push({
-            Bucket,
-            Key,
-            UploadId: data.UploadId,
-            accessKeyId,
-            endpoint
-          })
-          localStorage.setItem('keyList', JSON.stringify(keyList))
-          const multiplePart = []
-          // uploadPart
-          for (let chunkCount = 0; chunkCount < chunks; chunkCount++) {
-            const start = chunkCount * chunkSize
-            const end = Math.min(start + chunkSize, fileSize)
-            const body = blob.slice(start, end)
-            const reqParams = {
-              PartNumber: chunkCount + 1,
-              Body: body,
-              Bucket,
-              Key,
-              UploadId: data.UploadId
-            }
-            const p = new Promise((res, rej) => {
-              this.S3.uploadPart(reqParams
-                , (err, data) => {
-                  if (err) rej(err)
-                  else res(data)
-                })
-            })
-            multiplePart.push(p)
-          }
-          // uploadPart End
-          Promise.allSettled(multiplePart).then(listPartFin => {
-            console.log(listPartFin, 'finish')
-            const partOver = listPartFin.every(x => x.status === 'fulfilled')
-            if (partOver) {
-              // listParts
-              var params = {
-                Bucket,
-                Key: hostName + '/' + file.raw.webkitRelativePath,
-                UploadId: data.UploadId
-              }
-              // this.S3.listMultipartUploads({ Bucket }, (err, data) => {
-              //   console.log(err, data, '123')
-              // })
-              this.S3.listParts(params, (err, res) => {
-                if (err) return
-                else {
-                  const Parts = res.Parts.map(x => {
-                    return {
-                      PartNumber: x.PartNumber,
-                      ETag: x.ETag
-                    }
-                  }).sort((a, b) => a.PartNumber - b.PartNumber)
-                  // finish
-                  this.S3.completeMultipartUpload({
-                    Bucket,
-                    Key,
-                    UploadId: data.UploadId,
-                    MultipartUpload: { Parts }
-                  }, (err, data) => {
-                    // 测试取消分段上传
-                    console.log(err, data)
-                  })
-                }
-              })
-            } else {
-              // handle reUploadPart
-            }
-          })
-        }
-      })
-    },
-
-    handleMultUpload (fileArr) {
-      const chunkSize = this.uploadPartSize
+    async handleMultUpload (fileArr) {
       const {
         Bucket,
         hostName,
         accessKeyId,
         endpoint
       } = this.form
-      const arr = localStorage.getItem('fileList')
-      if (!arr) localStorage.setItem('fileList', '[]')
-      this.readFileList = JSON.parse(arr || '[]')
-      // return PromiseMultiple
-      return fileArr.map(file => {
+      const asyncTask = (file) => {
         const fileSize = file.size
+        // 大于5GB、分片10m、500、
+        let chunkSize = ''
+        if (fileSize > 1024 * 1024 * 1024 * 10) {
+          chunkSize = 1024 * 1024 * 10
+        } else if (fileSize > 1024 * 1024 * 1024 * 5) {
+          chunkSize = 1024 * 1024 * 8
+        } else {
+          chunkSize = 1024 * 1024 * 5
+        }
+        // > 1000 ? 1024 * 1024 * 10 : this.uploadPartSize //5MB
         const chunks = Math.ceil(fileSize / chunkSize)
         const Key = hostName + '/' + this.handlePutPath(file)
         file['Key'] = Key
         return new Promise((resolve, rejected) => {
           // 检测文件检测失败重传
           const startTime = moment().format('YYYY-MM-DD HH:mm:ss')
-
+          // this.readFileList = [{ 'accessKeyId': 'minioadmin', 'endpoint': 'http://10.0.2.153:9000', 'Bucket': 'test', 'Key': '/testBig/1223.exe', 'UploadId': 'N2IwOTE3MDctYzgxZi00NTFlLThjZGMtM2FiNGZkYjE0MjIzLjAyMTJiNjExLWRlMDItNDNiMi04OWIzLWUwMjA2NjA1NWRlNg' }]
           const isExistReUploadPart = this.readFileList.find(x => {
-            return x.Key === Key && x.Bucket === Bucket && x.accessKeyId === accessKeyId && x.endpoint === endpoint && x.reUpload
+            return x.Key === Key && x.Bucket === Bucket && x.accessKeyId === accessKeyId && x.endpoint === endpoint
           })
+
+          // 存在文件的分片、调用listPart获取已上传的分片、并在下面的上传分片中跳过已有的分片
+          // 一旦uploadPart开始进行中途断网则需要恢复
+          // 所以断网续传2中、重试和重传
+          // 重传下面得逻辑得调用listPart辅助记录已上传得文件并跳过进度
+          // 且用于记录上传part的uploadId得同步新的uploadId
+          // 多次中断会有问题、所以得记录已上传的partNumber、在新的上传失败时
+          // 譬如、第一次上传1、2、3、4、5、5失败、则记录到4的size
+          // 第二次1、2、3、5成功、4失败、则5不会同步
+          // 所以断网对于大文件的记录得全部清空、从头开始？？
           if (isExistReUploadPart) {
-            // 存在切片、在有效期且开启续传
             const {
-              parts
+              UploadId
             } = isExistReUploadPart
-            const multiplePart = []
-            for (let chunkCount = 0; chunkCount < chunks; chunkCount++) {
-              const start = chunkCount * chunkSize
-              const end = Math.min(start + chunkSize, fileSize)
-              const body = file.slice(start, end)
-              const reqParams = {
-                PartNumber: chunkCount + 1,
-                Body: body,
-                Bucket,
-                Key,
-                UploadId: isExistReUploadPart.UploadId
-              }
-              const jumpPass = parts.some(x => x.PartNumber === chunkCount + 1)
-              if (jumpPass) continue
-              const p = new Promise((res, rej) => {
-                this.S3.uploadPart(reqParams
-                  , (uploadPartErr, uploadPartData) => {
-                    if (uploadPartErr) rej(uploadPartErr)
-                    else res(uploadPartData)
-                  })
-              })
-              multiplePart.push(p)
+            // 存在切片、在有效期且开启续传
+            const params = {
+              Bucket,
+              Key,
+              UploadId
             }
-            // afterUploadPart
-            Promise.allSettled(multiplePart).then(listPartFin => {
-              // console.log(listPartFin, 'finish')
-              const partOver = listPartFin.every(x => x.status === 'fulfilled')
-              if (partOver) {
-                // listParts
-                var params = {
-                  Bucket,
-                  Key,
-                  UploadId: isExistReUploadPart.UploadId
-                }
-                this.S3.listParts(params, (partErr, partRes) => {
-                  const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                  if (partErr) {
-                    rejected({
-                      err: partErr,
-                      file,
-                      startTime,
-                      endTime
+            // console.log(this.readFileList, params)
+            this.S3.listParts(params, async (err, data) => {
+              if (!err) {
+                let {
+                  parts
+                } = isExistReUploadPart
+                parts = parts && parts.length
+                  ? [...new Set([...(data.Parts || []).map(x => x.PartNumber), ...parts])]
+                  : (data.Parts || []).map(x => x.PartNumber)
+                // console.log('data', data)
+                // console.log(parts, '=====已上传的part', this.readFileList, <isEx></isEx>istReUploadPart)
+                let multiplePart = []
+                const listPartFin = []
+                if (chunks !== data.Parts.length) {
+                  // 1)删除已上传得part、进度会倒退
+                  // 2)fileList记录上传part、并在每次listPart后去重part
+                  const res = await this.S3.createMultipartUpload({ Bucket, Key }).promise()
+                  const newUploadId = res.UploadId
+                  isExistReUploadPart.UploadId = newUploadId
+                  let netBreak = false
+                  for (let chunkCount = 0; chunkCount < chunks; chunkCount++) {
+                    if (netBreak) break
+                    const start = chunkCount * chunkSize
+                    const end = Math.min(start + chunkSize, fileSize)
+                    const doneUploadSize = end - start
+                    const body = file.slice(start, end)
+                    const PartNumber = chunkCount + 1
+                    const reqParams = {
+                      PartNumber,
+                      Body: body,
+                      Bucket,
+                      Key,
+                      UploadId: newUploadId
+                    }
+                    const jumpPass = parts.some(x => x === chunkCount + 1)
+
+                    const p = new Promise((res, rej) => {
+                      this.S3.uploadPart(reqParams
+                        , (uploadPartErr, uploadPartData) => {
+                          if (uploadPartErr) {
+                            rej({ ...uploadPartErr, doneUploadSize })
+                          } else {
+                            res(jumpPass ? { ...uploadPartData, doneUploadSize: 0, PartNumber }
+                              : { ...uploadPartData, doneUploadSize, PartNumber }
+                            )
+                          }
+                        })
                     })
-                  } else {
-                    const Parts = partRes.Parts.map(x => {
-                      return {
-                        PartNumber: x.PartNumber,
-                        ETag: x.ETag
-                      }
-                    }).sort((a, b) => a.PartNumber - b.PartNumber)
-                    // finish
+                    multiplePart.push(p)
+                    if (multiplePart.length == 6 || chunkCount === chunks - 1) {
+                      const partRes = await Promise.allSettled(multiplePart)
+                      // console.log(partRes, '123')
+                      this.putSize += partRes.reduce((pre, cur) => {
+                        if (cur.status === 'fulfilled') {
+                          pre += cur.value.doneUploadSize
+                        } else {
+                          netBreak = cur.reason.code === 'NetworkingError' || cur.reason.code === 'TimeoutError'
+                        }
+                        return pre
+                      }, 0)
+                      listPartFin.push(...partRes)
+                      multiplePart = []
+                    }
+                  }
+                  // console.log(listPartFin, '=====剩下的分片=====')
+                  const partOver = listPartFin.every(x => x.status === 'fulfilled')
+                  if (partOver) {
+                    // listParts
+                    const Parts = [...listPartFin]
+                      .map(x => {
+                        return {
+                          PartNumber: x.PartNumber || x.value.PartNumber,
+                          ETag: x.ETag || x.value.ETag
+                        }
+                      })
+                      .sort((a, b) => a.PartNumber - b.PartNumber)
                     this.S3.completeMultipartUpload({
                       Bucket,
                       Key,
-                      UploadId: isExistReUploadPart.UploadId,
+                      UploadId: newUploadId,
                       MultipartUpload: { Parts }
                     }, (compErr, compErrData) => {
                       if (compErr) {
@@ -468,121 +937,15 @@ export default {
                           endTime
                         })
                       } else {
+                        const delIndex = this.readFileList.findIndex(x => {
+                          return x.UploadId === isExistReUploadPart.UploadId
+                        })
+                        this.readFileList.splice(delIndex, 1)
                         resolve(compErrData)
                       }
                       // console.log(compErr, compErrData)
                     })
-                  }
-                })
-              } else {
-                // 处理uploadpart错误、取其中一个error
-                const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                const err = listPartFin.find(x => x.status === 'rejected')?.reason
-                rejected({
-                  err: err,
-                  file,
-                  startTime,
-                  endTime
-                })
-                // handle reUploadPart
-              }
-            })
-          } else {
-            this.S3.createMultipartUpload({
-              Bucket,
-              Key
-            }, (createErr, createData) => {
-              const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-              if (createErr) {
-              // console.error('Error creating multipart upload:', createErr)
-                console.log(createErr, 'listPartFin')
-                rejected({ err: createErr, file, startTime, endTime })
-              } else {
-                const multiplePart = []
-                // writeAbortLog
-                this.readFileList.push({
-                  accessKeyId,
-                  endpoint,
-                  Bucket,
-                  Key,
-                  UploadId: createData.UploadId
-                })
-                // 此处同步的所以有问题了vuex先缓存一下
-                // endWrite 此处记录及最终Promise处处理完成判断、清楚记录或执行abortMultiple
-                for (let chunkCount = 0; chunkCount < chunks; chunkCount++) {
-                  const start = chunkCount * chunkSize
-                  const end = Math.min(start + chunkSize, fileSize)
-                  const body = file.slice(start, end)
-                  const reqParams = {
-                    PartNumber: chunkCount + 1,
-                    Body: body,
-                    Bucket,
-                    Key,
-                    UploadId: createData.UploadId
-                  }
-                  const p = new Promise((res, rej) => {
-                    // if (chunkCount > chunks - 2) {
-                    //   reqParams.Bucket = '666'
-                    // }
-                    this.S3.uploadPart(reqParams
-                      , (uploadPartErr, uploadPartData) => {
-                        if (uploadPartErr) rej(uploadPartErr)
-                        else res(uploadPartData)
-                      })
-                  })
-                  multiplePart.push(p)
-                }
-                // uploadPart End
-                Promise.allSettled(multiplePart).then(listPartFin => {
-                // console.log(listPartFin, 'finish')
-                  const partOver = listPartFin.every(x => x.status === 'fulfilled')
-                  if (partOver) {
-                  // listParts
-                    var params = {
-                      Bucket,
-                      Key,
-                      UploadId: createData.UploadId
-                    }
-                    this.S3.listParts(params, (partErr, partRes) => {
-                      const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                      if (partErr) {
-                        rejected({
-                          err: partErr,
-                          file,
-                          startTime,
-                          endTime
-                        })
-                      } else {
-                        const Parts = partRes.Parts.map(x => {
-                          return {
-                            PartNumber: x.PartNumber,
-                            ETag: x.ETag
-                          }
-                        }).sort((a, b) => a.PartNumber - b.PartNumber)
-                        // finish
-                        this.S3.completeMultipartUpload({
-                          Bucket,
-                          Key,
-                          UploadId: createData.UploadId,
-                          MultipartUpload: { Parts }
-                        }, (compErr, compErrData) => {
-                          if (compErr) {
-                            const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                            rejected({
-                              err: compErr,
-                              file,
-                              startTime,
-                              endTime
-                            })
-                          } else {
-                            resolve(compErrData)
-                          }
-                          // console.log(compErr, compErrData)
-                        })
-                      }
-                    })
                   } else {
-                  // 处理uploadpart错误、取其中一个error
                     const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
                     const err = listPartFin.find(x => x.status === 'rejected')?.reason
                     rejected({
@@ -591,1358 +954,41 @@ export default {
                       startTime,
                       endTime
                     })
-                  // handle reUploadPart
                   }
-                })
-              }
-            })
-          }
-        })
-      })
-    },
-    postFolder (type) {
-      if (type === 'file') {
-        $('.el-upload__input')[0].webkitdirectory = false
-      } else {
-        $('.el-upload__input')[0].webkitdirectory = true
-      }
-    },
-    releaseDisable () {
-      document.oncontextmenu = function () { }
-      document.onkeydown = function (event) {}
-      window.onbeforeunload = function () {}
-    },
-    resetForm (formName) {
-      if (this.$refs[formName] != undefined) {
-        this.$refs[formName].resetFields()
-      }
-    },
-
-    onDrop (e) {
-      e.preventDefault()
-      const dataTransfer = e.dataTransfer
-      if (
-        dataTransfer.items &&
-        dataTransfer.items[0] &&
-        dataTransfer.items[0].webkitGetAsEntry
-      ) {
-        this.webkitReadDataTransfer(dataTransfer)
-      }
-    },
-    webkitReadDataTransfer (dataTransfer) {
-      let fileNum = dataTransfer.items.length
-      const files = []
-      this.loading = true
-
-      // 递减计数，当fileNum为0，说明读取文件完毕
-      const decrement = () => {
-        if (--fileNum === 0) {
-          this.handleFiles(files)
-          this.loading = false
-        }
-      }
-
-      // 递归读取文件方法
-      const readDirectory = (reader) => {
-        // readEntries() 方法用于检索正在读取的目录中的目录条目，并将它们以数组的形式传递给提供的回调函数。
-        reader.readEntries((entries) => {
-          if (entries.length) {
-            fileNum += entries.length
-            entries.forEach((entry) => {
-              if (entry.isFile) {
-                entry.file((file) => {
-                  readFiles(file, entry.fullPath)
-                }, readError)
-              } else if (entry.isDirectory) {
-                readDirectory(entry.createReader())
-              }
-            })
-
-            readDirectory(reader)
-          } else {
-            decrement()
-          }
-        }, readError)
-      }
-      // 文件对象
-      const items = dataTransfer.items
-      // 拖拽文件遍历读取
-      for (var i = 0; i < items.length; i++) {
-        var entry = items[i].webkitGetAsEntry()
-        if (!entry) {
-          decrement()
-          return
-        }
-
-        if (entry.isFile) {
-          // 读取单个文件
-          return
-          // readFiles(items[i].getAsFile(), entry.fullPath, 'file')
-        } else {
-          // entry.createReader() 读取目录。
-          readDirectory(entry.createReader())
-        }
-      }
-
-      function readFiles (file, fullPath) {
-        file.relativePath = fullPath.substring(1)
-        files.push(file)
-        decrement()
-      }
-      function readError (fileError) {
-        throw fileError
-      }
-    },
-
-    handleFiles (files) {
-      // 按文件名称去存储列表，考虑到批量拖拽不会有同名文件出现
-      const dirObj = {}
-      // console.log(files, '1233')
-      // return
-      files.forEach((item) => {
-        // relativePath 和 name 一致表示上传的为文件，不一致为文件夹
-        // 文件直接放入table表格中
-        // 仍需考虑去重问题
-        const isExist = this.fileListArr.findIndex(x => x.name === item.name && x.relativePath === item.relativePath)
-        if (isExist > -1) {
-          this.fileListArr.splice(isExist, 1)
-        }
-        this.fileListArr.push(item)
-        // if (item.relativePath === item.name) {
-        //   this.tableData.push({
-        //     name: item.name,
-        //     filesList: [item.file],
-        //     isFolder: false,
-        //     size: item.size
-        //   })
-        // }
-        // // 文件夹，需要处理后放在表格中
-        // if (item.relativePath !== item.name) {
-        //   const filderName = item.relativePath.split('/')[0]
-        //   if (dirObj[filderName]) {
-        //     // 放入文件夹下的列表内
-        //     const dirList = dirObj[filderName].filesList || []
-        //     dirList.push(item)
-        //     dirObj[filderName].filesList = dirList
-        //     // 统计文件大小
-        //     const dirSize = dirObj[filderName].size
-        //     dirObj[filderName].size = dirSize ? dirSize + item.size : item.size
-        //   } else {
-        //     dirObj[filderName] = {
-        //       filesList: [item],
-        //       size: item.size
-        //     }
-        //   }
-        // }
-      })
-
-      // 放入tableData
-      Object.keys(dirObj).forEach((key) => {
-        this.tableData.push({
-          name: key,
-          filesList: dirObj[key].filesList,
-          isFolder: true,
-          size: dirObj[key].size
-        })
-      })
-    },
-
-    validateBucket () {
-      if (!this.form.Bucket) {
-        if (this.bucketList.length) {
-          this.$notify({
-            type: 'error',
-            title: '请选择一个bucket'
-          })
-        } else {
-          if (this.noBucket) {
-            this.$notify({
-              type: '无bucket可用，请先创建bucket'
-            })
-          } else {
-            this.$notify({
-              type: 'error',
-              title: '请点击“连接”按钮，设置bucket'
-            })
-          }
-        }
-      } else {
-        this.$refs['form'].validate((valid) => {
-          if (valid) {
-            document.onkeydown = function (event) {
-              var e = event || window.event || arguments.callee.caller.arguments[0]
-              if (e && e.keyCode == 116) {
-                return false
-              }
-            }
-            window.onbeforeunload = function (e) {
-              // 兼容ie
-              // 触发条件 产生交互、当前不支持自定义文字
-              e = e || window.event
-              if (e) e.returnValue = 'none'
-              return 'none'
-            }
-            document.oncontextmenu = function () { return false }
-            this.dirFlag = true
-            const { endpoint, accessKeyId } = this.form
-            localStorage.setItem('form', JSON.stringify({
-              endpoint,
-              accessKeyId
-            }))
-          }
-        })
-      }
-    },
-    getBucketList () {
-      const {
-        accessKeyId,
-        secretAccessKey,
-        endpoint
-      } = this.form
-      if (!endpoint) {
-        this.$notify({
-          type: 'error',
-          title: '请输入endpoint'
-        })
-        return
-      }
-      if (!accessKeyId) {
-        this.$notify({
-          type: 'error',
-          title: '请输入Access Key'
-        })
-        return
-      }
-      if (!secretAccessKey) {
-        this.$notify({
-          type: 'error',
-          title: '请输入Secret Key'
-        })
-        return
-      }
-      this.S3 = new AWS.S3({
-        accessKeyId,
-        secretAccessKey,
-        endpoint,
-        region: 'EastChain-1',
-        s3ForcePathStyle: true
-      })
-      this.S3.listBuckets((err, data) => {
-        if (err) {
-          // console.dir(err)
-          // console.log('%c 123', 'color:red;font-size:20px')
-          // "NetworkingError"
-          let title = ''
-          let message = ''
-          if (err.code === 'AccessDenied') {
-            title = '连接S3失败'
-            message = '请检查ak/sk是否输入正确'
-          } else if (Number(err.code) === 12) {
-            title = '网络异常'
-            message = '请检查endpoint是否正确'
-          } else if (err.code === 'NetworkingError') {
-            title = '网络异常'
-            message = '请检查endpoint是否正确,或稍后再试'
-          } else {
-            title = '连接S3失败'
-            message = this.$trans(err.message || '')
-          }
-          // console.dir(err, 'err')
-          this.$notify({
-            type: 'error',
-            title,
-            message,
-            showClose: false,
-            customClass: 'errorTip'
-          })
-          this.noBucket = false
-          this.bucketList = []
-          this.form.Bucket = ''
-        } else {
-          this.bucketList = (data.Buckets || []).map(x => x.Name)
-          if (!this.bucketList.length) {
-            this.$notify({
-              type: 'error',
-              title: '无bucket可用，请先创建bucket'
-            })
-            this.noBucket = true
-          } else {
-            this.form.Bucket = this.bucketList[0]
-            this.$notify({
-              type: 'success',
-              title: '连接S3成功'
-            })
-
-            // 确保断网或刷新页面导致未完成的上传记录清除
-            this.doClearFileLog()
-          }
-        }
-      })
-    },
-    doClearFileLog () {
-      const {
-        accessKeyId,
-        endpoint
-      } = this.form
-      const keyList = JSON.parse(JSON.stringify(this.readFileList))
-      const doAbortTasks = keyList.map((x, i) => {
-        return new Promise((resolve, rejected) => {
-          if (accessKeyId === x.accessKeyId && endpoint === x.endpoint) {
-            // 一致性确保listPart正常
-            const params = {
-              Bucket: x.Bucket,
-              Key: x.Key,
-              UploadId: x.UploadId
-            }
-            this.S3.listParts(params, (err, data) => {
-              // 不存在err、complete完还有part、上传大文件失败
-              // console.log(data, 'err', err)
-              if (!err) {
-                // doAbort
-                const reUpload = data.Parts && data.Parts.length > 0
-                // console.log(data, '1233', reUpload)
-                if (reUpload && this.enableReUpload) {
-                  keyList[i].reUpload = true
-                  keyList[i].parts = data.Parts
-                  const expireTime = keyList[i].expireTime
-                  if (expireTime) {
-                    if (
-                      expireTime < moment().valueOf()) {
-                      this.S3.abortMultipartUpload(params, (err, data) => {
-                        if (!err) {
-                          keyList[i].delete = true
-                          resolve('clearTask')
-                          // 清除该条记录
-                        }
+                } else {
+                  // 上传成功、complete失败
+                  const Parts = [...data.Parts]
+                    .map(x => {
+                      return {
+                        PartNumber: x.PartNumber || x.value.PartNumber,
+                        ETag: x.ETag || x.value.ETag
+                      }
+                    })
+                    .sort((a, b) => a.PartNumber - b.PartNumber)
+                  this.S3.completeMultipartUpload({
+                    Bucket,
+                    Key,
+                    UploadId,
+                    MultipartUpload: { Parts }
+                  }, (compErr, compErrData) => {
+                    if (compErr) {
+                      const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
+                      rejected({
+                        err: compErr,
+                        file,
+                        startTime,
+                        endTime
                       })
                     } else {
-                      resolve('keepReUpload')
-                    }
-                  } else {
-                    keyList[i].expireTime = moment().add(15, 'day').valueOf()
-                    resolve('reUpload')
-                  }
-                  // 有切片需要支持后续上传
-                } else {
-                  this.S3.abortMultipartUpload(params, (err, data) => {
-                    if (!err) {
-                      keyList[i].delete = true
-                      resolve('clearTask')
-                      // 清除该条记录
+                      const delIndex = this.readFileList.findIndex(x => {
+                        return x.UploadId === isExistReUploadPart.UploadId
+                      })
+                      this.readFileList.splice(delIndex, 1)
+                      resolve(compErrData)
                     }
                   })
+                  // console.log('合并')
                 }
-              } else {
-                // 此处问题、
-                keyList[i].delete = true
-                resolve('clearTask')
-                // 清除该条记录
-              }
-            })
-          } else {
-            rejected('notMatch')
-            // noThingTodo
-          }
-        })
-      })
-      Promise.allSettled(doAbortTasks).then(res => {
-        // localStorage.setItem('fileList', JSON.stringify(iterateArr))
-        // 结束清理status为删除的
-        const fileList = keyList.filter(x => x.delete !== true)
-        this.readFileList = []
-        localStorage.setItem('fileList', JSON.stringify(fileList))
-        // console.log('checkOver', keyList, localStorage.getItem('fileList'))
-      })
-    },
-
-    confirmPut () {
-      const {
-        Bucket,
-        hostName
-      } = this.form
-
-      const putObjectArr = []
-      const multUploadArr = []
-
-      const judgeUploadType = async () => {
-        this.fileListArr.forEach(x => {
-          if (x.size <= this.uploadPartSize) {
-            putObjectArr.push({
-              Bucket,
-              Key: hostName + '/' + this.handlePutPath(x),
-              Body: x
-            })
-          } else {
-            multUploadArr.push(x)
-          }
-        })
-      }
-      // 区分大文件
-      (async () => {
-        await judgeUploadType()
-        // startPutObject
-        // console.log(putObjectArr, multUploadArr)
-        // return
-        const loading = this.$loading({
-          lock: true,
-          text: '文件上传中，请勿关闭当前页面',
-          spinner: 'el-icon-loading',
-          background: 'rgba(1,1,1,.3)',
-          customClass: 'putLoading'
-        })
-        try {
-          const putObejcts = putObjectArr.map(file => {
-            return new Promise((res, rej) => {
-              const startTime = moment().format('YYYY-MM-DD HH:mm:ss')
-              this.S3.putObject(file, (err, data) => {
-                const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                if (err) rej({ err, file, startTime, endTime })
-                else res({ success: 'success', file, startTime, endTime })
-              })
-            })
-          })
-          const multipleObjects = this.handleMultUpload(multUploadArr)
-          Promise.allSettled(
-            [Promise.allSettled(putObejcts),
-              Promise.allSettled(multipleObjects)
-            ]
-          ).then(result => {
-            this.releaseDisable()
-            loading.close()
-            // console.log(result, 'result')
-            this.writeErrorLog(result)
-            // 上传及分段上传全部结束
-          })
-        } catch (error) {
-          console.log('errorOperate')
-        }
-      })()
-    },
-    writeErrorLog (result) {
-      const file = [...result[0].value, ...result[1].value]
-      const failList = file.filter(x => x.status === 'rejected')
-      const log = failList.reduce((pre, cur, i) => {
-        return pre + '结束时间：' + cur.reason.endTime + ' ' + '对象Key: ' + cur.reason.file.Key + ' ' + ' ' + '错误原因: ' + cur.reason.err.message + '\n'
-      }, '')
-      const total = file.length
-      const failCount = failList.length
-      const successCount = total - failCount
-      // console.log('===============', failList)
-      if (failCount && failCount > 0) {
-        upload({
-          log
-        }).then(res => {
-          this.$notify({
-            title: '上传完成',
-            dangerouslyUseHTMLString: true,
-            type: 'success',
-            message: `<p>
-          <strong style="color:#d3d6d8;font-size:15px">总计: ${total}个</strong>
-          <br/> <strong style="color:#d3d6d8;font-size:15px">成功: ${successCount}个</strong>
-          <br/> <strong style="color:#d3d6d8;font-size:15px">失败: ${failCount}个</strong>
-          <br/> <span style="color:#d3d6d8;font-size:15px">请到备份历史查看详情</span>
-        </p>`
-          })
-        }).finally(() => {
-          this.dirFlag = false
-        })
-      } else {
-        this.$notify({
-          title: '上传完成',
-          dangerouslyUseHTMLString: true,
-          type: 'success',
-          message: `<p>
-          <strong style="color:#d3d6d8;font-size:15px">总计: ${total}个</strong>
-          <br/> <strong style="color:#d3d6d8;font-size:15px">成功: ${successCount}个</strong>
-          <br/> <strong style="color:#d3d6d8;font-size:15px">失败: ${failCount}个</strong>
-        </p>`
-        })
-        this.dirFlag = false
-      }
-    }
-  }
-}
-</script>
-<style lang="scss" scoped>
-:deep(.form){
-  label.el-form-item__label{
-    margin-left: 0!important;
-    width: 150px!important;
-  }
-  .el-select{
-    width: 100%;
-  }
-}
-
-:deep(.el-dialog){
-  .icon {
-    cursor: pointer;
-    font-size: 17px;
-    margin: 0 18px 0 3px;
-    vertical-align: middle !important;
-  }
-}
-:deep(.errorTip){
-  background-color: aqua!important;
-  width: fit-content!important;
-  .el-notification__group{
-    .el-notification__content{
-      p{
-        color: #d3d6d8;
-      }
-    }
-  }
-}
-
-.el-icon-upload {
-  font-size: 19px;
-  margin: 0;
-}
-
-.el-upload__text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  line-height: 20px;
-  text-align: center;
-  color: #d3d6d8;
-}
-
-.addFiles {
-  color: #337dff;
-}
-
-.drag {
-  width: 100%;
-  margin-top: 10px;
-  padding: 50px 10px 50px;
-  border: 1px dashed #ccc;
-}
-.el-table{
-  max-height:600px;
-  overflow-y: auto;
-}
-</style>
-<style>
-.putLoading {
-  .el-loading-spinner{
-    margin-top: -100px!important;
-  }
-  .el-loading-spinner i{
-    font-size: 25px;
-  }
-  .el-loading-text{
-    font-size: 25px;
-  }
-}
-</style>
-```
-
-
-## 分片上传、
-
-### 上传对象并发不同步
-```js
-<template>
-  <div>
-    <el-row>
-      <el-col
-        :span="24"
-        class="manage-area-title"
-      >
-        <h2>备份</h2>
-      </el-col>
-    </el-row>
-    <!-- <BreadCrumbs /> -->
-    <div
-      v-loading="getHostLoading"
-      class="page_content_wrap"
-    >
-      <el-form
-        ref="form"
-        class="form"
-        :model="form"
-        style="width: 40%;"
-        label-width="150px"
-        :rules="rules"
-      >
-        <el-form-item label="hostName">
-          <el-input
-            v-model="form.hostName"
-            placeholder="请输入hostName"
-            readonly
-          />
-        </el-form-item>
-        <el-form-item
-          label="endpoint"
-          prop="endpoint"
-        >
-          <el-input
-            v-model="form.endpoint"
-            clearable
-            placeholder="请输入endpoint"
-          />
-        </el-form-item>
-        <el-form-item
-          label="Access Key"
-          prop="accessKeyId"
-        >
-          <el-input
-            v-model="form.accessKeyId"
-            clearable
-            placeholder="请输入Access Key"
-          />
-        </el-form-item>
-        <el-form-item
-          label="Secret Key"
-          prop="secretAccessKey"
-        >
-          <el-input
-            v-model="form.secretAccessKey"
-            type="password"
-            show-password
-            clearable
-            placeholder="请输入Secret Key"
-            style="width: 80%;"
-          />
-          <el-button
-            style="position: absolute; right: 0;top:8px"
-            @click="getBucketList"
-          >连接</el-button>
-        </el-form-item>
-        <el-form-item
-          v-if="bucketList&&bucketList.length"
-          label="bucket"
-          prop="Bucket"
-        >
-          <el-select
-            v-model="form.Bucket"
-            clearable
-            placeholder="请选择一个bucket"
-            filterable
-          >
-            <el-option
-              v-for="x in bucketList"
-              :key="x"
-              :value="x"
-              :label="x"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            class="golden"
-            @click="validateBucket()"
-          >备份</el-button>
-          <el-button
-            class="blue"
-            @click="resetForm('form')"
-          >重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-
-    <!-- <div
-      id="loadChart"
-      style="width:400px;height:300px"
-    /> -->
-
-    <el-dialog
-      title="备份"
-      :visible.sync="dirFlag"
-      width="65%"
-      destroy-on-close
-      :close-on-press-escape="false"
-      :close-on-click-modal="false"
-    >
-      <el-form
-        ref="createForm"
-        :model="createForm"
-        size="mini"
-        label-width="150px"
-        style="padding:0 5%;position:relative"
-      >
-        <!-- :before-upload="validateFileRule" -->
-        <!-- :accept=",,拼接可接受文件类型 image/* 任意图片文件" -->
-        <!-- :http-request="uploadFile"  覆盖原生action上传方法-->
-        <!-- var formData = new FormData();  //  用FormData存放上传文件 -->
-        <!-- formData.append('paramsName','file') -->
-        <el-row class="uploadMenu">
-          <el-upload
-            ref="uploadFile"
-            action="#"
-            multiple
-            :show-file-list="false"
-            :http-request="handleRequest"
-            :before-upload="handleSizeValidate"
-          >
-            <!-- <el-button
-                size="small"
-                class="golden"
-                @click="postFolder('file')"
-              >上传文件</el-button> -->
-            <el-button
-              size="small"
-              class="golden"
-              @click="postFolder('folder')"
-            >上传</el-button>
-          </el-upload>
-          <el-button
-            class="blue"
-            :disabled="!fileListArr.length"
-            @click="cleafFile"
-          >清空</el-button>
-        </el-row>
-        <!-- <input type="file" id="upload" ref="inputer" name="file" multiple /> -->
-        <div
-          draggable="true"
-          class="drag tableBox"
-          :style="renderPadding"
-        >
-          <div
-            v-show="!fileListArr.length"
-            class="el-upload__text"
-          >
-            <i
-              class="el-icon-upload"
-              style="margin-right: 6px"
-            />点击上传或拖拽文件夹到此处
-            <!-- <el-button type="text" @click="addFiles">添加文件</el-button> -->
-          </div>
-          <div
-            v-show="!fileListArr.length"
-            class="el-upload__text"
-          >
-            <!-- 文件上传数量不能超过100个，总大小不超过5GB -->
-            单个文件大小不超过50GB
-          </div>
-          <el-table
-            v-show="fileListArr.length"
-            :data="fileListArr.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
-          >
-            <el-table-column
-              label="对象key"
-              prop="name"
-              min-width="120px"
-            />
-            <el-table-column
-              label="目录"
-              min-width="120px"
-            >
-              <template slot-scope="scope">
-                {{ (scope.row.webkitRelativePath ? form.hostName +'/'+ scope.row.webkitRelativePath : form.hostName +'/'+ scope.row.relativePath) | renderPath }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="类型"
-              width="180px"
-            >
-              <template slot-scope="scope">
-                {{ scope.row.type }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="大小"
-              width="120px"
-            >
-              <template slot-scope="scope">
-                {{ byteConvert(scope.row.size) }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="移除"
-              width="100px"
-            >
-              <template slot-scope="scope">
-                <svg
-                  class="icon"
-                  aria-hidden="true"
-                  @click="removeItem(scope)"
-                >
-                  <use xlink:href="#icon-trash" />
-                </svg>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-pagination
-            v-show="fileListArr.length"
-            :current-page="currentPage"
-            :page-sizes="[5, 10, 50, 100]"
-            :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="fileListArr.length"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
-        </div>
-      </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          class="golden"
-          :disabled="fileListArr.length==0"
-          @click="confirmPut()"
-        >{{ $trans('button.confirm') }}</el-button>
-        <el-button @click="dirFlag = false;">{{ $trans('button.cancel') }}</el-button>
-      </div>
-      <div
-        id="loadChart"
-        style="width:400px;height:300px;display:none"
-      />
-    </el-dialog>
-    <div
-      v-if="showDrop"
-      class="picker__drop-zone"
-      @dragover="(e)=>e.preventDefault()"
-      @drop="onDrop"
-    >
-      <div class="drop-arrow">
-        <div class="arrow anim-floating" />
-        <div class="base" />
-      </div>
-      <div
-        data-v-6a50ffaa=""
-        class="picker__drop-zone-label"
-      >拖拽文件夹到此处</div>
-    </div>
-  </div>
-</template>
-<script>
-import {
-  upload,
-  getHostname
-} from '@/api/agent'
-const AWS = require('aws-sdk')
-// const FileSaver = require('file-saver')
-//  AWS 设置超时时间 默认2min、当前60min
-const initialTime = 5000
-let catchNetFail = false
-AWS.config.update({
-  httpOptions: {
-    timeout: 1000 * 60 * 5
-  },
-  maxRetries: 0 // 默认
-  // maxRedirects: 10,
-  // retryDelayOptions: {
-  //   // base 默认100ms
-  //   customBackoff: (count, err) => {
-  //     // catchNetFail = true
-  //     initialTime = count * 1000 + 5000
-  //     // console.log(count, initialTime)
-  //     // 重试时间间隔、默认5000，线性增长、最大增长5min、总重试时间12h
-  //     // y= kx+b k、b为常数、by轴的偏移量
-  //     // an = a1+(n-1) sn = n(a1+an)/2
-  //     // 420=>24h
-  //     return initialTime
-  //   }
-  // }
-})
-import moment from 'moment'
-export default {
-  filters: {
-    renderPath (path) {
-      path = String(path) || ''
-      const lastIndex = path.lastIndexOf('/')
-      return path.substr(0, lastIndex)
-    }
-  },
-  data () {
-    return {
-      continueArr: [],
-      finalList: [],
-      loadingBg: null,
-      putObjectNameArr: [],
-      timer: null,
-      myecharts: null,
-      datas_outer: [],
-      mockPutSize: 0,
-      needMock: false,
-      putSize: 0,
-      totalSize: 0,
-      createForm: {
-        folderName: ''
-      },
-      dirFlag: false,
-      form: {
-        hostName: '',
-        accessKeyId: '',
-        secretAccessKey: '',
-        // endpoint: 'http://10.0.2.154:8300',
-        endpoint: '',
-        path: '',
-        Bucket: ''
-      },
-      bucketList: [],
-      pageSize: 10,
-      currentPage: 1,
-      fileList: [],
-      fileListArr: [],
-      executeTime: '',
-      rules: {
-        // hostName: { required: true, message: '请输入hostName' },
-        accessKeyId: { required: true, message: '请输入accessKeyId' },
-        secretAccessKey: { required: true, message: '请输入secretAccessKey' },
-        endpoint: {
-          required: true,
-          validator: (_, val, cb) => {
-            const reg = /^(http:\/\/)?(.)*/
-            if (!val) {
-              return cb('请输入endpoint')
-            } else if (reg.test(val)) {
-              if (val.indexOf('http://') === -1) {
-                // 匹配http://替换
-                const regPrefix = /(h)?(t)?(t)?(p)?(:)?(\/)?(\/)?/
-                const matchStr = val.match(regPrefix)?.[0]
-                this.form.endpoint = 'http://' + val.substring(matchStr.length)
-              } else {
-                return cb()
-              }
-            }
-          }
-        },
-        Bucket: { required: true, message: '请选择bucket' }
-      },
-      S3: null,
-      noBucket: false,
-      getHostLoading: false,
-      uploadSizeLimt: 5 * 1024 ** 3, // 上传文件大小限制 1T
-      uploadPartSize: 1024 * 1024 * 5, // 分段大小&&文件启用分段大小
-      sizeError: [],
-      enableReUpload: true,
-      readFileList: [],
-      showDrop: false
-    }
-  },
-  computed: {
-    renderPadding () {
-      return this.fileListArr.length ? {
-        padding: '50px 10px'
-      } : {
-        padding: '150px 20px'
-      }
-    },
-    options () {
-      return {
-        tooltip: {
-          show: false
-        },
-        title: {
-          // text超出最大数字16位
-          text: this.renderLoadingText(),
-          x: 'center',
-          y: 'center',
-          textStyle: {
-            color: '#fff',
-            fontSize: '30px' // 中间标题文字大小设置
-          }
-        },
-        series: [
-          {
-            name: '完成情况外层',
-            type: 'pie',
-            padAngle: 5,
-            // radius: ['40%', '60%'],
-            radius: ['52%', '75%'],
-            center: ['50%', '50%'],
-            clockwise: false,
-            data: this.datas_outer,
-            // startAngle: 100,
-            hoverAnimation: false,
-            legendHoverLink: false,
-            label: {
-              show: false
-            },
-            labelLine: {
-              show: false
-            }
-          }
-        ]
-      }
-    }
-  },
-  watch: {
-    dirFlag (val) {
-      if (val) {
-        this.$nextTick(() => {
-          this.$refs['uploadFile'].clearFiles()
-        })
-        this.enableDrop()
-        this.fileListArr = []
-        this.datas_outer = []
-        for (let i = 30; i > 0; i--) {
-          this.datas_outer.push({
-            value: 1, // 占位用
-            name: '未完成',
-            itemStyle: { color: '#19272e' }
-          })
-        }
-      } else {
-        this.mockPutSize = 0
-        this.needMock = false
-        this.myecharts = null
-        this.continueArr = []
-        this.putSize = 0 // 记录进度
-        this.totalSize = 0
-        this.readFileList = []
-        catchNetFail = false
-        clearTimeout(this.timer)
-        this.releaseDisable()
-        this.disableDrop()
-        // this.doClearFileLog()
-      }
-    }
-  },
-  mounted () {
-    // AWS.events.on('send', (req) => {
-    //   console.log('req', req)
-    //   if (req.retryCount > 5) {
-    //     this.S3.uploadPart(
-    //       { ...req.request.params }
-    //       , (error, success) => {
-    //         console.log(error, success, req)
-    //       })
-    //   }
-    // })
-    // this.needMock = true
-    // this.myecharts = this.$echarts.init(document.getElementById('loadChart'))
-    // this.renderChartPart()
-    // setTimeout(async () => {
-    //   await this.renderLoadingChart(5)
-    // }, 1000)
-    document.addEventListener('keydown', function (event) {
-      if (event.code === 'Escape') {
-        event.preventDefault() // 取消默认行为
-      }
-    })
-    const { accessKeyId = '', endpoint = '' } = JSON.parse(localStorage.getItem('form')) || {}
-    this.form.accessKeyId = accessKeyId || 'http://10.0.2.153:9000'
-    this.form.endpoint = endpoint
-    //  || 'http://10.0.2.153:9000'
-    this.form.secretAccessKey = 'minioadmin'
-    setTimeout(() => {
-      this.getBucketList()
-    })
-    // this.init()
-
-    // get HostName、默认传递
-    // setTimeout(() => {
-    //   this.getBucketList()
-    //   // this.init()
-    // })
-  },
-  destroyed () {
-    clearTimeout(this.timer)
-  },
-  methods: {
-    dragEnterHandler (e) {
-      e.preventDefault()
-      if (!this.showDrop) {
-        this.showDrop = true
-      }
-    },
-    dragLeaveHandler (e) {
-      e.preventDefault()
-      e.relatedTarget || (this.showDrop = false)
-      // e.relatedTarget有效值仍在界面内
-    },
-    dropHandler (e) {
-      e.preventDefault()
-      this.showDrop = false
-    },
-    renderLoadingText () {
-      return this.needMock ? String(this.mockPutSize).replace('.00', '') + '%' : Number((this.putSize / this.totalSize) * 100).toFixed(2).replace('.00', '') + '%'
-    },
-    async renderLoadingChart (timeSeconds, initialValue = 0) {
-      // console.log(timeSeconds, 123)
-      const totalValue = initialValue ? 100 - initialValue : 100
-      const res = this.getMockTime(timeSeconds, totalValue)
-      this.mockPutSize = initialValue == 100 ? 100 : initialValue + Number(res[0]).toFixed(2)
-      this.renderChartPart()
-      // 比如5s
-      for (let i = 1; i <= timeSeconds; i++) {
-        await new Promise(resolve => {
-          setTimeout(() => {
-            // 这里放置每隔一秒执行的代码
-            this.mockPutSize = Number(res.shift()).toFixed(2)
-            this.renderChartPart()
-            // 进度 xdata 最终是 100
-            resolve(i)
-          }, 1000) // i * 1000 表示每次延迟 i 秒
-        })
-      }
-      return Promise.resolve(true)
-    },
-
-    renderChartPart () {
-      //
-      var num = 30 // 定义小块个数
-      var rate = this.needMock ? this.mockPutSize / 100 : this.putSize / this.totalSize // 完成率
-      const count = rate * 30
-      //
-      // 填充
-      for (let i = 1; i <= num; i++) {
-        if (i <= count) {
-          this.datas_outer[num - i].itemStyle.color = '#ff8746'
-        } else {
-          this.datas_outer[num - i].itemStyle.color = '#19272e'
-        }
-      }
-      this.myecharts && this.myecharts.setOption(this.options)
-      if (this.needMock) {
-        clearTimeout(this.timer)
-      } else {
-        this.timer = setTimeout(() => {
-          this.renderChartPart()
-        }, 1000)
-      }
-    },
-    getMockTime (totalTime, count) {
-      const res = []
-      count = count || 100
-      function nonLinearIncrease (currentTime, totalTime) {
-        // 非线性增长函数，这里使用了sin函数作为示例
-        const progress = Math.sin((Math.PI / 2) * (currentTime / totalTime))
-        const result = progress * count
-        return result
-      }
-      // 测试函数，模拟从0到100的非线性增长过程
-      function testNonLinearIncrease (totalTime) {
-        for (let t = 1; t <= totalTime; t++) {
-          const value = nonLinearIncrease(t, totalTime)
-          res.push(value)
-          // console.log(`Time: ${t}, Value: ${value}`)
-        }
-        return res
-      }
-      return testNonLinearIncrease(totalTime)
-    },
-    handlePutPath (file) {
-      const {
-        webkitRelativePath,
-        relativePath
-      } = file
-      return webkitRelativePath || relativePath
-    },
-    cleafFile () {
-      this.fileListArr = [] // 清除表格展示
-      this.$refs['uploadFile'].clearFiles() // 清除组件FileList
-    },
-    handleRequest (val) {
-      // 无功能、为自定义请求触发 beforeUpload校验文件
-      // console.log(val, '123')
-    },
-    handleSizeValidate (file) {
-      const size = file.size
-      const isExist = this.fileListArr.findIndex(x => {
-        return x.name === file.name && (x.webkitRelativePath || x.relativePath) === (file.webkitRelativePath || file.relativePath)
-      })
-      if (isExist > -1 || size > this.uploadSizeLimt) {
-        return false
-      }
-      this.fileListArr.push(file)
-    },
-    init () {
-      // const { accessKeyId = '', endpoint = '' } = JSON.parse(localStorage.getItem('form')) || {}
-      // this.form.accessKeyId = accessKeyId
-      // this.form.endpoint = endpoint
-      // this.form.hostName = 'Dc'
-
-      this.getHostLoading = true
-      getHostname().then(res => {
-        this.form.hostName = res.data || ''
-      }).finally(() => {
-        this.getHostLoading = false
-        const { accessKeyId = '', endpoint = '' } = JSON.parse(localStorage.getItem('form')) || {}
-        this.form.accessKeyId = accessKeyId
-        this.form.endpoint = endpoint
-      })
-    },
-    removeItem (row) {
-      const index = this.fileListArr.findIndex(x => x.relativePath === row.row.relativePath && x.name === row.row.name)
-      this.fileListArr.splice(index, 1)
-      // 最后一页删除后、切到1
-      if (this.fileListArr.length / this.pageSize <= 1) {
-        this.currentPage = 1
-      } else if (Math.ceil(this.fileListArr.length / this.pageSize) < this.currentPage) {
-        this.currentPage = this.currentPage - 1
-      }
-    },
-    handleSizeChange (val) {
-      this.pageSize = val
-    },
-    handleCurrentChange (val) {
-      this.currentPage = val
-    },
-
-    async handleMultUpload (fileArr) {
-      const {
-        Bucket,
-        hostName,
-        accessKeyId,
-        endpoint
-      } = this.form
-      // const arr = localStorage.getItem('fileList')
-      // if (!arr) localStorage.setItem('fileList', '[]')
-      // this.readFileList = JSON.parse(arr || '[]')
-      // 此处做断点续传
-      // return PromiseMultiple
-      // 此处不能统一执行、依次加入任务队列
-      const asyncTask = (file) => {
-        const fileSize = file.size
-        // 大于5GB、分片10m、500、
-        let chunkSize = ''
-        if (fileSize > 1024 * 1024 * 1024 * 10) {
-          chunkSize = 1024 * 1024 * 10
-        } else if (fileSize > 1024 * 1024 * 1024 * 5) {
-          chunkSize = 1024 * 1024 * 8
-        } else {
-          chunkSize = 1024 * 1024 * 5
-        }
-        // > 1000 ? 1024 * 1024 * 10 : this.uploadPartSize //5MB
-        const chunks = Math.ceil(fileSize / chunkSize)
-        const Key = hostName + '/' + this.handlePutPath(file)
-        file['Key'] = Key
-        return new Promise((resolve, rejected) => {
-          // 检测文件检测失败重传
-          const startTime = moment().format('YYYY-MM-DD HH:mm:ss')
-
-          const isExistReUploadPart = this.readFileList.find(x => {
-            return x.Key === Key && x.Bucket === Bucket && x.accessKeyId === accessKeyId && x.endpoint === endpoint
-          })
-          // console.log(
-          //   isExistReUploadPart, '分片续传'
-          // )
-          // 存在文件的分片、调用listPart获取已上传的分片、并在下面的上传分片中跳过已有的分片
-          // 触发前置条件、 分片处理完添加分片到fileList上传列表、处理成功移除、
-          // 故递归处理的函数在此只有分片失败会进入此、createMultipartUpload和complete不会在此处理？
-          if (isExistReUploadPart) {
-            const {
-              UploadId
-            } = isExistReUploadPart
-            // 存在切片、在有效期且开启续传
-            const params = {
-              Bucket,
-              Key,
-              UploadId
-            }
-            this.S3.listParts(params, (err, data) => {
-              // 不存在err、complete完还有part、上传大文件失败
-              // console.log(data, 'err', err)
-              if (!err) {
-                // console.log(data.Parts, '===已上传的分片===')
-                // 分片续传、data.Parts 参数为已上传的分片list、需重置非空
-                isExistReUploadPart.parts = data.Parts || [];
-                (async () => {
-                  const {
-                    parts
-                  } = isExistReUploadPart
-                  let multiplePart = []
-                  const listPartFin = []
-                  for (let chunkCount = 0; chunkCount < chunks; chunkCount++) {
-                    const start = chunkCount * chunkSize
-                    const end = Math.min(start + chunkSize, fileSize)
-                    const doneUploadSize = end - start
-                    const body = file.slice(start, end)
-                    const PartNumber = chunkCount + 1
-                    const reqParams = {
-                      PartNumber,
-                      Body: body,
-                      Bucket,
-                      Key,
-                      UploadId: isExistReUploadPart.UploadId
-                    }
-                    const jumpPass = parts.some(x => x.PartNumber === chunkCount + 1)
-                    if (jumpPass) {
-                      this.putSize += doneUploadSize
-                      if (chunkCount === chunks - 1) {
-                        const partRes = await Promise.allSettled(multiplePart)
-                        this.putSize += partRes.reduce((pre, cur) => {
-                          pre += cur.status === 'fulfilled' ? cur.value.doneUploadSize
-                            : cur.reason.doneUploadSize
-                          return pre
-                        }, 0)
-                        listPartFin.push(...partRes)
-                        multiplePart = []
-                        continue
-                      } else {
-                        continue
-                        // 此处continue跳过已有的循环、若为最后循环、需等待任务队列结束并拿到分片结果
-                      }
-                    }
-                    const p = new Promise((res, rej) => {
-                      this.S3.uploadPart(reqParams
-                        , (uploadPartErr, uploadPartData) => {
-                          if (uploadPartErr) rej({ ...uploadPartErr, doneUploadSize })
-                          else res({ ...uploadPartData, doneUploadSize, PartNumber })
-                        })
-                    })
-                    multiplePart.push(p)
-                    if (multiplePart.length == 5 || chunkCount === chunks - 1) {
-                      const partRes = await Promise.allSettled(multiplePart)
-                      this.putSize += partRes.reduce((pre, cur) => {
-                        pre += cur.status === 'fulfilled' ? cur.value.doneUploadSize
-                          : cur.reason.doneUploadSize
-                        return pre
-                      }, 0)
-                      listPartFin.push(...partRes)
-                      multiplePart = []
-                    }
-                  }
-                  // console.log(listPartFin, '=====剩下的分片=====')
-                  const partOver = listPartFin.every(x => x.status === 'fulfilled')
-                  if (partOver) {
-                    // listParts
-                    const Parts = [...listPartFin, ...parts]
-                      .map(x => {
-                        return {
-                          PartNumber: x.PartNumber || x.value.PartNumber,
-                          ETag: x.ETag || x.value.ETag
-                        }
-                      })
-                      .sort((a, b) => a.PartNumber - b.PartNumber)
-                    this.S3.completeMultipartUpload({
-                      Bucket,
-                      Key,
-                      UploadId: isExistReUploadPart.UploadId,
-                      MultipartUpload: { Parts }
-                    }, (compErr, compErrData) => {
-                      if (compErr) {
-                        const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                        rejected({
-                          err: compErr,
-                          file,
-                          startTime,
-                          endTime
-                        })
-                      } else {
-                        const delIndex = this.readFileList.findIndex(x => {
-                          return x.UploadId === isExistReUploadPart.UploadId
-                        })
-                        this.readFileList.splice(delIndex, 1)
-                        resolve(compErrData)
-                      }
-                      // console.log(compErr, compErrData)
-                    })
-                  } else {
-                    // 处理uploadpart错误、取其中一个error
-                    const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                    const uploadPartError = listPartFin.find(x => x.status === 'rejected')?.reason
-                    rejected({
-                      err: uploadPartError,
-                      file,
-                      startTime,
-                      endTime
-                    })
-                    // handle reUploadPart
-                  }
-                })()
-              } else {
-                this.putSize += fileSize
-                const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                rejected({ err, file, startTime, endTime })
               }
             })
           } else {
@@ -1954,7 +1000,7 @@ export default {
               const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
               if (createErr) {
                 // console.error('Error creating multipart upload:', createErr)
-                this.putSize += fileSize
+                // this.putSize += fileSize
                 // console.log(createErr, 'listPartFin')
                 rejected({ err: createErr, file, startTime, endTime })
               } else {
@@ -1970,7 +1016,9 @@ export default {
                 const listPartFin = []
                 // 此处同步的所以有问题了vuex先缓存一下
                 // endWrite 此处记录及最终Promise处处理完成判断、清楚记录或执行abortMultiple
+                let netBreak = false
                 for (let chunkCount = 0; chunkCount < chunks; chunkCount++) {
+                  if (netBreak) break
                   const start = chunkCount * chunkSize
                   const end = Math.min(start + chunkSize, fileSize)
                   const doneUploadSize = end - start
@@ -1989,16 +1037,24 @@ export default {
                     this.S3.uploadPart(reqParams
                       , (uploadPartErr, uploadPartData) => {
                         if (uploadPartErr) rej({ ...uploadPartErr, doneUploadSize })
-                        else res({ ...uploadPartData, doneUploadSize })
+                        else {
+                          console.log(uploadPartData, '123')
+                          res({ ...uploadPartData, doneUploadSize })
+                        }
                       })
                   })
                   multiplePart.push(p)
-                  if (multiplePart.length == 3 || chunkCount === chunks - 1) {
+                  if (multiplePart.length == 6 || chunkCount === chunks - 1) {
                     const partRes = await Promise.allSettled(multiplePart)
                     // console.log(partRes, '123')
                     this.putSize += partRes.reduce((pre, cur) => {
-                      pre += cur.status === 'fulfilled' ? cur.value.doneUploadSize
-                        : cur.reason.doneUploadSize
+                      if (cur.status === 'fulfilled') {
+                        pre += cur.value.doneUploadSize
+                      } else {
+                        // console.log(cur, 'uploadPartERROR======')
+                        netBreak = cur.reason.code === 'NetworkingError' ||
+                          cur.reason.code === 'TimeoutError'
+                      }
                       return pre
                     }, 0)
                     listPartFin.push(...partRes)
@@ -2007,7 +1063,7 @@ export default {
                 }
                 // uploadPart End
 
-                const partOver = listPartFin.every(x => x.status === 'fulfilled')
+                const partOver = listPartFin.every(x => x.status === 'fulfilled') && listPartFin.length === chunks
                 if (partOver) {
                   // listParts
                   // var params = {
@@ -2015,12 +1071,25 @@ export default {
                   //   Key,
                   //   UploadId: createData.UploadId
                   // }
-                  const Parts = listPartFin.map((x, i) => {
+                  // const Parts = listPartFin.map((x, i) => {
+                  //   console.log(x, '12333')
+                  //   return {
+                  //     PartNumber: i + 1,
+                  //     ETag: x.value.ETag
+                  //   }
+                  // })
+                  const resListParts = await this.S3.listParts({
+                    Bucket,
+                    Key,
+                    UploadId: createData.UploadId
+                  }).promise()
+                  const Parts = resListParts.Parts.map(x => {
                     return {
-                      PartNumber: i + 1,
-                      ETag: x.value.ETag
+                      PartNumber: x.PartNumber,
+                      ETag: x.ETag
                     }
-                  })
+                  }).sort((a, b) => a.PartNumber - b.PartNumber)
+                  console.log(resListParts, '12PartsPartsParts=====3')
                   this.S3.completeMultipartUpload({
                     Bucket,
                     Key,
@@ -2040,47 +1109,9 @@ export default {
                         return x.UploadId === createData.UploadId
                       })
                       this.readFileList.splice(delIndex, 1)
-                      resolve(compErrData)
+                      resolve({ ...compErrData, Key })
                     }
                   })
-                  // this.S3.listParts(params, (partErr, partRes) => {
-                  //   const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                  //   if (partErr) {
-                  //     rejected({
-                  //       err: partErr,
-                  //       file,
-                  //       startTime,
-                  //       endTime
-                  //     })
-                  //   } else {
-                  //     const Parts = partRes.Parts.map(x => {
-                  //       return {
-                  //         PartNumber: x.PartNumber,
-                  //         ETag: x.ETag
-                  //       }
-                  //     }).sort((a, b) => a.PartNumber - b.PartNumber)
-                  //     // finish
-                  //     this.S3.completeMultipartUpload({
-                  //       Bucket,
-                  //       Key,
-                  //       UploadId: createData.UploadId,
-                  //       MultipartUpload: { Parts }
-                  //     }, (compErr, compErrData) => {
-                  //       if (compErr) {
-                  //         const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                  //         rejected({
-                  //           err: compErr,
-                  //           file,
-                  //           startTime,
-                  //           endTime
-                  //         })
-                  //       } else {
-                  //         resolve(compErrData)
-                  //       }
-                  //       // console.log(compErr, compErrData)
-                  //     })
-                  //   }
-                  // })
                 } else {
                   // 处理uploadpart错误、取其中一个error
                   const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
@@ -2098,18 +1129,18 @@ export default {
           }
         })
       }
-      const finalList = []
+      let finalRes = null
       while (fileArr.length) {
         const file = fileArr.shift()
-        finalList.push(await asyncTask(file).catch(err => {
+        finalRes = await asyncTask(file).catch(err => {
           return {
             hasError: true,
             err
           }
-        }))
+        })
       }
       //
-      return finalList[0].hasError ? Promise.reject(finalList) : Promise.resolve(finalList)
+      return finalRes.hasError ? Promise.reject(finalRes) : Promise.resolve(finalRes)
     },
     postFolder (type) {
       if (type === 'file') {
@@ -2135,10 +1166,12 @@ export default {
     },
     resetForm (formName) {
       if (this.$refs[formName] != undefined) {
-        this.$refs[formName].resetFields()
+        this.$refs['accessKeyId'] = ''
+        this.$refs['secretAccessKey'] = ''
+        this.$refs['endpoint'] = ''
+        // this.$refs[formName].resetFields()
       }
     },
-
     onDrop (e) {
       e.preventDefault()
       const dataTransfer = e.dataTransfer
@@ -2284,7 +1317,7 @@ export default {
           } else {
             this.$notify({
               type: 'error',
-              title: '请点击“连接”按钮，设置bucket'
+              title: '请点击"连接"按钮'
             })
           }
         }
@@ -2315,11 +1348,11 @@ export default {
         })
       }
     },
-    getBucketList () {
-      const {
+    async getBucketList (flag) {
+      let {
         accessKeyId,
-        secretAccessKey,
-        endpoint
+        endpoint,
+        location
       } = this.form
       if (!endpoint) {
         this.$notify({
@@ -2335,25 +1368,44 @@ export default {
         })
         return
       }
-      if (!secretAccessKey) {
-        this.$notify({
-          type: 'error',
-          title: '请输入Secret Key'
+
+      // console.log('调用接口获取ak、')
+
+      const p = new Promise((resolve, reject) => {
+        getUser({ user: this.form.accessKeyId }, location).then(res => {
+          if (String(res) === '') {
+            this.$msg({
+              type: 'error',
+              text: '当前用户不存在'
+            })
+            reject(res)
+          } else {
+            this.form.secretAccessKey = String(res)
+            resolve(true)
+          }
         })
-        return
-      }
-      this.S3 = new AWS.S3({
+      })
+      const valid = await p
+      if (!valid) return
+      this.checkFlag = true
+      endpoint = endpoint.startsWith('http') || endpoint.startsWith('https') ? endpoint : 'http://' + endpoint
+      let secretAccessKey = this.form.secretAccessKey
+      this.$store.state._S3 = new AWS.S3({
         accessKeyId,
         secretAccessKey,
         endpoint,
         region: 'EastChain-1',
-        s3ForcePathStyle: true
+        s3ForcePathStyle: true,
+        signatureVersion: 'v4',
+        sslEnabled: true,
       })
-      this.S3.listBuckets((err, data) => {
+      this.saveConfig()
+      this.getHostLoading = this.$loading(this.loadingOption)
+      this.$store.state._S3.listBuckets((err, data) => {
+        // const data = await this.S3.send(new ListBucketsCommand({}));
         if (err) {
           // console.dir(err)
           // console.log('%c 123', 'color:red;font-size:20px')
-          // "NetworkingError"
           let title = ''
           let message = ''
           if (err.code === 'AccessDenied') {
@@ -2367,7 +1419,69 @@ export default {
             message = '请检查endpoint是否正确,或稍后再试'
           } else {
             title = '连接S3失败'
-            message = this.$trans(err.message || '')
+            message = this.$ts(err.message || '')
+          }
+          // console.dir(err, 'err')
+          this.$notify({
+            type: 'error',
+            title,
+            message,
+            showClose: false,
+            customClass: 'errorTip'
+          })
+          this.noBucket = false
+          this.bucketList = []
+          this.form.Bucket = ''
+          this.getHostLoading.close()
+        } else {
+          this.bucketList = (data.Buckets || []).map(x => ({ BucketName: x.Name, CreationDate: x.CreationDate }))
+          if (!this.bucketList.length) {
+            this.$notify({
+              type: 'error',
+              title: '无bucket可用，请先创建bucket'
+            })
+            this.noBucket = true
+            this.getHostLoading.close()
+          } else {
+            this.form.Bucket = this.bucketList[0]
+            if (flag) {
+              this.$notify({
+                type: 'success',
+                title: `连接S3成功`
+                // ${this.selform === '' ? ', 请点击保存!' : ', 请点击修改!'}`
+              })
+            }
+            this.$store.dispatch('initS3', { S3: this.$store.state._S3, accessKeyId, secretAccessKey, endpoint })
+              .finally(() => {
+                this.getHostLoading.close()
+              })
+            // this.form.Bucket = 'test'
+            // this.dirFlag = true
+            // 确保断网或刷新页面导致未完成的上传记录清除
+            // this.doClearFileLog()
+          }
+        }
+      })
+    },
+    refreshBucket () {
+      this.$store.state._S3.listBuckets((err, data) => {
+        if (err) {
+          // console.dir(err)
+          // console.log('%c 123', 'color:red;font-size:20px')
+          let title = ''
+          let message = ''
+          if (err.code === 'AccessDenied') {
+            title = '连接S3失败'
+            message = '请检查ak/sk是否输入正确'
+          } else if (Number(err.code) === 12) {
+            title = '网络异常'
+            message = '请检查endpoint是否正确'
+          } else if (err.code === 'NetworkingError') {
+            title = '网络异常'
+            message = '请检查endpoint是否正确,或稍后再试'
+          } else {
+            title = '连接S3失败'
+            message = this.$ts(err.message || '')
           }
           // console.dir(err, 'err')
           this.$notify({
@@ -2381,23 +1495,7 @@ export default {
           this.bucketList = []
           this.form.Bucket = ''
         } else {
-          this.bucketList = (data.Buckets || []).map(x => x.Name)
-          if (!this.bucketList.length) {
-            this.$notify({
-              type: 'error',
-              title: '无bucket可用，请先创建bucket'
-            })
-            this.noBucket = true
-          } else {
-            this.form.Bucket = this.bucketList[0]
-            this.$notify({
-              type: 'success',
-              title: '连接S3成功'
-            })
-            this.form.Bucket = 'test'
-            // 确保断网或刷新页面导致未完成的上传记录清除
-            // this.doClearFileLog()
-          }
+          this.bucketList = (data.Buckets || []).map(x => ({ BucketName: x.Name, CreationDate: x.CreationDate }))
         }
       })
     },
@@ -2482,270 +1580,10 @@ export default {
         Bucket,
         hostName
       } = this.form
-      this.finalList = []
-      const putObjectArr = []
-      const multUploadArr = []
       this.disableDrop()
       document.querySelector('#loadChart').style.display = 'block'
-      const judgeUploadType = async () => {
-        // 文件分流
-        this.fileListArr.forEach(x => {
-          this.totalSize = this.totalSize + x.size
-          if (x.size <= this.uploadPartSize) {
-            putObjectArr.push({
-              Bucket,
-              Key: hostName + '/' + this.handlePutPath(x),
-              Body: x
-            })
-          } else {
-            multUploadArr.push(x)
-          }
-        })
-      }
+      this.totalSize = this.fileListArr.reduce((pre, cur) => pre + cur.size, 0)
       // 区分大文件
-      (async () => {
-        await judgeUploadType()
-        // startPutObject
-        // console.log(putObjectArr, multUploadArr)
-        // return
-        this.loadingBg = this.$loading({
-          lock: true,
-          text: '文件上传中，请勿关闭当前页面',
-          spinner: 'el-icon-loading',
-          background: 'rgba(1,1,1,.3)',
-          customClass: 'putLoading'
-        })
-        try {
-          const putObjectFin = []
-          // const taskList = []
-          this.putObjectNameArr = []
-          const needMock = multUploadArr.length === 0
-          // const putObjectStart = +new Date()
-          // const putObjectCount = putObjectArr.length
-          this.needMock = needMock && putObjectArr.length <= 5
-          this.myecharts = this.$echarts.init(document.getElementById('loadChart'))
-          this.renderChartPart()
-          //
-          const _this = this
-          // 任务队列3
-          class AsyncQueue {
-            constructor (maxConcurrent = 2) {
-              this.maxConcurrent = maxConcurrent
-              this.running = 0
-              this.queue = []
-            }
-
-            // 优化单个上传大文件、分片任务并发改为非同步任务
-            async run () {
-              while (this.running < this.maxConcurrent && this.queue.length > 0) {
-                const file = this.queue.shift()
-                this.running++
-                let asyncTask = null
-                if (file.size <= _this.uploadPartSize) {
-                  asyncTask = new Promise((res, rej) => {
-                    const startTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                    _this.S3.putObject({
-                      Bucket,
-                      Key: hostName + '/' + _this.handlePutPath(file)
-                    }, (err, data) => {
-                      const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                      if (err) rej({ err, file, startTime, endTime })
-                      else res({ success: 'success', file, startTime, endTime })
-                    })
-                  })
-                } else {
-                  const uploadResult = await Promise.allSettled([_this.handleMultUpload([file])])
-                  console.log(uploadResult, '1233')
-                  asyncTask = new Promise((resolve, reject) => {
-                    uploadResult[0].status === 'rejected' ? reject({ ...uploadResult[0].reason[0], isMultUpload: true }) : resolve({ ...uploadResult[0].value, isMultUpload: true })
-                  })
-                  // 与putObject区分
-                }
-                await Promise.allSettled([asyncTask]).then(res => {
-                  console.log(res, '=========')
-                  const result = res[0]
-                  // 这里分段处理得promise只返回最终处理成功得数据注意和putObject区分
-                  if (result.status === 'fulfilled') {
-                    if (!result.value.isMultUpload) {
-                      _this.putSize += result.value.file.size
-                    }
-                  } else {
-                    if (!result.reason.isMultUpload) {
-                      _this.putSize += result.reason.file.size
-                    }
-                  }
-                  putObjectFin.push(result)
-                  this.running--
-                  if (putObjectFin.length === _this.fileListArr.length) {
-                    setTimeout(() => {
-                      _this.releaseDisable()
-                      _this.loadingBg.close()
-                      console.log(putObjectFin)
-                      // console.log(result, 'result')
-                      _this.writeErrorLog(putObjectFin)
-                    }, 1200)
-                  } else {
-                    this.run()
-                  }
-                })
-              }
-              // console.log(putObjectFin, '12333')
-            }
-
-            add (task) {
-              this.queue.push(task)
-              this.run()
-            }
-          }
-          const asyncQueue = new AsyncQueue(2)
-          let totalCount = this.fileListArr.length
-          let index = 0
-          while (totalCount > 0) {
-            totalCount--
-            const file = this.fileListArr[index]
-            asyncQueue.add(file)
-            index++
-          }
-          // for (let i = 0; i < putObjectCount; i++) {
-          //   const file = putObjectArr[i]
-          //   // i > 0 ? file.Bucket = '123' : null
-          //   const p = new Promise((res, rej) => {
-          //     const startTime = moment().format('YYYY-MM-DD HH:mm:ss')
-          //     this.S3.putObject(file, (err, data) => {
-          //       const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-          //       if (err) rej({ err, file, startTime, endTime })
-          //       else res({ success: 'success', file, startTime, endTime })
-          //     })
-          //   })
-          //   taskList.push(p)
-          //   if (taskList.length == 5 || i === putObjectCount - 1) {
-          //     const partRes = await Promise.allSettled(taskList)
-          //     this.putSize += partRes.reduce((pre, cur) => {
-          //       pre += cur.status === 'fulfilled' ? cur.value.file.Body.size
-          //         : cur.reason.file.Body.size
-          //       return pre
-          //     }, 0)
-          //     putObjectFin.push(...partRes)
-          //     taskList = []
-          //   }
-          // }
-          // 文件索引不对、记录上传功能的文件名、并移除、记录余下文件
-          // this.continueArr = putObjectArr.filter(x => {
-          //   return this.putObjectNameArr.every(y => {
-          //     return x.Key !== y
-          //   })
-          // })
-          // if (this.continueArr.length) {
-          //   this.loadingBg.close()
-          //   setTimeout(() => {
-          //     // 判断网络连接情况
-          //     this.$confirm('恢复上传对象', '请确认', {
-          //       confirmButtonText: '确定',
-          //       cancelButtonText: '取消',
-          //       closeOnClickModal: false,
-          //       closeOnPressEscape: false,
-          //       showClose: false,
-          //       type: 'warning',
-          //       dangerouslyUseHTMLString: true
-          //     }).then(() => {
-          //       this.continueUpload(putObjectFin, multUploadArr)
-          //     }).catch(() => {
-          //       this.dirFlag = false
-          //     })
-          //   }, 1000)
-          //   return
-          // }
-          // putObject小于5、
-          // if (needMock) {
-          //   if (putObjectArr.length <= 5 && !catchNetFail) {
-          //     const putObjectEnd = +new Date()
-          //     const timeSeconds = Math.ceil((putObjectEnd - putObjectStart) / 1000)
-          //     await this.renderLoadingChart(timeSeconds, Number(((this.putSize / this.totalSize) * 100).toFixed(2)))
-          //   } else {
-          //     catchNetFail = false
-          //   }
-          // }
-          // const multipleObjects = await this.handleMultUpload(multUploadArr)
-          // console.log(multipleObjects, '====分片文件list====')
-          // console.log(this.totalSize, this.putSize, 'fin')
-          // setTimeout(() => {
-          //   this.releaseDisable()
-          //   this.loadingBg.close()
-          //   console.log(putObjectFin)
-          //   // console.log(result, 'result')
-          //   this.writeErrorLog(putObjectFin)
-          // }, 1200)
-          // 上传及分段上传全部结束
-        } catch (error) {
-          console.log('errorOperate', error)
-        }
-      })()
-    },
-    writeErrorLog (result) {
-      console.log(result, '================')
-      const file = result
-      // console.log(result, '123')
-      const failList = file.filter(x => x.status === 'rejected' || (x.hasError))
-      // .map(x => {
-      //   // while大文件异步promise格式化
-      //   if (x.hasError) {
-      //     x.reason = x.err
-      //   }
-      //   return x
-      // })
-      // const log = failList.reduce((pre, cur, i) => {
-      //   return pre + '结束时间：' + cur.reason.endTime + ' ' + '对象Key: ' + cur.reason.file.Key + ' ' + ' ' + '错误原因: ' + cur.reason.err.message + '\n'
-      // }, '')
-      const total = file.length
-      const failCount = failList.length
-      const successCount = total - failCount
-      // console.log('===============', failList, log, result)
-      if (failCount && failCount > 0) {
-        this.$notify({
-          title: '上传完成',
-          dangerouslyUseHTMLString: true,
-          type: 'success',
-          message: `<p>
-          <strong style="color:#d3d6d8;font-size:15px">总计: ${total}个</strong>
-          <br/> <strong style="color:#d3d6d8;font-size:15px">成功: ${successCount}个</strong>
-          <br/> <strong style="color:#d3d6d8;font-size:15px">失败: ${failCount}个</strong>
-          <br/>
-        </p>`
-        })
-        this.dirFlag = false
-        // upload({
-        //   log
-        // }).then(res => {
-        //   this.$notify({
-        //     title: '上传完成',
-        //     dangerouslyUseHTMLString: true,
-        //     type: 'success',
-        //     message: `<p>
-        //   <strong style="color:#d3d6d8;font-size:15px">总计: ${total}个</strong>
-        //   <br/> <strong style="color:#d3d6d8;font-size:15px">成功: ${successCount}个</strong>
-        //   <br/> <strong style="color:#d3d6d8;font-size:15px">失败: ${failCount}个</strong>
-        //   <br/> <span style="color:#d3d6d8;font-size:15px">请到备份历史查看详情</span>
-        // </p>`
-        //   })
-        // }).finally(() => {
-        //   this.dirFlag = false
-        // })
-      } else {
-        this.$notify({
-          title: '上传完成',
-          dangerouslyUseHTMLString: true,
-          type: 'success',
-          message: `<p>
-          <strong style="color:#d3d6d8;font-size:15px">总计: ${total}个</strong>
-          <br/> <strong style="color:#d3d6d8;font-size:15px">成功: ${successCount}个</strong>
-          <br/> <strong style="color:#d3d6d8;font-size:15px">失败: ${failCount}个</strong>
-        </p>`
-        })
-        this.dirFlag = false
-      }
-    },
-    async continueUpload (putObjectFin, multUploadArr) {
-      // case putObject
       this.loadingBg = this.$loading({
         lock: true,
         text: '文件上传中，请勿关闭当前页面',
@@ -2753,1657 +1591,30 @@ export default {
         background: 'rgba(1,1,1,.3)',
         customClass: 'putLoading'
       })
-      const {
-        hostName
-      } = this.form
-      let taskList = []
-      const needMock = multUploadArr.length === 0
-      const putObjectStart = +new Date()
-      this.needMock = needMock && this.continueArr.length <= 5
-
-      // putObject 待上传的文件、
-      const count = this.continueArr.length
-      for (let i = 0; i < count; i++) {
-        const file = this.continueArr[i]
-        // i > 0 ? file.Bucket = '123' : null
-        const p = new Promise((res, rej) => {
-          const startTime = moment().format('YYYY-MM-DD HH:mm:ss')
-          this.S3.putObject(file, (err, data) => {
-            const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-            if (err) rej({ err, file, startTime, endTime })
-            else res({ success: 'success', file, startTime, endTime })
-          })
-        })
-        taskList.push(p)
-        if (taskList.length == 5 || i === count - 1) {
-          const partRes = await Promise.allSettled(taskList)
-          // 罗列list 记录上传后的状态
-          // 存在reject newworkFailure 停止当前for循环putObject
-          if (partRes.some(x => x.status === 'rejected' && x.reason.err.code === 'NetworkingError')) {
-            break
-          } else {
-            console.log(partRes, '1233')
-            // 记录上传成功及非网络异常导致的上传失败
-            this.putObjectNameArr.push(...partRes.map(x => {
-              return x.status === 'fulfilled'
-                ? hostName + '/' + this.handlePutPath(x.value.file.Body)
-                : hostName + '/' + this.handlePutPath(x.reason.file.Body)
-            }))
-          }
-          this.putSize += partRes.reduce((pre, cur) => {
-            pre += cur.status === 'fulfilled' ? cur.value.file.Body.size
-              : cur.reason.file.Body.size
-            return pre
-          }, 0)
-          putObjectFin.push(...partRes)
-          taskList = []
-        }
-      }
-      this.continueArr = this.continueArr.filter(x => {
-        return this.putObjectNameArr.every(y => {
-          return x.Key !== y
-        })
-      })
-      if (this.continueArr.length) {
-        this.loadingBg.close()
-        setTimeout(() => {
-          // 判断网络连接情况
-          this.$confirm('恢复上传对象', '请确认', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            closeOnClickModal: false,
-            closeOnPressEscape: false,
-            type: 'warning',
-            dangerouslyUseHTMLString: true
-          }).then(() => {
-            this.continueUpload(putObjectFin, multUploadArr)
-          })
-        }, 1000)
-        return
-      }
-      if (this.needMock) {
-        const putObjectEnd = +new Date()
-        const timeSeconds = Math.ceil((putObjectEnd - putObjectStart) / 1000)
-        await this.renderLoadingChart(timeSeconds)
-      }
-      const multipleObjects = await this.handleMultUpload(multUploadArr)
-      // console.log(this.totalSize, this.putSize, 'fin')
-      setTimeout(() => {
-        this.releaseDisable()
-        this.loadingBg.close()
-        // console.log(result, 'result')
-        this.writeErrorLog([...multipleObjects, ...putObjectFin])
-      }, 1200)
-    },
-    handleRemoveErrorUpload (arr) {
-      arr = JSON.parse(JSON.stringify(arr))
-      const ErrorConnect = arr.filter(x => x.hasError && x.err.err.code === 'NetworkingError')
-      if (ErrorConnect.length) {
-        const index = arr.findIndex(x => {
-          return x.Key === ErrorConnect[0].err.file.Key
-        })
-        arr.splice(index, 1)
-      }
-      return arr
-    }
-  }
-}
-</script>
-<style lang="scss" scoped>
-:deep(.form) {
-  label.el-form-item__label {
-    margin-left: 0 !important;
-    width: 150px !important;
-  }
-  .el-select {
-    width: 100%;
-  }
-}
-
-:deep(.el-dialog) {
-  .icon {
-    cursor: pointer;
-    font-size: 17px;
-    margin: 0 18px 0 3px;
-    vertical-align: middle !important;
-  }
-}
-:deep(.errorTip) {
-  background-color: aqua !important;
-  width: fit-content !important;
-  .el-notification__group {
-    .el-notification__content {
-      p {
-        color: #d3d6d8;
-      }
-    }
-  }
-}
-
-.el-icon-upload {
-  font-size: 40px;
-  margin: 0;
-}
-
-.el-upload__text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 25px;
-  margin: 40px 10px;
-  line-height: 25px;
-  text-align: center;
-  color: #d3d6d8;
-}
-
-.addFiles {
-  color: #337dff;
-}
-
-.drag {
-  width: 100%;
-  margin-top: 10px;
-}
-.el-table {
-  max-height: 600px;
-  overflow-y: auto;
-}
-#loadChart {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-</style>
-<style lang="scss">
-.putLoading {
-  .el-loading-spinner {
-    position: fixed;
-    top: 10%;
-    left: 50%;
-    width: fit-content;
-    transform: translate(-50%);
-  }
-  .el-loading-spinner i {
-    font-size: 25px;
-  }
-  .el-loading-text {
-    font-size: 25px;
-  }
-}
-.uploadMenu {
-  width: fit-content;
-  display: flex;
-  justify-content: flex-start;
-  .el-button {
-    font-size: 25px;
-    height: 60px;
-    width: 120px;
-    padding: 15px;
-    margin-right: 50px;
-    box-sizing: border-box;
-  }
-}
-.picker__drop-zone {
-  position: fixed;
-  box-sizing: border-box;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: hsla(0, 0%, 100%, 0.9);
-  border: 6px solid #ff8746;
-  z-index: 99999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  .anim-floating {
-    animation-name: anim-floating-6a50ffaa;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
-  }
-  .picker__drop-zone-label {
-    margin-top: 30px;
-    font-size: 25px;
-    color: #333;
-  }
-  .drop-arrow {
-    display: inline-block;
-    div {
-      display: block;
-      background-repeat: no-repeat;
-      background-position: 50%;
-    }
-    .arrow {
-      width: 38.68px;
-      height: 63.76px;
-      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 38.68 63.76' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M34.2 42.63 21.68 55V3c0-1.42-.88-3-2.34-3a3 3 0 0 0-2.66 3v52L4.47 42.63a2.68 2.68 0 0 0-1.85-.76 2.57 2.57 0 0 0-1.85.76 2.51 2.51 0 0 0 0 3.63L17.49 63a2.7 2.7 0 0 0 1.85.76 2.58 2.58 0 0 0 1.85-.76l16.72-16.75a2.51 2.51 0 0 0 0-3.63 2.69 2.69 0 0 0-3.7 0Zm0 0' fill='%23333'/%3E%3C/svg%3E");
-      margin-left: auto;
-      margin-right: auto;
-      margin-bottom: 0;
-    }
-    .base {
-      width: 88.98px;
-      height: 28.61px;
-      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 88.98 28.61' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M86.42.38A2.26 2.26 0 0 0 84 2.73v9.07a12.34 12.34 0 0 1-12 11.93H15.78C9.44 23.73 5 18.05 5 11.73V2.28A2.22 2.22 0 0 0 2.56 0 2.55 2.55 0 0 0 0 2.56v9.45a16.48 16.48 0 0 0 16.44 16.6h56.22A16.38 16.38 0 0 0 89 12.02V2.95A2.35 2.35 0 0 0 86.72.38h-.28z' fill='%23333'/%3E%3C/svg%3E");
-    }
-  }
-}
-@keyframes anim-floating-6a50ffaa {
-  0% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(25%);
-  }
-
-  to {
-    transform: translateY(0);
-  }
-}
-</style>
-
-```
-
-
-### 上传对象并发同步
-```js
-<template>
-  <div>
-    <el-row>
-      <el-col
-        :span="24"
-        class="manage-area-title"
-      >
-        <h2>备份</h2>
-      </el-col>
-    </el-row>
-    <!-- <BreadCrumbs /> -->
-    <div
-      v-loading="getHostLoading"
-      class="page_content_wrap"
-    >
-      <el-form
-        ref="form"
-        class="form"
-        :model="form"
-        style="width: 40%;"
-        label-width="150px"
-        :rules="rules"
-      >
-        <el-form-item label="hostName">
-          <el-input
-            v-model="form.hostName"
-            placeholder="请输入hostName"
-            readonly
-          />
-        </el-form-item>
-        <el-form-item
-          label="endpoint"
-          prop="endpoint"
-        >
-          <el-input
-            v-model="form.endpoint"
-            clearable
-            placeholder="请输入endpoint"
-          />
-        </el-form-item>
-        <el-form-item
-          label="Access Key"
-          prop="accessKeyId"
-        >
-          <el-input
-            v-model="form.accessKeyId"
-            clearable
-            placeholder="请输入Access Key"
-          />
-        </el-form-item>
-        <el-form-item
-          label="Secret Key"
-          prop="secretAccessKey"
-        >
-          <el-input
-            v-model="form.secretAccessKey"
-            type="password"
-            show-password
-            clearable
-            placeholder="请输入Secret Key"
-            style="width: 80%;"
-          />
-          <el-button
-            style="position: absolute; right: 0;top:8px"
-            @click="getBucketList"
-          >连接</el-button>
-        </el-form-item>
-        <el-form-item
-          v-if="bucketList&&bucketList.length"
-          label="bucket"
-          prop="Bucket"
-        >
-          <el-select
-            v-model="form.Bucket"
-            clearable
-            placeholder="请选择一个bucket"
-            filterable
-          >
-            <el-option
-              v-for="x in bucketList"
-              :key="x"
-              :value="x"
-              :label="x"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            class="golden"
-            @click="validateBucket()"
-          >备份</el-button>
-          <el-button
-            class="blue"
-            @click="resetForm('form')"
-          >重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-
-    <!-- <div
-      id="loadChart"
-      style="width:400px;height:300px"
-    /> -->
-
-    <el-dialog
-      title="备份"
-      :visible.sync="dirFlag"
-      width="65%"
-      destroy-on-close
-      :close-on-press-escape="false"
-      :close-on-click-modal="false"
-    >
-      <el-form
-        ref="createForm"
-        :model="createForm"
-        size="mini"
-        label-width="150px"
-        style="padding:0 5%;position:relative"
-      >
-        <!-- :before-upload="validateFileRule" -->
-        <!-- :accept=",,拼接可接受文件类型 image/* 任意图片文件" -->
-        <!-- :http-request="uploadFile"  覆盖原生action上传方法-->
-        <!-- var formData = new FormData();  //  用FormData存放上传文件 -->
-        <!-- formData.append('paramsName','file') -->
-        <el-row class="uploadMenu">
-          <el-upload
-            ref="uploadFile"
-            action="#"
-            multiple
-            :show-file-list="false"
-            :http-request="handleRequest"
-            :before-upload="handleSizeValidate"
-          >
-            <!-- <el-button
-                size="small"
-                class="golden"
-                @click="postFolder('file')"
-              >上传文件</el-button> -->
-            <el-button
-              size="small"
-              class="golden"
-              @click="postFolder('folder')"
-            >上传</el-button>
-          </el-upload>
-          <el-button
-            class="blue"
-            :disabled="!fileListArr.length"
-            @click="cleafFile"
-          >清空</el-button>
-        </el-row>
-        <!-- <input type="file" id="upload" ref="inputer" name="file" multiple /> -->
-        <div
-          draggable="true"
-          class="drag tableBox"
-          :style="renderPadding"
-        >
-          <div
-            v-show="!fileListArr.length"
-            class="el-upload__text"
-          >
-            <i
-              class="el-icon-upload"
-              style="margin-right: 6px"
-            />点击上传或拖拽文件夹到此处
-            <!-- <el-button type="text" @click="addFiles">添加文件</el-button> -->
-          </div>
-          <div
-            v-show="!fileListArr.length"
-            class="el-upload__text"
-          >
-            <!-- 文件上传数量不能超过100个，总大小不超过5GB -->
-            单个文件大小不超过50GB
-          </div>
-          <el-table
-            v-show="fileListArr.length"
-            :data="fileListArr.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
-          >
-            <el-table-column
-              label="对象key"
-              prop="name"
-              min-width="120px"
-            />
-            <el-table-column
-              label="目录"
-              min-width="120px"
-            >
-              <template slot-scope="scope">
-                {{ (scope.row.webkitRelativePath ? form.hostName +'/'+ scope.row.webkitRelativePath : form.hostName +'/'+ scope.row.relativePath) | renderPath }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="类型"
-              width="180px"
-            >
-              <template slot-scope="scope">
-                {{ scope.row.type }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="大小"
-              width="120px"
-            >
-              <template slot-scope="scope">
-                {{ byteConvert(scope.row.size) }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="移除"
-              width="100px"
-            >
-              <template slot-scope="scope">
-                <svg
-                  class="icon"
-                  aria-hidden="true"
-                  @click="removeItem(scope)"
-                >
-                  <use xlink:href="#icon-trash" />
-                </svg>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-pagination
-            v-show="fileListArr.length"
-            :current-page="currentPage"
-            :page-sizes="[5, 10, 50, 100]"
-            :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="fileListArr.length"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
-        </div>
-      </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          class="golden"
-          :disabled="fileListArr.length==0"
-          @click="confirmPut()"
-        >{{ $trans('button.confirm') }}</el-button>
-        <el-button @click="dirFlag = false;">{{ $trans('button.cancel') }}</el-button>
-      </div>
-      <div
-        id="loadChart"
-        style="width:400px;height:300px;display:none"
-      />
-    </el-dialog>
-    <div
-      v-if="showDrop"
-      class="picker__drop-zone"
-      @dragover="(e)=>e.preventDefault()"
-      @drop="onDrop"
-    >
-      <div class="drop-arrow">
-        <div class="arrow anim-floating" />
-        <div class="base" />
-      </div>
-      <div
-        data-v-6a50ffaa=""
-        class="picker__drop-zone-label"
-      >拖拽文件夹到此处</div>
-    </div>
-  </div>
-</template>
-<script>
-import {
-  upload,
-  getHostname
-} from '@/api/agent'
-const AWS = require('aws-sdk')
-// const FileSaver = require('file-saver')
-//  AWS 设置超时时间 默认2min、当前60min
-let initialTime = 5000
-let catchNetFail = false
-AWS.config.update({
-  httpOptions: {
-    timeout: 1000 * 60 * 5
-  },
-  maxRetries: 420, // 默认
-  retryDelayOptions: {
-    // base 默认100ms
-    customBackoff: (count, err) => {
-      initialTime = count * 1000 + 5000
-      // console.log(count, initialTime)
-      // 重试时间间隔、默认5000，线性增长、最大增长5min、总重试时间12h
-      // y= kx+b k、b为常数、by轴的偏移量
-      // an = a1+(n-1) sn = n(a1+an)/2
-      // 420=>24h
-      console.log(err, '123')
-      return initialTime
-    }
-  }
-})
-import moment from 'moment'
-export default {
-  filters: {
-    renderPath (path) {
-      path = String(path) || ''
-      const lastIndex = path.lastIndexOf('/')
-      return path.substr(0, lastIndex)
-    }
-  },
-  data () {
-    return {
-      continueArr: [],
-      finalList: [],
-      loadingBg: null,
-      putObjectNameArr: [],
-      timer: null,
-      myecharts: null,
-      datas_outer: [],
-      mockPutSize: 0,
-      needMock: false,
-      putSize: 0,
-      totalSize: 0,
-      createForm: {
-        folderName: ''
-      },
-      dirFlag: false,
-      form: {
-        hostName: '',
-        accessKeyId: '',
-        secretAccessKey: '',
-        // endpoint: 'http://10.0.2.154:8300',
-        endpoint: '',
-        path: '',
-        Bucket: ''
-      },
-      bucketList: [],
-      pageSize: 10,
-      currentPage: 1,
-      fileList: [],
-      fileListArr: [],
-      executeTime: '',
-      rules: {
-        // hostName: { required: true, message: '请输入hostName' },
-        accessKeyId: { required: true, message: '请输入accessKeyId' },
-        secretAccessKey: { required: true, message: '请输入secretAccessKey' },
-        endpoint: {
-          required: true,
-          validator: (_, val, cb) => {
-            const reg = /^(http:\/\/)?(.)*/
-            if (!val) {
-              return cb('请输入endpoint')
-            } else if (reg.test(val)) {
-              if (val.indexOf('http://') === -1) {
-                // 匹配http://替换
-                const regPrefix = /(h)?(t)?(t)?(p)?(:)?(\/)?(\/)?/
-                const matchStr = val.match(regPrefix)?.[0]
-                this.form.endpoint = 'http://' + val.substring(matchStr.length)
-              } else {
-                return cb()
-              }
-            }
-          }
-        },
-        Bucket: { required: true, message: '请选择bucket' }
-      },
-      S3: null,
-      noBucket: false,
-      getHostLoading: false,
-      uploadSizeLimt: 5 * 1024 ** 3, // 上传文件大小限制 1T
-      uploadPartSize: 1024 * 1024 * 5, // 分段大小&&文件启用分段大小
-      sizeError: [],
-      enableReUpload: true,
-      readFileList: [],
-      showDrop: false
-    }
-  },
-  computed: {
-    renderPadding () {
-      return this.fileListArr.length ? {
-        padding: '50px 10px'
-      } : {
-        padding: '150px 20px'
-      }
-    },
-    options () {
-      return {
-        tooltip: {
-          show: false
-        },
-        title: {
-          // text超出最大数字16位
-          text: this.renderLoadingText(),
-          x: 'center',
-          y: 'center',
-          textStyle: {
-            color: '#fff',
-            fontSize: '30px' // 中间标题文字大小设置
-          }
-        },
-        series: [
-          {
-            name: '完成情况外层',
-            type: 'pie',
-            padAngle: 5,
-            // radius: ['40%', '60%'],
-            radius: ['52%', '75%'],
-            center: ['50%', '50%'],
-            clockwise: false,
-            data: this.datas_outer,
-            // startAngle: 100,
-            hoverAnimation: false,
-            legendHoverLink: false,
-            label: {
-              show: false
-            },
-            labelLine: {
-              show: false
-            }
-          }
-        ]
-      }
-    }
-  },
-  watch: {
-    dirFlag (val) {
-      if (val) {
-        this.$nextTick(() => {
-          this.$refs['uploadFile'].clearFiles()
-        })
-        this.enableDrop()
-        this.fileListArr = []
-        this.datas_outer = []
-        for (let i = 30; i > 0; i--) {
-          this.datas_outer.push({
-            value: 1, // 占位用
-            name: '未完成',
-            itemStyle: { color: '#19272e' }
-          })
-        }
-      } else {
-        this.mockPutSize = 0
-        this.needMock = false
-        this.myecharts = null
-        this.continueArr = []
-        this.putSize = 0 // 记录进度
-        this.totalSize = 0
-        this.readFileList = []
-        catchNetFail = false
-        clearTimeout(this.timer)
-        this.releaseDisable()
-        this.disableDrop()
-        // this.doClearFileLog()
-      }
-    }
-  },
-  mounted () {
-    // AWS.events.on('send', (req) => {
-    //   console.log('req', req)
-    //   if (req.retryCount > 5) {
-    //     this.S3.uploadPart(
-    //       { ...req.request.params }
-    //       , (error, success) => {
-    //         console.log(error, success, req)
-    //       })
-    //   }
-    // })
-    // this.needMock = true
-    // this.myecharts = this.$echarts.init(document.getElementById('loadChart'))
-    // this.renderChartPart()
-    // setTimeout(async () => {
-    //   await this.renderLoadingChart(5)
-    // }, 1000)
-    document.addEventListener('keydown', function (event) {
-      if (event.code === 'Escape') {
-        event.preventDefault() // 取消默认行为
-      }
-    })
-    const { accessKeyId = '', endpoint = '' } = JSON.parse(localStorage.getItem('form')) || {}
-    this.form.accessKeyId = accessKeyId
-    // || 'http://10.0.2.153:9000'
-    this.form.endpoint = endpoint
-    // || 'http://10.0.2.153:9000'
-    // this.form.secretAccessKey = 'minioadmin'
-    // setTimeout(() => {
-    //   this.getBucketList()
-    // })
-    this.init()
-
-    // get HostName、默认传递
-    // setTimeout(() => {
-    //   this.getBucketList()
-    //   // this.init()
-    // })
-  },
-  destroyed () {
-    clearTimeout(this.timer)
-  },
-  methods: {
-    dragEnterHandler (e) {
-      e.preventDefault()
-      if (!this.showDrop) {
-        this.showDrop = true
-      }
-    },
-    dragLeaveHandler (e) {
-      e.preventDefault()
-      e.relatedTarget || (this.showDrop = false)
-      // e.relatedTarget有效值仍在界面内
-    },
-    dropHandler (e) {
-      e.preventDefault()
-      this.showDrop = false
-    },
-    renderLoadingText () {
-      return this.needMock ? String(this.mockPutSize).replace('.00', '') + '%' : Number((this.putSize / this.totalSize) * 100).toFixed(2).replace('.00', '') + '%'
-    },
-    async renderLoadingChart (timeSeconds, initialValue = 0) {
-      // console.log(timeSeconds, 123)
-      const totalValue = initialValue ? 100 - initialValue : 100
-      const res = this.getMockTime(timeSeconds, totalValue)
-      this.mockPutSize = initialValue == 100 ? 100 : initialValue + Number(res[0]).toFixed(2)
+      this.myecharts = this.$echarts.init(document.getElementById('loadChart'))
       this.renderChartPart()
-      // 比如5s
-      for (let i = 1; i <= timeSeconds; i++) {
-        await new Promise(resolve => {
-          setTimeout(() => {
-            // 这里放置每隔一秒执行的代码
-            this.mockPutSize = Number(res.shift()).toFixed(2)
-            this.renderChartPart()
-            // 进度 xdata 最终是 100
-            resolve(i)
-          }, 1000) // i * 1000 表示每次延迟 i 秒
-        })
-      }
-      return Promise.resolve(true)
-    },
-
-    renderChartPart () {
-      //
-      var num = 30 // 定义小块个数
-      var rate = this.needMock ? this.mockPutSize / 100 : this.putSize / this.totalSize // 完成率
-      const count = rate * 30
-      //
-      // 填充
-      for (let i = 1; i <= num; i++) {
-        if (i <= count) {
-          this.datas_outer[num - i].itemStyle.color = '#ff8746'
-        } else {
-          this.datas_outer[num - i].itemStyle.color = '#19272e'
-        }
-      }
-      this.myecharts && this.myecharts.setOption(this.options)
-      if (this.needMock) {
-        clearTimeout(this.timer)
-      } else {
-        this.timer = setTimeout(() => {
-          this.renderChartPart()
-        }, 1000)
-      }
-    },
-    getMockTime (totalTime, count) {
-      const res = []
-      count = count || 100
-      function nonLinearIncrease (currentTime, totalTime) {
-        // 非线性增长函数，这里使用了sin函数作为示例
-        const progress = Math.sin((Math.PI / 2) * (currentTime / totalTime))
-        const result = progress * count
-        return result
-      }
-      // 测试函数，模拟从0到100的非线性增长过程
-      function testNonLinearIncrease (totalTime) {
-        for (let t = 1; t <= totalTime; t++) {
-          const value = nonLinearIncrease(t, totalTime)
-          res.push(value)
-          // console.log(`Time: ${t}, Value: ${value}`)
-        }
-        return res
-      }
-      return testNonLinearIncrease(totalTime)
-    },
-    handlePutPath (file) {
-      const {
-        webkitRelativePath,
-        relativePath
-      } = file
-      return webkitRelativePath || relativePath
-    },
-    cleafFile () {
-      this.fileListArr = [] // 清除表格展示
-      this.$refs['uploadFile'].clearFiles() // 清除组件FileList
-    },
-    handleRequest (val) {
-      // 无功能、为自定义请求触发 beforeUpload校验文件
-      // console.log(val, '123')
-    },
-    handleSizeValidate (file) {
-      const size = file.size
-      const isExist = this.fileListArr.findIndex(x => {
-        return x.name === file.name && (x.webkitRelativePath || x.relativePath) === (file.webkitRelativePath || file.relativePath)
-      })
-      if (isExist > -1 || size > this.uploadSizeLimt) {
-        return false
-      }
-      this.fileListArr.push(file)
-    },
-    init () {
-      // const { accessKeyId = '', endpoint = '' } = JSON.parse(localStorage.getItem('form')) || {}
-      // this.form.accessKeyId = accessKeyId
-      // this.form.endpoint = endpoint
-      // this.form.hostName = 'Dc'
-
-      this.getHostLoading = true
-      getHostname().then(res => {
-        this.form.hostName = res.data || ''
-      }).finally(() => {
-        this.getHostLoading = false
-        const { accessKeyId = '', endpoint = '' } = JSON.parse(localStorage.getItem('form')) || {}
-        this.form.accessKeyId = accessKeyId
-        this.form.endpoint = endpoint
-      })
-    },
-    removeItem (row) {
-      const index = this.fileListArr.findIndex(x => x.relativePath === row.row.relativePath && x.name === row.row.name)
-      this.fileListArr.splice(index, 1)
-      // 最后一页删除后、切到1
-      if (this.fileListArr.length / this.pageSize <= 1) {
-        this.currentPage = 1
-      } else if (Math.ceil(this.fileListArr.length / this.pageSize) < this.currentPage) {
-        this.currentPage = this.currentPage - 1
-      }
-    },
-    handleSizeChange (val) {
-      this.pageSize = val
-    },
-    handleCurrentChange (val) {
-      this.currentPage = val
-    },
-
-    async handleMultUpload (fileArr) {
-      const {
-        Bucket,
-        hostName,
-        accessKeyId,
-        endpoint
-      } = this.form
-      // const arr = localStorage.getItem('fileList')
-      // if (!arr) localStorage.setItem('fileList', '[]')
-      // this.readFileList = JSON.parse(arr || '[]')
-      // 此处做断点续传
-      // return PromiseMultiple
-      // 此处不能统一执行、依次加入任务队列
-      const asyncTask = (file) => {
-        const fileSize = file.size
-        // 大于5GB、分片10m、500、
-        let chunkSize = ''
-        if (fileSize > 1024 * 1024 * 1024 * 10) {
-          chunkSize = 1024 * 1024 * 10
-        } else if (fileSize > 1024 * 1024 * 1024 * 5) {
-          chunkSize = 1024 * 1024 * 8
-        } else {
-          chunkSize = 1024 * 1024 * 5
-        }
-        // > 1000 ? 1024 * 1024 * 10 : this.uploadPartSize //5MB
-        const chunks = Math.ceil(fileSize / chunkSize)
-        const Key = hostName + '/' + this.handlePutPath(file)
-        file['Key'] = Key
-        return new Promise((resolve, rejected) => {
-          // 检测文件检测失败重传
-          const startTime = moment().format('YYYY-MM-DD HH:mm:ss')
-
-          const isExistReUploadPart = this.readFileList.find(x => {
-            return x.Key === Key && x.Bucket === Bucket && x.accessKeyId === accessKeyId && x.endpoint === endpoint
-          })
-          // console.log(
-          //   isExistReUploadPart, '分片续传'
-          // )
-          // 存在文件的分片、调用listPart获取已上传的分片、并在下面的上传分片中跳过已有的分片
-          // 触发前置条件、 分片处理完添加分片到fileList上传列表、处理成功移除、
-          // 故递归处理的函数在此只有分片失败会进入此、createMultipartUpload和complete不会在此处理？
-          if (isExistReUploadPart) {
-            const {
-              UploadId
-            } = isExistReUploadPart
-            // 存在切片、在有效期且开启续传
-            const params = {
-              Bucket,
-              Key,
-              UploadId
-            }
-            this.S3.listParts(params, (err, data) => {
-              // 不存在err、complete完还有part、上传大文件失败
-              // console.log(data, 'err', err)
-              if (!err) {
-                // console.log(data.Parts, '===已上传的分片===')
-                // 分片续传、data.Parts 参数为已上传的分片list、需重置非空
-                isExistReUploadPart.parts = data.Parts || [];
-                (async () => {
-                  const {
-                    parts
-                  } = isExistReUploadPart
-                  let multiplePart = []
-                  const listPartFin = []
-                  for (let chunkCount = 0; chunkCount < chunks; chunkCount++) {
-                    const start = chunkCount * chunkSize
-                    const end = Math.min(start + chunkSize, fileSize)
-                    const doneUploadSize = end - start
-                    const body = file.slice(start, end)
-                    const PartNumber = chunkCount + 1
-                    const reqParams = {
-                      PartNumber,
-                      Body: body,
-                      Bucket,
-                      Key,
-                      UploadId: isExistReUploadPart.UploadId
-                    }
-                    const jumpPass = parts.some(x => x.PartNumber === chunkCount + 1)
-                    if (jumpPass) {
-                      this.putSize += doneUploadSize
-                      if (chunkCount === chunks - 1) {
-                        const partRes = await Promise.allSettled(multiplePart)
-                        this.putSize += partRes.reduce((pre, cur) => {
-                          pre += cur.status === 'fulfilled' ? cur.value.doneUploadSize
-                            : cur.reason.doneUploadSize
-                          return pre
-                        }, 0)
-                        listPartFin.push(...partRes)
-                        multiplePart = []
-                        continue
-                      } else {
-                        continue
-                        // 此处continue跳过已有的循环、若为最后循环、需等待任务队列结束并拿到分片结果
-                      }
-                    }
-                    const p = new Promise((res, rej) => {
-                      this.S3.uploadPart(reqParams
-                        , (uploadPartErr, uploadPartData) => {
-                          if (uploadPartErr) rej({ ...uploadPartErr, doneUploadSize })
-                          else res({ ...uploadPartData, doneUploadSize, PartNumber })
-                        })
-                    })
-                    multiplePart.push(p)
-                    if (multiplePart.length == 5 || chunkCount === chunks - 1) {
-                      const partRes = await Promise.allSettled(multiplePart)
-                      this.putSize += partRes.reduce((pre, cur) => {
-                        pre += cur.status === 'fulfilled' ? cur.value.doneUploadSize
-                          : cur.reason.doneUploadSize
-                        return pre
-                      }, 0)
-                      listPartFin.push(...partRes)
-                      multiplePart = []
-                    }
-                  }
-                  // console.log(listPartFin, '=====剩下的分片=====')
-                  const partOver = listPartFin.every(x => x.status === 'fulfilled')
-                  if (partOver) {
-                    // listParts
-                    const Parts = [...listPartFin, ...parts]
-                      .map(x => {
-                        return {
-                          PartNumber: x.PartNumber || x.value.PartNumber,
-                          ETag: x.ETag || x.value.ETag
-                        }
-                      })
-                      .sort((a, b) => a.PartNumber - b.PartNumber)
-                    this.S3.completeMultipartUpload({
-                      Bucket,
-                      Key,
-                      UploadId: isExistReUploadPart.UploadId,
-                      MultipartUpload: { Parts }
-                    }, (compErr, compErrData) => {
-                      if (compErr) {
-                        const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                        rejected({
-                          err: compErr,
-                          file,
-                          startTime,
-                          endTime
-                        })
-                      } else {
-                        const delIndex = this.readFileList.findIndex(x => {
-                          return x.UploadId === isExistReUploadPart.UploadId
-                        })
-                        this.readFileList.splice(delIndex, 1)
-                        resolve(compErrData)
-                      }
-                      // console.log(compErr, compErrData)
-                    })
-                  } else {
-                    // 处理uploadpart错误、取其中一个error
-                    const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                    const uploadPartError = listPartFin.find(x => x.status === 'rejected')?.reason
-                    rejected({
-                      err: uploadPartError,
-                      file,
-                      startTime,
-                      endTime
-                    })
-                    // handle reUploadPart
-                  }
-                })()
-              } else {
-                this.putSize += fileSize
-                const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                rejected({ err, file, startTime, endTime })
-              }
-            })
-          } else {
-            // 处理上传进度
-            this.S3.createMultipartUpload({
-              Bucket,
-              Key
-            }, async (createErr, createData) => {
-              const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-              if (createErr) {
-                // console.error('Error creating multipart upload:', createErr)
-                this.putSize += fileSize
-                // console.log(createErr, 'listPartFin')
-                rejected({ err: createErr, file, startTime, endTime })
-              } else {
-                let multiplePart = []
-                // writeAbortLog
-                this.readFileList.push({
-                  accessKeyId,
-                  endpoint,
-                  Bucket,
-                  Key,
-                  UploadId: createData.UploadId
-                })
-                const listPartFin = []
-                // 此处同步的所以有问题了vuex先缓存一下
-                // endWrite 此处记录及最终Promise处处理完成判断、清楚记录或执行abortMultiple
-                for (let chunkCount = 0; chunkCount < chunks; chunkCount++) {
-                  const start = chunkCount * chunkSize
-                  const end = Math.min(start + chunkSize, fileSize)
-                  const doneUploadSize = end - start
-                  const body = file.slice(start, end)
-                  const reqParams = {
-                    PartNumber: chunkCount + 1,
-                    Body: body,
-                    Bucket,
-                    Key,
-                    UploadId: createData.UploadId
-                  }
-                  const p = new Promise((res, rej) => {
-                    // if (chunkCount > chunks - 2) {
-                    //   reqParams.Bucket = '666'
-                    // }
-                    this.S3.uploadPart(reqParams
-                      , (uploadPartErr, uploadPartData) => {
-                        if (uploadPartErr) rej({ ...uploadPartErr, doneUploadSize })
-                        else res({ ...uploadPartData, doneUploadSize })
-                      })
-                  })
-                  multiplePart.push(p)
-                  if (multiplePart.length == 3 || chunkCount === chunks - 1) {
-                    const partRes = await Promise.allSettled(multiplePart)
-                    // console.log(partRes, '123')
-                    this.putSize += partRes.reduce((pre, cur) => {
-                      pre += cur.status === 'fulfilled' ? cur.value.doneUploadSize
-                        : cur.reason.doneUploadSize
-                      return pre
-                    }, 0)
-                    listPartFin.push(...partRes)
-                    multiplePart = []
-                  }
-                }
-                // uploadPart End
-
-                const partOver = listPartFin.every(x => x.status === 'fulfilled')
-                if (partOver) {
-                  // listParts
-                  // var params = {
-                  //   Bucket,
-                  //   Key,
-                  //   UploadId: createData.UploadId
-                  // }
-                  const Parts = listPartFin.map((x, i) => {
-                    return {
-                      PartNumber: i + 1,
-                      ETag: x.value.ETag
-                    }
-                  })
-                  this.S3.completeMultipartUpload({
-                    Bucket,
-                    Key,
-                    UploadId: createData.UploadId,
-                    MultipartUpload: { Parts }
-                  }, (compErr, compErrData) => {
-                    if (compErr) {
-                      const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                      rejected({
-                        err: compErr,
-                        file,
-                        startTime,
-                        endTime
-                      })
-                    } else {
-                      const delIndex = this.readFileList.findIndex(x => {
-                        return x.UploadId === createData.UploadId
-                      })
-                      this.readFileList.splice(delIndex, 1)
-                      resolve(compErrData)
-                    }
-                  })
-                  // this.S3.listParts(params, (partErr, partRes) => {
-                  //   const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                  //   if (partErr) {
-                  //     rejected({
-                  //       err: partErr,
-                  //       file,
-                  //       startTime,
-                  //       endTime
-                  //     })
-                  //   } else {
-                  //     const Parts = partRes.Parts.map(x => {
-                  //       return {
-                  //         PartNumber: x.PartNumber,
-                  //         ETag: x.ETag
-                  //       }
-                  //     }).sort((a, b) => a.PartNumber - b.PartNumber)
-                  //     // finish
-                  //     this.S3.completeMultipartUpload({
-                  //       Bucket,
-                  //       Key,
-                  //       UploadId: createData.UploadId,
-                  //       MultipartUpload: { Parts }
-                  //     }, (compErr, compErrData) => {
-                  //       if (compErr) {
-                  //         const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                  //         rejected({
-                  //           err: compErr,
-                  //           file,
-                  //           startTime,
-                  //           endTime
-                  //         })
-                  //       } else {
-                  //         resolve(compErrData)
-                  //       }
-                  //       // console.log(compErr, compErrData)
-                  //     })
-                  //   }
-                  // })
-                } else {
-                  // 处理uploadpart错误、取其中一个error
-                  const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                  const err = listPartFin.find(x => x.status === 'rejected')?.reason
-                  rejected({
-                    err: err,
-                    file,
-                    startTime,
-                    endTime
-                  })
-                  // handle reUploadPart
-                }
-              }
-            })
-          }
-        })
-      }
-      const finalList = []
-      while (fileArr.length) {
-        const file = fileArr.shift()
-        finalList.push(await asyncTask(file).catch(err => {
-          return {
-            hasError: true,
-            err
-          }
-        }))
-      }
-      //
-      return finalList[0].hasError ? Promise.reject(finalList) : Promise.resolve(finalList)
-    },
-    postFolder (type) {
-      if (type === 'file') {
-        document.querySelector('.el-upload__input').webkitdirectory = false
-      } else {
-        document.querySelector('.el-upload__input').webkitdirectory = true
-      }
-    },
-    releaseDisable () {
-      document.oncontextmenu = function () { }
-      document.onkeydown = function (event) { }
-      window.onbeforeunload = function () { }
-    },
-    enableDrop () {
-      window.addEventListener('dragenter', this.dragEnterHandler)
-      window.addEventListener('dragleave', this.dragLeaveHandler)
-      window.addEventListener('drop', this.dropHandler)
-    },
-    disableDrop () {
-      window.removeEventListener('dragenter', this.dragEnterHandler)
-      window.removeEventListener('dragleave', this.dragLeaveHandler)
-      window.removeEventListener('drop', this.dropHandler)
-    },
-    resetForm (formName) {
-      if (this.$refs[formName] != undefined) {
-        this.$refs[formName].resetFields()
-      }
-    },
-
-    onDrop (e) {
-      e.preventDefault()
-      const dataTransfer = e.dataTransfer
-      if (
-        dataTransfer.items &&
-        dataTransfer.items[0] &&
-        dataTransfer.items[0].webkitGetAsEntry
-      ) {
-        this.webkitReadDataTransfer(dataTransfer)
-      }
-    },
-    webkitReadDataTransfer (dataTransfer) {
-      let fileNum = dataTransfer.items.length
-      const files = []
-      this.loading = true
-
-      // 递减计数，当fileNum为0，说明读取文件完毕
-      const decrement = () => {
-        if (--fileNum === 0) {
-          this.handleFiles(files)
-          this.loading = false
-        }
-      }
-
-      // 递归读取文件方法
-      const readDirectory = (reader) => {
-        // readEntries() 方法用于检索正在读取的目录中的目录条目，并将它们以数组的形式传递给提供的回调函数。
-        reader.readEntries((entries) => {
-          if (entries.length) {
-            fileNum += entries.length
-            entries.forEach((entry) => {
-              if (entry.isFile) {
-                entry.file((file) => {
-                  readFiles(file, entry.fullPath)
-                }, readError)
-              } else if (entry.isDirectory) {
-                readDirectory(entry.createReader())
-              }
-            })
-
-            readDirectory(reader)
-          } else {
-            decrement()
-          }
-        }, readError)
-      }
-      // 文件对象
-      const items = dataTransfer.items
-      // 拖拽文件遍历读取
-      for (var i = 0; i < items.length; i++) {
-        var entry = items[i].webkitGetAsEntry()
-        if (!entry) {
-          decrement()
-          return
-        }
-
-        if (entry.isFile) {
-          // 读取单个文件
-          return
-          // readFiles(items[i].getAsFile(), entry.fullPath, 'file')
-        } else {
-          // entry.createReader() 读取目录。
-          readDirectory(entry.createReader())
-        }
-      }
-
-      function readFiles (file, fullPath) {
-        file.relativePath = fullPath.substring(1)
-        files.push(file)
-        decrement()
-      }
-      function readError (fileError) {
-        throw fileError
-      }
-    },
-
-    handleFiles (files) {
-      // 按文件名称去存储列表，考虑到批量拖拽不会有同名文件出现
-      const dirObj = {}
-      // console.log(files, '1233')
-      // return
-      files.forEach((item) => {
-        // relativePath 和 name 一致表示上传的为文件，不一致为文件夹
-        // 文件直接放入table表格中
-        // 仍需考虑去重问题
-        const isExist = this.fileListArr.findIndex(x => x.name === item.name && (x.webkitRelativePath || x.relativePath) === (item.webkitRelativePath || item.relativePath))
-        if (isExist > -1 || item.size > this.uploadSizeLimt) {
-          return
-          // this.fileListArr.splice(isExist, 1)
-        }
-        this.fileListArr.push(item)
-        // if (item.relativePath === item.name) {
-        //   this.tableData.push({
-        //     name: item.name,
-        //     filesList: [item.file],
-        //     isFolder: false,
-        //     size: item.size
-        //   })
-        // }
-        // // 文件夹，需要处理后放在表格中
-        // if (item.relativePath !== item.name) {
-        //   const filderName = item.relativePath.split('/')[0]
-        //   if (dirObj[filderName]) {
-        //     // 放入文件夹下的列表内
-        //     const dirList = dirObj[filderName].filesList || []
-        //     dirList.push(item)
-        //     dirObj[filderName].filesList = dirList
-        //     // 统计文件大小
-        //     const dirSize = dirObj[filderName].size
-        //     dirObj[filderName].size = dirSize ? dirSize + item.size : item.size
-        //   } else {
-        //     dirObj[filderName] = {
-        //       filesList: [item],
-        //       size: item.size
-        //     }
-        //   }
-        // }
-      })
-
-      // 放入tableData
-      Object.keys(dirObj).forEach((key) => {
-        this.tableData.push({
-          name: key,
-          filesList: dirObj[key].filesList,
-          isFolder: true,
-          size: dirObj[key].size
-        })
-      })
-    },
-
-    validateBucket () {
-      if (!this.form.Bucket) {
-        if (this.bucketList.length) {
-          this.$notify({
-            type: 'error',
-            title: '请选择一个bucket'
-          })
-        } else {
-          if (this.noBucket) {
-            this.$notify({
-              type: '无bucket可用，请先创建bucket'
-            })
-          } else {
-            this.$notify({
-              type: 'error',
-              title: '请点击“连接”按钮，设置bucket'
-            })
-          }
-        }
-      } else {
-        this.$refs['form'].validate((valid) => {
-          if (valid) {
-            document.onkeydown = function (event) {
-              var e = event || window.event || arguments.callee.caller.arguments[0]
-              if (e && e.keyCode == 116) {
-                return false
-              }
-            }
-            window.onbeforeunload = function (e) {
-              // 兼容ie
-              // 触发条件 产生交互、当前不支持自定义文字
-              e = e || window.event
-              if (e) e.returnValue = 'none'
-              return 'none'
-            }
-            document.oncontextmenu = function () { return false }
-            this.dirFlag = true
-            const { endpoint, accessKeyId } = this.form
-            localStorage.setItem('form', JSON.stringify({
-              endpoint,
-              accessKeyId
-            }))
-          }
-        })
-      }
-    },
-    getBucketList () {
-      const {
-        accessKeyId,
-        secretAccessKey,
-        endpoint
-      } = this.form
-      if (!endpoint) {
-        this.$notify({
-          type: 'error',
-          title: '请输入endpoint'
-        })
-        return
-      }
-      if (!accessKeyId) {
-        this.$notify({
-          type: 'error',
-          title: '请输入Access Key'
-        })
-        return
-      }
-      if (!secretAccessKey) {
-        this.$notify({
-          type: 'error',
-          title: '请输入Secret Key'
-        })
-        return
-      }
-      this.S3 = new AWS.S3({
-        accessKeyId,
-        secretAccessKey,
-        endpoint,
-        region: 'EastChain-1',
-        s3ForcePathStyle: true
-      })
-      this.S3.listBuckets((err, data) => {
-        if (err) {
-          // console.dir(err)
-          // console.log('%c 123', 'color:red;font-size:20px')
-          // "NetworkingError"
-          let title = ''
-          let message = ''
-          if (err.code === 'AccessDenied') {
-            title = '连接S3失败'
-            message = '请检查ak/sk是否输入正确'
-          } else if (Number(err.code) === 12) {
-            title = '网络异常'
-            message = '请检查endpoint是否正确'
-          } else if (err.code === 'NetworkingError') {
-            title = '网络异常'
-            message = '请检查endpoint是否正确,或稍后再试'
-          } else {
-            title = '连接S3失败'
-            message = this.$trans(err.message || '')
-          }
-          // console.dir(err, 'err')
-          this.$notify({
-            type: 'error',
-            title,
-            message,
-            showClose: false,
-            customClass: 'errorTip'
-          })
-          this.noBucket = false
-          this.bucketList = []
-          this.form.Bucket = ''
-        } else {
-          this.bucketList = (data.Buckets || []).map(x => x.Name)
-          if (!this.bucketList.length) {
-            this.$notify({
-              type: 'error',
-              title: '无bucket可用，请先创建bucket'
-            })
-            this.noBucket = true
-          } else {
-            this.form.Bucket = this.bucketList[0]
-            this.$notify({
-              type: 'success',
-              title: '连接S3成功'
-            })
-            // this.form.Bucket = 'test'
-            // 确保断网或刷新页面导致未完成的上传记录清除
-            // this.doClearFileLog()
-          }
-        }
-      })
-    },
-    doClearFileLog () {
-      const {
-        accessKeyId,
-        endpoint
-      } = this.form
-      const keyList = JSON.parse(JSON.stringify(this.readFileList))
-      // console.log(keyList, 'null')
-      const doAbortTasks = keyList.map((x, i) => {
-        return new Promise((resolve, rejected) => {
-          if (accessKeyId === x.accessKeyId && endpoint === x.endpoint) {
-            // 一致性确保listPart正常
-            const params = {
-              Bucket: x.Bucket,
-              Key: x.Key,
-              UploadId: x.UploadId
-            }
-            this.S3.listParts(params, (err, data) => {
-              // 不存在err、complete完还有part、上传大文件失败
-              // console.log(data, 'err', err)
-              if (!err) {
-                // doAbort
-                const reUpload = data.Parts && data.Parts.length > 0
-                // console.log(data, '1233', reUpload)
-                if (reUpload && this.enableReUpload) {
-                  keyList[i].reUpload = true
-                  keyList[i].parts = data.Parts
-                  const expireTime = keyList[i].expireTime
-                  if (expireTime) {
-                    if (
-                      expireTime < moment().valueOf()) {
-                      this.S3.abortMultipartUpload(params, (err, data) => {
-                        if (!err) {
-                          keyList[i].delete = true
-                          resolve('clearTask')
-                          // 清除该条记录
-                        }
-                      })
-                    } else {
-                      resolve('keepReUpload')
-                    }
-                  } else {
-                    keyList[i].expireTime = moment().add(15, 'day').valueOf()
-                    resolve('reUpload')
-                  }
-                  // 有切片需要支持后续上传
-                } else {
-                  this.S3.abortMultipartUpload(params, (err, data) => {
-                    if (!err) {
-                      keyList[i].delete = true
-                      resolve('clearTask')
-                      // 清除该条记录
-                    }
-                  })
-                }
-              } else {
-                // 此处问题、
-                keyList[i].delete = true
-                resolve('clearTask')
-                // 清除该条记录
-              }
-            })
-          } else {
-            rejected('notMatch')
-            // noThingTodo
-          }
-        })
-      })
-      Promise.allSettled(doAbortTasks).then(res => {
-        // localStorage.setItem('fileList', JSON.stringify(iterateArr))
-        // 结束清理status为删除的
-        const fileList = keyList.filter(x => x.delete !== true)
-        this.readFileList = []
-        localStorage.setItem('fileList', JSON.stringify(fileList))
-        // console.log('checkOver', keyList, localStorage.getItem('fileList'))
-      })
-    },
-    confirmPut () {
-      const {
-        Bucket,
-        hostName
-      } = this.form
-      this.finalList = []
-      const putObjectArr = []
-      const multUploadArr = []
-      this.disableDrop()
-      document.querySelector('#loadChart').style.display = 'block'
-      const judgeUploadType = async () => {
-        // 文件分流
-        this.fileListArr.forEach(x => {
-          this.totalSize = this.totalSize + x.size
-          if (x.size <= this.uploadPartSize) {
-            putObjectArr.push({
-              Bucket,
-              Key: hostName + '/' + this.handlePutPath(x),
-              Body: x
-            })
-          } else {
-            multUploadArr.push(x)
-          }
-        })
-      }
-      // 区分大文件
-      (async () => {
-        await judgeUploadType()
-        // startPutObject
-        // console.log(putObjectArr, multUploadArr)
-        // return
-        this.loadingBg = this.$loading({
-          lock: true,
-          text: '文件上传中，请勿关闭当前页面',
-          spinner: 'el-icon-loading',
-          background: 'rgba(1,1,1,.3)',
-          customClass: 'putLoading'
-        })
+      this.finList = []
+      const onProgree = async (fileList) => {
         try {
-          const putObjectFin = []
-          // const taskList = []
-          this.putObjectNameArr = []
-          const needMock = multUploadArr.length === 0
-          // const putObjectStart = +new Date()
-          // const putObjectCount = putObjectArr.length
-          this.needMock = needMock && putObjectArr.length <= 5
-          this.myecharts = this.$echarts.init(document.getElementById('loadChart'))
-          this.renderChartPart()
-          //
-          const _this = this
+          const successFileList = []
           let taskList = []
-          const len = this.fileListArr.length
+          const len = fileList.length
+          this.netWorkFail = false
           for (let i = 0; i < len; i++) {
-            const file = this.fileListArr[i]
+            if (this.netWorkFail) {
+              break
+            }
+            const file = fileList[i]
             let asyncTask = null
             if (file.size <= this.uploadPartSize) {
               asyncTask = new Promise((res, rej) => {
                 const startTime = moment().format('YYYY-MM-DD HH:mm:ss')
-                _this.S3.putObject({
+                const Key = hostName + '/' + this.handlePutPath(file)
+                file['Key'] = Key
+                this.S3.putObject({
                   Bucket,
-                  Key: hostName + '/' + _this.handlePutPath(file)
+                  Key,
+                  Body: file
                 }, (err, data) => {
                   const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
                   if (err) rej({ err, file, startTime, endTime })
@@ -4415,29 +1626,65 @@ export default {
               // 与putObject区分
             }
             taskList.push(asyncTask)
-            if (taskList.length == 2 || i === len - 1) {
-              const partRes = await Promise.allSettled(taskList)
-              this.putSize += partRes.reduce((pre, cur) => {
-                if (cur.status === 'fulfilled' && !Array.isArray(cur.value)) {
+            // 并发上传文件数1、上传文件分片6
+            const partRes = await Promise.allSettled(taskList)
+            // console.log(partRes, '上传文件结束')
+            this.putSize += partRes.reduce((pre, cur) => {
+              if (cur.status === 'fulfilled') {
+                // 不具有Bucket、putObject、上传结束进度++
+                if (!cur.value.Bucket) {
                   pre += cur.value.file.size
+                  successFileList.push(cur.value.file.Key)
+                } else {
+                  successFileList.push(cur.value.Key)
                 }
-                return pre
-              }, 0)
-              putObjectFin.push(...partRes)
-              taskList = []
-            }
+                this.finList.push(cur)
+              } else if (cur.status === 'rejected') {
+                // console.log(cur, 'errrorrrr')
+                if (cur.reason.err?.err?.code === 'NetworkingError' || cur.reason.err?.code === 'NetworkingError' || cur.reason.err?.err?.code === 'TimeoutError' || cur.reason.err?.code === 'TimeoutError') {
+                  this.netWorkFail = true
+                } else {
+                  this.finList.push(cur)
+                }
+              }
+              return pre
+            }, 0)
+            taskList = []
           }
-          setTimeout(() => {
-            _this.releaseDisable()
-            _this.loadingBg.close()
-            console.log(putObjectFin)
-            // console.log(result, 'result')
-            _this.writeErrorLog(putObjectFin)
-          }, 1200)
+          // End
+          if (this.netWorkFail) {
+            const recoverFile = fileList.filter(x => {
+              return !successFileList.includes(x.Key)
+            })
+            // console.log(recoverFile, '=====ERROR', successFileList, fileList)
+            this.timerFail = setInterval(() => {
+              if (!this.connectingFlag) {
+                this.doCheckNetWork().then(() => {
+                  clearInterval(this.timerFail)
+                  this.netWorkFail = false
+                  setTimeout(() => {
+                    onProgree(recoverFile)
+                  }, 500)
+                })
+              }
+              // doCheckNetWork
+            }, 10000)
+
+            // 待重试文件
+          } else {
+            setTimeout(() => {
+              this.releaseDisable()
+              this.loadingBg.close()
+              console.log(this.finList, '===OVER===')
+              // console.log(result, 'result')
+              this.writeErrorLog(this.finList)
+            }, 1200)
+          }
         } catch (error) {
           console.log('errorOperate', error)
         }
-      })()
+      }
+      onProgree(this.fileListArr)
     },
     writeErrorLog (result) {
       // console.log(result, '================')
@@ -4463,6 +1710,7 @@ export default {
           title: '上传完成',
           dangerouslyUseHTMLString: true,
           type: 'success',
+          duration: 1000 * 10,
           message: `<p>
           <strong style="color:#d3d6d8;font-size:15px">总计: ${total}个</strong>
           <br/> <strong style="color:#d3d6d8;font-size:15px">成功: ${successCount}个</strong>
@@ -4502,97 +1750,6 @@ export default {
         this.dirFlag = false
       }
     },
-    async continueUpload (putObjectFin, multUploadArr) {
-      // case putObject
-      this.loadingBg = this.$loading({
-        lock: true,
-        text: '文件上传中，请勿关闭当前页面',
-        spinner: 'el-icon-loading',
-        background: 'rgba(1,1,1,.3)',
-        customClass: 'putLoading'
-      })
-      const {
-        hostName
-      } = this.form
-      let taskList = []
-      const needMock = multUploadArr.length === 0
-      const putObjectStart = +new Date()
-      this.needMock = needMock && this.continueArr.length <= 5
-
-      // putObject 待上传的文件、
-      const count = this.continueArr.length
-      for (let i = 0; i < count; i++) {
-        const file = this.continueArr[i]
-        // i > 0 ? file.Bucket = '123' : null
-        const p = new Promise((res, rej) => {
-          const startTime = moment().format('YYYY-MM-DD HH:mm:ss')
-          this.S3.putObject(file, (err, data) => {
-            const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
-            if (err) rej({ err, file, startTime, endTime })
-            else res({ success: 'success', file, startTime, endTime })
-          })
-        })
-        taskList.push(p)
-        if (taskList.length == 5 || i === count - 1) {
-          const partRes = await Promise.allSettled(taskList)
-          // 罗列list 记录上传后的状态
-          // 存在reject newworkFailure 停止当前for循环putObject
-          if (partRes.some(x => x.status === 'rejected' && x.reason.err.code === 'NetworkingError')) {
-            break
-          } else {
-            console.log(partRes, '1233')
-            // 记录上传成功及非网络异常导致的上传失败
-            this.putObjectNameArr.push(...partRes.map(x => {
-              return x.status === 'fulfilled'
-                ? hostName + '/' + this.handlePutPath(x.value.file.Body)
-                : hostName + '/' + this.handlePutPath(x.reason.file.Body)
-            }))
-          }
-          this.putSize += partRes.reduce((pre, cur) => {
-            pre += cur.status === 'fulfilled' ? cur.value.file.Body.size
-              : cur.reason.file.Body.size
-            return pre
-          }, 0)
-          putObjectFin.push(...partRes)
-          taskList = []
-        }
-      }
-      this.continueArr = this.continueArr.filter(x => {
-        return this.putObjectNameArr.every(y => {
-          return x.Key !== y
-        })
-      })
-      if (this.continueArr.length) {
-        this.loadingBg.close()
-        setTimeout(() => {
-          // 判断网络连接情况
-          this.$confirm('恢复上传对象', '请确认', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            closeOnClickModal: false,
-            closeOnPressEscape: false,
-            type: 'warning',
-            dangerouslyUseHTMLString: true
-          }).then(() => {
-            this.continueUpload(putObjectFin, multUploadArr)
-          })
-        }, 1000)
-        return
-      }
-      if (this.needMock) {
-        const putObjectEnd = +new Date()
-        const timeSeconds = Math.ceil((putObjectEnd - putObjectStart) / 1000)
-        await this.renderLoadingChart(timeSeconds)
-      }
-      const multipleObjects = await this.handleMultUpload(multUploadArr)
-      // console.log(this.totalSize, this.putSize, 'fin')
-      setTimeout(() => {
-        this.releaseDisable()
-        this.loadingBg.close()
-        // console.log(result, 'result')
-        this.writeErrorLog([...multipleObjects, ...putObjectFin])
-      }, 1200)
-    },
     handleRemoveErrorUpload (arr) {
       arr = JSON.parse(JSON.stringify(arr))
       const ErrorConnect = arr.filter(x => x.hasError && x.err.err.code === 'NetworkingError')
@@ -4608,11 +1765,48 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-:deep(.form) {
-  label.el-form-item__label {
+.page_content_wrap {
+  margin-top: 50px;
+}
+
+.manage-area-title {
+  display: flex;
+
+  .selectConfig {
+    display: flex;
+    align-items: center;
+    width: 500px;
+
+    .el-select {
+      width: 100%;
+    }
+  }
+
+  svg {
+    margin: 0 0 0 20px;
+    cursor: pointer;
+
+    &.del {
+      color: #cf3a3a;
+      position: relative;
+      top: .2px;
+      margin-left: 20px;
+    }
+
+    &.add {
+      color: #ff8746;
+    }
+  }
+}
+
+
+
+::v-deep .form {
+  .el-form-item__label {
     margin-left: 0 !important;
     width: 150px !important;
   }
+
   .el-select {
     width: 100%;
   }
@@ -4626,9 +1820,11 @@ export default {
     vertical-align: middle !important;
   }
 }
+
 :deep(.errorTip) {
   background-color: aqua !important;
   width: fit-content !important;
+
   .el-notification__group {
     .el-notification__content {
       p {
@@ -4662,10 +1858,12 @@ export default {
   width: 100%;
   margin-top: 10px;
 }
+
 .el-table {
   max-height: 600px;
   overflow-y: auto;
 }
+
 #loadChart {
   position: absolute;
   top: 50%;
@@ -4682,26 +1880,33 @@ export default {
     width: fit-content;
     transform: translate(-50%);
   }
+
   .el-loading-spinner i {
     font-size: 25px;
   }
+
   .el-loading-text {
     font-size: 25px;
   }
 }
+
 .uploadMenu {
   width: fit-content;
   display: flex;
   justify-content: flex-start;
+
   .el-button {
-    font-size: 25px;
-    height: 60px;
-    width: 120px;
-    padding: 15px;
-    margin-right: 50px;
+    font-size: 16px;
+    min-width: 60px;
+    height: fit-content;
+    width: fit-content;
+    padding: 10px;
+    margin-right: 30px;
     box-sizing: border-box;
+    margin-left: 0;
   }
 }
+
 .picker__drop-zone {
   position: fixed;
   box-sizing: border-box;
@@ -4716,23 +1921,28 @@ export default {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+
   .anim-floating {
     animation-name: anim-floating-6a50ffaa;
     animation-duration: 1s;
     animation-iteration-count: infinite;
   }
+
   .picker__drop-zone-label {
     margin-top: 30px;
     font-size: 25px;
     color: #333;
   }
+
   .drop-arrow {
     display: inline-block;
+
     div {
       display: block;
       background-repeat: no-repeat;
       background-position: 50%;
     }
+
     .arrow {
       width: 38.68px;
       height: 63.76px;
@@ -4741,6 +1951,7 @@ export default {
       margin-right: auto;
       margin-bottom: 0;
     }
+
     .base {
       width: 88.98px;
       height: 28.61px;
@@ -4748,6 +1959,7 @@ export default {
     }
   }
 }
+
 @keyframes anim-floating-6a50ffaa {
   0% {
     transform: translateY(0);
@@ -4762,14 +1974,611 @@ export default {
   }
 }
 </style>
+
+
 ```
 
 
 
-
-## 完整上传组件化监控进度
+## 下载服务
 ```js
-store/download.js
+const express = require('express');
+const cors = require('cors');
+const axios = require('axios');
+const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+const path = require('path');
+const fs = require('fs');
+const app = express();
+const port = process.env.PORT || 8081;
+
+app.use(cors());
+app.use(express.json());
+
+let s3Client = null;
+
+// 创建 logs 目录
+const logsDir = path.join(__dirname, 'logs');
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
+
+// 日志记录函数
+function writeLog (data) {
+  const now = new Date();
+  const dateStr = now.toISOString().split('T')[0];
+  const { timestamp, message } = data;
+  const logEntry = `[${timestamp}] ${JSON.stringify(message)}\n`;
+  const logFile = path.join(logsDir, `${dateStr}.txt`);
+  fs.appendFileSync(logFile, logEntry);
+}
+
+// API路由
+app.post('/init-s3', (req, res) => {
+  try {
+    const { accessKeyId, secretAccessKey, endpoint } = req.body;
+
+    s3Client = new S3Client({
+      region: "EastChain-1",
+      endpoint,
+      credentials: {
+        accessKeyId,
+        secretAccessKey
+      },
+      forcePathStyle: true
+    });
+
+    res.json({ success: true, message: 'S3 client initialized successfully' });
+  } catch (error) {
+    console.error('S3 initialization error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/generate-signed-url', async (req, res) => {
+  if (!s3Client) {
+    return res.status(400).json({ error: 'S3 client not initialized' });
+  }
+
+  const { bucket, key, start, end } = req.body;
+  const command = new GetObjectCommand({
+    Bucket: bucket,
+    Key: key,
+    // Range: `bytes=${start}-${end}`
+  });
+
+  try {
+    const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+    res.json({ url });
+  } catch (err) {
+    console.error('Generate signed URL error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 添加CORS中间件
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
+  next();
+});
+
+// 修改代理下载接口使用 axios
+app.post('/proxy-download', async (req, res) => {
+  console.log('Received request body:', req.body);
+
+  const { url, range } = req.body;
+
+  if (!url) {
+    console.error('Missing URL parameter');
+    return res.status(400).json({ error: 'Missing URL parameter' });
+  }
+
+  if (!range) {
+    console.error('Missing range parameter');
+    return res.status(400).json({ error: 'Missing range parameter' });
+  }
+
+  try {
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(url);
+      if (!parsedUrl.protocol || !parsedUrl.hostname) {
+        throw new Error('Invalid URL format');
+      }
+    } catch (e) {
+      console.error('URL validation error:', e.message);
+      return res.status(400).json({
+        error: 'Invalid URL format',
+        details: e.message,
+        url: url
+      });
+    }
+
+    console.log('Making request to:', {
+      url: parsedUrl.toString(),
+      range: range
+    });
+
+    // 使用 axios 发送请求
+    const response = await axios({
+      method: 'get',
+      url: parsedUrl.toString(),
+      headers: {
+        Range: range
+      },
+      responseType: 'stream'
+    });
+
+    // 转发响应头
+    res.setHeader('Content-Type', response.headers['content-type'] || 'application/octet-stream');
+    res.setHeader('Content-Length', response.headers['content-length']);
+    res.setHeader('Content-Range', response.headers['content-range']);
+    res.setHeader('Accept-Ranges', 'bytes');
+
+    // 流式转发响应体
+    response.data.pipe(res);
+
+  } catch (error) {
+    console.error('Proxy error:', error);
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
+    }
+  }
+});
+
+// 错误处理中间件
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  res.status(500).json({ error: 'Internal server error' });
+});
+
+app.post('/logData', (req, res) => {
+  try {
+    const data = req.body;
+    writeLog(data);
+    res.json({ success: true, message: '数据已成功记录' });
+  } catch (error) {
+    console.error('记录日志时出错:', error);
+    res.status(500).json({ success: false, message: '记录日志失败', error: error.message });
+  }
+});
+
+// 静态文件服务
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// 所有其他路由重定向到 index.html（支持 Vue Router 的 history 模式）
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+// 启动服务器
+app.listen(port, () => {
+  console.log(`Proxy server running on port ${port}`);
+});
+
+
+```
+
+
+## 打包命令
+```js
+// package.json---
+"package": "build.bat && node build.js && npm run build"
+// build.bat && node build.js
+
+chcp 65001
+@echo off
+REM 构建脚本：执行 NCC 编译并整合 PM2 配置
+
+set ENTRY_FILE=server/app.js
+set OUTPUT_DIR=nodeJs
+set PACKAGE_DIR=frontEnd.zip
+set PM2_CONFIG=server/ecosystem.config.js
+
+echo [1/3] 清理旧构建目录...
+if exist %OUTPUT_DIR% rmdir /s /q %OUTPUT_DIR%
+if exist %PACKAGE_DIR% del /q %PACKAGE_DIR%
+
+echo [2/3] 使用 NCC 编译项目...
+ncc build %ENTRY_FILE% -o %OUTPUT_DIR%
+
+echo [3/3] 复制 PM2 配置文件...
+copy %PM2_CONFIG% %OUTPUT_DIR%\%PM2_CONFIG% > nul
+
+echo 构建完成！输出目录：%OUTPUT_DIR%
+pause
+
+
+
+// copyEcosystem.js
+const fs = require('fs');
+const path = require('path');
+const sourcePath = path.join(__dirname, 'server', 'ecosystem.config.js');
+const destinationPath = path.join(__dirname, 'nodeJs', 'ecosystem.config.js');
+fs.copyFile(sourcePath, destinationPath, (err) => {
+  if (err) {
+    console.error('复制文件时出错:', err);
+  } else {
+    console.log('文件成功复制到 nodeJs 目录');
+  }
+});
+
+
+```
+
+
+
+## route && vuex
+```js
+import router from './router'
+import store from './vuex'
+const AWS = require('aws-sdk');
+router.beforeEach((to, from, next) => {
+  const s3 = store.state._S3
+  if (!s3 && to.name !== 'BackUp') {
+    const s3Client = JSON.parse(
+      localStorage.getItem('s3Client')
+    )
+    if (!s3Client) {
+      next('/main/bucket')
+    } else {
+      let { accessKeyId, secretAccessKey, endpoint } = s3Client
+      endpoint = endpoint.startsWith('http') || endpoint.startsWith('https') ? endpoint : 'http://' + endpoint
+      // AWS.config.logger = console;  // 关键配置
+      // AWS.config.logLevel = 'warn';  // 仅警告和错误
+      var S3 = new AWS.S3({
+        accessKeyId,
+        secretAccessKey,
+        endpoint,
+        region: 'EastChain-1',
+        s3ForcePathStyle: true,
+        signatureVersion: 'v4',
+        sslEnabled: true,
+      })
+      // 初始化S3客户端
+      store.dispatch('initS3', { S3, accessKeyId, secretAccessKey, endpoint })
+        .then(() => {
+          next()
+        })
+        .catch((error) => {
+          console.error('Error initializing S3:', error)
+          next('/main/bucket')
+        })
+    }
+  } else {
+    next()
+  }
+})
+
+
+// vuex
+
+import Vue from 'vue'
+import Vuex from 'vuex'
+import Cookies from 'js-cookie'
+import { constantRouterMap, asyncRouterMap } from '../router'
+import { refreshToken, getDIH, checkUserRole } from '@/api/dashboard'
+import { getPermission } from '@/api/policy'
+import { statusCode } from '@/utils/statusCode'
+import { permission } from '@/utils/permission-language'
+import { Gateway } from '@/api/gateway-request'
+import config from '../../proxy.config'
+import download from './download'
+import upload from './upload'
+import axios from 'axios'
+Vue.use(Vuex)
+// function hasPermission (roles, route) {
+//   if (route.meta && route.meta.roles) {
+//     return roles.some(role => route.meta.roles.indexOf(role) >= 0)
+//   } else {
+//     return false
+//   }
+// }
+
+// function filterAsyncRouter (asyncRouterMap, roles) {
+//   const accessedRouters = asyncRouterMap.filter(route => {
+//     if (hasPermission(roles, route)) {
+//       if (route.children && route.children.length) {
+//         route.children = filterAsyncRouter(route.children, roles)
+//       }
+//       return true
+//     }
+//     return false
+//   })
+//   return accessedRouters
+// }
+const store = new Vuex.Store({
+  // 全局变量
+  state: {
+    user: null,
+    ws: null, // websocket
+    socketStatus: false, // websocket status
+    websocketLastHeartBeat: 0,
+    isCollapse: false,
+    redCount: 0,
+    orangeCount: 0,
+    yellowCount: 0,
+    countFlag: 0,
+    toPool: false,
+    isListHistroy: false,
+    dosVersion: 'v1',
+    port: null,
+    addRouters: [],
+    routers: [],
+    token: '',
+    isHtGateway: '',
+    isOpenDih: '',
+    refreshToken: '',
+    api: [],
+    statusCode,
+    permission,
+    updateTime: '',
+    logoInfo: {},
+    _S3: '', // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html
+    _gatewayS3: '',
+    role: 'user',
+    isEip: false
+  },
+  // 修改全局变量必须通过mutations中的方法
+  // mutations只能采用同步方法
+  mutations: {
+    login (state, payload) {
+      state.user = payload
+      localStorage.setItem('user', JSON.stringify(state.user))
+    },
+    getPort (state, payload) {
+      state.port = payload
+    },
+    eipLogout () {
+      Cookies.remove('EIPGW-TOKEN')
+      sessionStorage.setItem('refreshToken', null)
+      sessionStorage.setItem('token', null)
+      localStorage.setItem('port', null)
+      localStorage.setItem('api', null)
+      localStorage.setItem('role', false)
+      localStorage.setItem('isEip', false)
+      localStorage.setItem('loginId', '')
+      window.location.reload()
+    },
+    logout (state) {
+      localStorage.setItem('port', null)
+      localStorage.setItem('api', null)
+      localStorage.setItem('role', false)
+      localStorage.setItem('isEip', false)
+      sessionStorage.setItem('refreshToken', null)
+      sessionStorage.setItem('token', null)
+      // localStorage.setItem('logoInfo', null)
+      Cookies.remove('token')
+      state.user = null
+      state.port = null
+      state._S3 = null
+      state._gatewayS3 = null
+      // state.ws && state.ws.close()
+    },
+    upLogoConfig (state, payload) {
+      sessionStorage.setItem('logoInfo', JSON.stringify(payload))
+      state.logoInfo = payload
+      document.title = payload.title
+    },
+    getS3 (state, payload) {
+      state._S3 = payload
+    },
+    gatewayS3 (state, payload) {
+      state._gatewayS3 = payload
+    },
+
+    SET_ROUTERS: (state, routers) => {
+      state.addRouters = routers
+      state.routers = constantRouterMap.concat(routers)
+    },
+    SET_TOKEN: (state, payload) => {
+      state.token = payload
+      sessionStorage.setItem('token', payload)
+    },
+    SET_EXPIRE_TOKEN: (state, payload) => {
+      // token=>expire 10min
+      state.refreshToken = payload
+      sessionStorage.setItem('refreshToken', payload)
+      const expires = new Date(new Date() * 1 + 540 * 1000)
+      Cookies.set('token', payload, { expires: expires })
+    },
+    SET_ACTION: (state, payload) => {
+      state.api = payload
+      localStorage.setItem('api', JSON.stringify(payload))
+    },
+
+    SET_ServiceFlag: (state, payload) => {
+      state['serviceFlag'] = payload
+    },
+    isHtGateway: (state, payload) => {
+      state.isHtGateway = payload
+    },
+    isOpenDih: (state, payload) => {
+      state.isOpenDih = payload
+    },
+    SET_ROLE: (state, payload) => {
+      state.role = payload
+      localStorage.setItem('role', payload)
+    },
+    SET_ISEIP: (state, payload) => {
+      state.isEip = payload
+      localStorage.setItem('isEip', payload)
+    }
+  },
+  actions: {
+    login ({ dispatch, commit, state }, payload) {
+      return new Promise((resolve, rej) => {
+        commit('login', payload)
+        // 获取权限菜单
+        const p1 = store.dispatch('setS3EndPoint')
+
+        const p2 = getPermission().then(res => {
+          const obj = {}
+          for (let i = 0; i < res.data.actionList.length; i++) {
+            obj[res.data.actionList[i]] = true
+          }
+          commit('SET_ACTION', obj)
+        }).catch((err) => {
+          rej(err)
+        })
+        const p3 = getDIH().then((res) => {
+          localStorage.setItem('isHtGateway', res.data.data.isHtGateway)
+          localStorage.setItem('isOpenDih', res.data.data.isOpenDih)
+          commit('SET_ServiceFlag', res.data.data.isOpenDih)
+          return res.data && res.data.data
+        }).catch(() => {
+          localStorage.setItem('isHtGateway', 'false')
+        })
+        const p4 = checkUserRole().then((res) => {
+          commit('SET_ROLE', res.data)
+        })
+        // const p4 = store.dispatch('getinterface')
+        // 创建s3JDK服务
+        Promise.allSettled([p1, p2, p3, p4]).then(res => {
+          const api = state.api || {}
+          api['isAdmin'] = ['superAdmin', 'fullPolicyAdmin'].includes(state.role)
+          commit('SET_ACTION', api)
+          resolve(res)
+        }).catch((err) => {
+          rej('err')
+        })
+      })
+    },
+
+    logout (context) {
+      context.commit('logout')
+    },
+    // js获取一个当前时间十秒过期时间戳
+    getToken ({ commit, state }) {
+      const token = sessionStorage.getItem('refreshToken') || state.refreshToken
+      if (String(state.isEip) === 'true') {
+        // eipLogin()
+        //   .then((res) => {
+        //     store.commit('SET_TOKEN', res.data.accessToken)
+        //     store.commit('SET_EXPIRE_TOKEN', res.data.refreshToken)
+        //   })
+        refreshToken(token)
+          .then((res) => {
+            store.commit('SET_TOKEN', res.data.accessToken)
+            store.commit('SET_EXPIRE_TOKEN', res.data.refreshToken)
+          })
+          .catch(error => {
+            console.error(error)
+          })
+      } else {
+        refreshToken(token)
+          .then((res) => {
+            store.commit('SET_TOKEN', res.data.accessToken)
+            store.commit('SET_EXPIRE_TOKEN', res.data.refreshToken)
+          })
+          .catch(error => {
+            console.error(error)
+          })
+      }
+    },
+    setS3EndPoint ({ commit, state, dispatch }) {
+      const AWS = require('aws-sdk')
+      return new Promise((resolve, reject) => {
+        let port = ''
+        const htLocation = [
+          'eipsit.htsc.com.cn',
+          'eip.htsc.com.cn',
+          'eipnew.htsc.com.cn',
+          'eipuat.htsc.com.cn'
+        ]
+        const isHtEnv = htLocation.some(x => window.location.href.indexOf(x) > -1)
+        if (window.location.host.indexOf('localhost') > -1) {
+          port = config['devServerProxy']['/api/']['target'] + '/dos'
+        } else if (isHtEnv) {
+          port = window.location.origin + '/s3sg/dos'
+        } else {
+          port = window.location.origin + '/dos'
+        }
+        localStorage.setItem('port', port)
+        commit('getPort', port)
+        var S3 = new AWS.S3({
+          accessKeyId: 'test',
+          secretAccessKey: 'test',
+          endpoint: port,
+          region: 'EastChain-1',
+          s3ForcePathStyle: true
+        })
+        AWS.events.on('send', (req) => {
+          req.request.httpRequest.headers['Authentication'] = sessionStorage.getItem('token')
+          req.request.httpRequest.headers['request-target'] = 'gateway'
+        })
+        var gatewayS3 = Gateway.S3({
+          accessKeyId: 'test',
+          secretAccessKey: 'test',
+          endpoint: port,
+          region: 'EastChain-1'
+        })
+        store.dispatch('getS3', data)
+        store.commit('gatewayS3', gatewayS3)
+        resolve(port)
+      })
+    },
+    async initS3 ({ commit }, { S3, accessKeyId, secretAccessKey, endpoint }) {
+      commit('getS3', S3)
+      // 初始化服务器端S3客户端
+      try {
+        const baseUrl = process.env.NODE_ENV === 'production'
+          ? window.location.origin  // 生产环境使用当前域名
+          : 'http://localhost:8081' // 开发环境使用本地服务器
+        // console.log('Requesting URL:', `${baseUrl}/init-s3`); // 添加调试日志
+        const response = await axios.post(`${baseUrl}/init-s3`, {
+          accessKeyId,
+          secretAccessKey,
+          endpoint
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.status !== 200) {
+          throw new Error(`Failed to initialize server S3 client: ${response.status} ${response.statusText}`);
+        }
+        // console.log('Server S3 client initialized:', response.data);
+      } catch (error) {
+        console.error('Server S3 initialization error:', error);
+        // this.$notify({
+        //   type: 'error',
+        //   title: '初始化失败',
+        //   message: error.message
+        // });
+      }
+    },
+    GenerateRoutes ({ commit }, { name }) {
+      return new Promise((res, rej) => {
+        let permissionRoute
+        if (name !== 'admin') {
+          permissionRoute = []
+          // permissionRoute = filterAsyncRouter(role,route)
+        } else {
+          permissionRoute = asyncRouterMap
+        }
+        commit('SET_ROUTERS', permissionRoute)
+        res()
+      })
+    }
+  },
+  getters: {
+  },
+  modules: {
+    download,
+    upload
+  }
+})
+
+export default store
+
+download.js
 
 const state = {
   downLoadTaskLists: [], // 存储下载任务列表
@@ -4804,10 +2613,9 @@ export default {
   actions,
 };
 
-```
 
-```js
-store/upload.js
+upload.js
+
 const state = {
   uploadTaskLists: [], // 存储下载任务列表
   uploadTaskQueue: [], //控制进度
@@ -4844,401 +2652,15 @@ export default {
   actions,
 };
 
+
+
 ```
 
+
+
+## 上传下载组件
 ```js
-store引入download、upload
-module:{
-  download,
-  upload
-}
-
-```
-```js
-    <el-button class="golden" @click="uploadFile">上传</el-button>
-
-
-
-    <el-dialog title="上传" :visible.sync="dirFlag" width="65%" destroy-on-close :close-on-press-escape="false"
-      :close-on-click-modal="false">
-      <el-form ref="createForm" :model="createForm" size="mini" label-width="150px"
-        style="padding:0 5%;position:relative">
-        <el-row class="uploadMenu">
-          <el-upload ref="uploadFile" action="#" :http-request="() => { }" multiple :show-file-list="false"
-            :before-upload="handleSizeValidate">
-            <!-- <el-button
-                size="small"
-                class="golden"
-                @click="postFolder('file')"
-              >上传文件</el-button> -->
-            <el-button size="small" class="golden" @click="postFolder('folder')">目录</el-button>
-            <el-button size="small" class="golden" @click="postFolder('file')">文件</el-button>
-          </el-upload>
-          <el-button class="blue" :disabled="!fileListArr.length" @click="cleafFile">清空</el-button>
-        </el-row>
-        <!-- <input type="file" id="upload" ref="inputer" name="file" multiple /> -->
-        <div draggable="true" class="drag tableBox" :style="renderPadding">
-          <div v-show="!fileListArr.length" class="el-upload__text">
-            <i class="el-icon-upload" style="margin-right: 6px" />点击上传或拖拽文件夹到此处
-            <!-- <el-button type="text" @click="addFiles">添加文件</el-button> -->
-          </div>
-          <div v-show="!fileListArr.length" class="el-upload__text">
-            <!-- 文件上传数量不能超过100个，总大小不超过5GB -->
-            单个文件大小不超过50GB
-          </div>
-          <el-table v-show="fileListArr.length"
-            :data="fileListArr.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
-            style="max-height: 600px;overflow-y: auto;">
-            <el-table-column label="对象key" prop="name" min-width="120px" />
-            <el-table-column label="目录" min-width="120px">
-              <template slot-scope="scope">
-                {{ renderFileRelative(scope.row)
-                }}
-              </template>
-            </el-table-column>
-            <el-table-column label="类型" width="180px">
-              <template slot-scope="scope">
-                {{ scope.row.type }}
-              </template>
-            </el-table-column>
-            <el-table-column label="大小" width="120px">
-              <template slot-scope="scope">
-                {{ byteConvert(scope.row.size) }}
-              </template>
-            </el-table-column>
-            <el-table-column label="移除" width="100px">
-              <template slot-scope="scope">
-                <svg style="cursor: pointer;color: #f34e4e;" class="icon" @click="removeItem(scope)">
-                  <use xlink:href="#icon-trash" />
-                </svg>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-pagination v-show="fileListArr.length" :current-page="currentPage" :page-sizes="[5, 10, 50, 100]"
-            :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="fileListArr.length"
-            @size-change="handleSizeChange" @current-change="handleCurrentChange" />
-        </div>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button class="golden" :disabled="fileListArr.length == 0" @click="confirmPut()">{{ $ts('button.confirm')
-        }}</el-button>
-        <el-button @click="dirFlag = false;">{{ $ts('button.cancel') }}</el-button>
-      </div>
-      <div id="loadChart" style="width:400px;height:300px;display:none" />
-    </el-dialog>
-
-
-    <div v-if="showDrop" class="picker__drop-zone" @dragover="(e) => e.preventDefault()" @drop="onDrop">
-      <div class="drop-arrow">
-        <div class="arrow anim-floating" />
-        <div class="base" />
-      </div>
-      <div class="picker__drop-zone-label">拖拽文件或文件夹到此处</div>
-    </div>
-
-
-watch:{
-    dirFlag (val) {
-      if (val) {
-        this.$nextTick(() => {
-          this.$refs['uploadFile'].clearFiles()
-        })
-        this.enableDrop()
-        this.fileListArr = []
-        this.datas_outer = []
-        for (let i = 30; i > 0; i--) {
-          this.datas_outer.push({
-            value: 1, // 占位用
-            name: '未完成',
-            itemStyle: { color: '#19272e' }
-          })
-        }
-      } else {
-        this.currentPage = 1
-        this.pageSize = 10
-        this.mockPutSize = 0
-        // this.needMock = false
-        this.myecharts = null
-        this.continueArr = []
-        this.putSize = 0 // 记录进度
-        this.totalSize = 0
-        this.readFileList = [] // 记录大文件上传
-        this.finList = []
-        clearTimeout(this.timer)
-        this.releaseDisable()
-        this.disableDrop()
-        // this.doClearFileLog()
-      }
-    },
-}
-
-methods:{
-    releaseDisable () {
-      document.oncontextmenu = function () { }
-      document.onkeydown = function (event) { }
-      window.onbeforeunload = function () { }
-    },
-    enableDrop () {
-      window.addEventListener('dragenter', this.dragEnterHandler)
-      window.addEventListener('dragleave', this.dragLeaveHandler)
-      window.addEventListener('drop', this.dropHandler)
-    },
-    disableDrop () {
-      window.removeEventListener('dragenter', this.dragEnterHandler)
-      window.removeEventListener('dragleave', this.dragLeaveHandler)
-      window.removeEventListener('drop', this.dropHandler)
-    },
-    dragEnterHandler (e) {
-      e.preventDefault()
-      if (!this.showDrop) {
-        this.showDrop = true
-      }
-    },
-    dragLeaveHandler (e) {
-      e.preventDefault()
-      e.relatedTarget || (this.showDrop = false)
-      // e.relatedTarget有效值仍在界面内
-    },
-    dropHandler (e) {
-      e.preventDefault()
-      this.showDrop = false
-    },
-    uploadFile () {
-      this.enableDisable()
-      this.dirFlag = true
-    },
-    enableDisable () {
-      // 禁用 F5 刷新
-      document.onkeydown = function (event) {
-        var e = event || window.event || arguments.callee.caller.arguments[0];
-        if (e && e.keyCode == 116) {
-          return false;
-        }
-      };
-      // 添加关闭标签页提示
-      window.onbeforeunload = function (e) {
-        // 兼容ie
-        // 触发条件 产生交互、当前不支持自定义文字
-        e = e || window.event
-        if (e) e.returnValue = 'none'
-        return 'none'
-      }
-    },
-    postFolder (type) {
-      if (type === 'file') {
-        document.querySelector('.el-upload__input').webkitdirectory = false
-      } else {
-        document.querySelector('.el-upload__input').webkitdirectory = true
-      }
-    },
-    onDrop (e) {
-      e.preventDefault()
-      const dataTransfer = e.dataTransfer
-      if (
-        dataTransfer.items &&
-        dataTransfer.items[0] &&
-        dataTransfer.items[0].webkitGetAsEntry
-      ) {
-        this.webkitReadDataTransfer(dataTransfer)
-      }
-    },
-
-    webkitReadDataTransfer (dataTransfer) {
-      // console.log(dataTransfer, 'datatransfer')
-      let fileNum = dataTransfer.items.length
-      const files = []
-      this.loading = true
-      // 递减计数，当fileNum为0，说明读取文件完毕
-      const decrement = () => {
-        if (--fileNum === 0) {
-          this.handleFiles(files)
-          this.loading = false
-        }
-      }
-
-      const readDirectory = (reader, fullPath) => {
-        reader.readEntries((entries) => {
-          if (entries.length) {
-            fileNum += entries.length
-            entries.forEach((entry) => {
-              if (entry.isFile) {
-                entry.file((file) => {
-                  readFiles(file, entry.fullPath)
-                }, readError)
-              } else if (entry.isDirectory) {
-                readDirectory(entry.createReader(), entry.fullPath)
-              }
-            })
-            readDirectory(reader, fullPath)
-          } else {
-            // // 如果 entries 为空，表示这是一个空文件夹
-            // const filterDir = fullPath.split('/')
-            // if (filterDir.length > 2) {
-            //   files.push({
-            //     relativePath: fullPath.substring(1), isDirectory: true, name: '/' + filterDir.slice(2).join('/'),
-            //     size: 0
-            //   })
-            // }
-            decrement()
-          }
-        }, readError)
-      };
-
-      const items = dataTransfer.items;
-      // 拖拽文件遍历读取
-      for (var i = 0; i < items.length; i++) {
-        var entry = items[i].webkitGetAsEntry()
-        if (!entry) {
-          decrement()
-          return
-        }
-
-        if (entry.isFile) {
-          readFiles(items[i].getAsFile(), entry.fullPath)
-        } else {
-          readDirectory(entry.createReader(), entry.fullPath)
-        }
-      }
-
-      function readFiles (file, fullPath) {
-        file.relativePath = fullPath.substring(1)
-        files.push(file)
-        decrement()
-      }
-      function readError (fileError) {
-        throw fileError
-      }
-    },
-    handleFiles (files) {
-      // 按文件名称去存储列表，考虑到批量拖拽不会有同名文件出现
-      files.forEach((item) => {
-        // relativePath 和 name 一致表示上传的为文件，不一致为文件夹
-        // 文件直接放入table表格中
-        // 仍需考虑去重问题
-        const isExist = this.fileListArr.findIndex(x => {
-          return !!(this.showFileDir(x)) ? (x.webkitRelativePath || x.relativePath) === (item.webkitRelativePath || item.relativePath) : x.name === item.name
-        })
-        if (isExist > -1) return false
-        if (item.size > this.uploadSizeLimt) {
-          this.$notify({
-            type: 'error',
-            text: '当前上传文件大于50G'
-          })
-          return false
-        }
-        this.fileListArr.push(item)
-      })
-    },
-    showPutFileKey (file) {
-      const {
-        webkitRelativePath,
-        relativePath
-      } = file
-      const hasDirPath = webkitRelativePath || relativePath
-      return (this.$route.query.filename || '') + (!!hasDirPath ? hasDirPath : file.name)
-    },
-    // 同步更新store、激活组件状态
-    confirmPut () {
-      try {
-        this.$nextTick(() => {
-          document.querySelector('.upload + span').classList.add('circleStatus')
-        })
-        //end
-        document.querySelector('.upload + span').classList.add('active')
-        // 刷新下载状态
-        setTimeout(() => {
-          document.querySelector('.upload + span').classList.remove('active')
-        }, 1000);
-        const uniqueKey = Date.now()
-        // 同步vuex
-        const totalSize = this.fileListArr.reduce((pre, cur) => pre + (cur.size || 0), 0)
-        const firstFile = this.fileListArr[0]
-        const taskName = this.fileListArr.length > 1 ? this.showPutFileKey(firstFile) + ' ... ' : this.showPutFileKey(firstFile)
-        // 展示进度
-        this.$store.commit('ADD_UPLOAD_TASK', {
-          taskName,
-          execSize: 0,
-          totalSize,
-          uniqueKey,
-          execCount: 0,
-          totalCount: this.fileListArr.length,
-          pending: true,
-        })
-        // 实际上传
-        this.$store.commit('ADD_UPLOAD_QUEUE', {
-          fileList: this.fileListArr,
-          prefix: this.$route.query.filename,
-          Bucket: this.$route.params.id,
-          taskName,
-          uniqueKey
-        })
-        this.dirFlag = false
-        this.$bus.$emit("upload")
-      } catch (error) {
-        console.log(error, '123')
-      }
-    },
-
-}
-<style>
-  .picker__drop-zone {
-  position: fixed;
-  box-sizing: border-box;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: hsla(0, 0%, 100%, 0.9);
-  border: 6px solid #ff8746;
-  z-index: 99999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-
-  .anim-floating {
-    animation-name: anim-floating-6a50ffaa;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
-  }
-
-  .picker__drop-zone-label {
-    margin-top: 30px;
-    font-size: 25px;
-    color: #333;
-  }
-
-  .drop-arrow {
-    display: inline-block;
-
-    div {
-      display: block;
-      background-repeat: no-repeat;
-      background-position: 50%;
-    }
-
-    .arrow {
-      width: 38.68px;
-      height: 63.76px;
-      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 38.68 63.76' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M34.2 42.63 21.68 55V3c0-1.42-.88-3-2.34-3a3 3 0 0 0-2.66 3v52L4.47 42.63a2.68 2.68 0 0 0-1.85-.76 2.57 2.57 0 0 0-1.85.76 2.51 2.51 0 0 0 0 3.63L17.49 63a2.7 2.7 0 0 0 1.85.76 2.58 2.58 0 0 0 1.85-.76l16.72-16.75a2.51 2.51 0 0 0 0-3.63 2.69 2.69 0 0 0-3.7 0Zm0 0' fill='%23333'/%3E%3C/svg%3E");
-      margin-left: auto;
-      margin-right: auto;
-      margin-bottom: 0;
-    }
-
-    .base {
-      width: 88.98px;
-      height: 28.61px;
-      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 88.98 28.61' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M86.42.38A2.26 2.26 0 0 0 84 2.73v9.07a12.34 12.34 0 0 1-12 11.93H15.78C9.44 23.73 5 18.05 5 11.73V2.28A2.22 2.22 0 0 0 2.56 0 2.55 2.55 0 0 0 0 2.56v9.45a16.48 16.48 0 0 0 16.44 16.6h56.22A16.38 16.38 0 0 0 89 12.02V2.95A2.35 2.35 0 0 0 86.72.38h-.28z' fill='%23333'/%3E%3C/svg%3E");
-    }
-  }
-}
-</style>
-```
-
-```js
-upload.vue
-
+        <upload />
 <template>
   <el-popover ref="uploadPopover" placement="left" width="400" trigger="click">
     <div class="customProgressContainer">
@@ -5394,9 +2816,9 @@ export default {
       }
     },
     async removeTask (index) {
-      console.log(this.abortController, 'abortController')
+      // console.log(this.abortController, 'abortController')
       // 清除分片
-      // 需要注意若是分片、清理还需额外调用abortMultipartUpload
+      // 需要注意若是分片、清理还需额外调用 abortMultipartUpload
       if (!isNaN(index)) {
         // console.log(index, '123')
         const item = this.uploadTaskLists.splice(index, 1); // 移除任务
@@ -5406,14 +2828,14 @@ export default {
         // console.log(this.abortController[id], this.abortController, id, index, item)
         // 任务列表是存在的、但abortController未添 加、需全部清除
         // 移除单个上传的任务、需要找出带有uploadId的、即需要清除分片、同时需要过滤后续的分片任务
-        console.log(this.abortController[id], 'idTest', item)
+        // console.log(this.abortController[id], 'idTest', item)
         // const partUpload = {}
         if (this.abortController[id]) {
           const arr = this.abortController[id]
           // 目录打包下载需要遍历调用
           const len = arr.length
           for (let i = 0; i < len; i++) {
-            console.log(arr[i], 'iii')
+            // console.log(arr[i], 'iii')
             // 中断所有请求
             if (arr[i].abort) {
               arr[i].abort()
@@ -5654,15 +3076,16 @@ export default {
             const recoverFile = fileList.filter(x => {
               return !successFileList.includes(x.Key)
             })
+            // console.log(recoverFile, 'recoverFile', this.uploadTaskLists)
             // 移除未分片对象的上传进度
-            recoverFile.forEach(x => {
-              const index = this.uploadTaskLists.findIndex(y => {
-                return x.Key === y.taskName
-              })
-              if (index !== -1) {
-                this.uploadTaskLists[index].execSize = 0
-              }
-            })
+            // recoverFile.forEach(x => {
+            //   const index = this.uploadTaskLists.findIndex(y => {
+            //     return x.Key === y.taskName
+            //   })
+            //   if (index !== -1) {
+            //     this.uploadTaskLists[index].execSize = 0
+            //   }
+            // })
             // console.log(recoverFile, '=====ERROR', successFileList, fileList)
             this.timerFail = setInterval(() => {
               if (!this.connectingFlag) {
@@ -5775,10 +3198,10 @@ export default {
                       }
                       const jumpPass = hasUploadPart.findIndex(x => x.PartNumber === PartNumber)
                       if (jumpPass !== -1) {
-                        const currentIdx = this.uploadTaskLists.findIndex(x => x.uniqueKey === taskKey)
-                        if (currentIdx > -1) {
-                          this.uploadTaskLists[currentIdx].execSize += hasUploadPart[jumpPass]['Size']
-                        }
+                        // const currentIdx = this.uploadTaskLists.findIndex(x => x.uniqueKey === taskKey)
+                        // if (currentIdx > -1) {
+                        //   this.uploadTaskLists[currentIdx].execSize += hasUploadPart[jumpPass]['Size']
+                        // }
                         continue
                       }
                       // 计算上传量
@@ -6341,11 +3764,7 @@ export default {
 
 
 
-```
-
-
-
-```js
+        <download />
 <template>
   <el-popover ref="downloadPopover" placement="left" width="400" trigger="click">
     <div class="customProgressContainer">
@@ -7048,239 +4467,6 @@ export default {
 }
 </style>
 
-
-```
-
-
-### nodejs 提供后台下载链接（解决页面预签名提示异常跨域问题CORS）
-
-```js
-store/index
-
-  async initS3 ({ commit }, { S3, accessKeyId, secretAccessKey, endpoint }) {
-    commit('getS3', S3)
-    // 初始化服务器端S3客户端
-    try {
-      const baseUrl = process.env.NODE_ENV === 'production'
-        ? window.location.origin  // 生产环境使用当前域名
-        : 'http://localhost:8081' // 开发环境使用本地服务器
-      // console.log('Requesting URL:', `${baseUrl}/init-s3`); // 添加调试日志
-      const response = await axios.post(`${baseUrl}/init-s3`, {
-        accessKeyId,
-        secretAccessKey,
-        endpoint
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.status !== 200) {
-        throw new Error(`Failed to initialize server S3 client: ${response.status} ${response.statusText}`);
-      }
-      console.log('Server S3 client initialized:', response.data);
-    } catch (error) {
-      console.error('Server S3 initialization error:', error);
-      // this.$notify({
-      //   type: 'error',
-      //   title: '初始化失败',
-      //   message: error.message
-      // });
-    }
-  },
-
-  // 先初始化后端s3服务传递相关参数
-  store.dispatch('initS3', { S3, accessKeyId, secretAccessKey, endpoint })
-    .then(() => {
-      next()
-    })
-    .catch((error) => {
-      console.error('Error initializing S3:', error)
-      next('/main/bucket')
-    })
-
-
-
-
-server/app.js
-const express = require('express');
-const cors = require('cors');
-const axios = require('axios');
-const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
-const path = require('path');
-const fs = require('fs');
-const app = express();
-const port = process.env.PORT || 8081;
-
-app.use(cors());
-app.use(express.json());
-
-let s3Client = null;
-
-// 创建 logs 目录
-const logsDir = path.join(__dirname, 'logs');
-if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir, { recursive: true });
-}
-
-// 日志记录函数
-function writeLog (data) {
-  const now = new Date();
-  const dateStr = now.toISOString().split('T')[0];
-  const { timestamp, message } = data;
-  const logEntry = `[${timestamp}] ${JSON.stringify(message)}\n`;
-  const logFile = path.join(logsDir, `${dateStr}.txt`);
-  fs.appendFileSync(logFile, logEntry);
-}
-
-// API路由
-app.post('/init-s3', (req, res) => {
-  try {
-    const { accessKeyId, secretAccessKey, endpoint } = req.body;
-
-    s3Client = new S3Client({
-      region: "EastChain-1",
-      endpoint,
-      credentials: {
-        accessKeyId,
-        secretAccessKey
-      },
-      forcePathStyle: true
-    });
-
-    res.json({ success: true, message: 'S3 client initialized successfully' });
-  } catch (error) {
-    console.error('S3 initialization error:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.post('/generate-signed-url', async (req, res) => {
-  if (!s3Client) {
-    return res.status(400).json({ error: 'S3 client not initialized' });
-  }
-
-  const { bucket, key, start, end } = req.body;
-  const command = new GetObjectCommand({
-    Bucket: bucket,
-    Key: key,
-    // Range: `bytes=${start}-${end}`
-  });
-
-  try {
-    const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-    res.json({ url });
-  } catch (err) {
-    console.error('Generate signed URL error:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// 添加CORS中间件
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
-  next();
-});
-
-// 修改代理下载接口使用 axios
-app.post('/proxy-download', async (req, res) => {
-  console.log('Received request body:', req.body);
-
-  const { url, range } = req.body;
-
-  if (!url) {
-    console.error('Missing URL parameter');
-    return res.status(400).json({ error: 'Missing URL parameter' });
-  }
-
-  if (!range) {
-    console.error('Missing range parameter');
-    return res.status(400).json({ error: 'Missing range parameter' });
-  }
-
-  try {
-    let parsedUrl;
-    try {
-      parsedUrl = new URL(url);
-      if (!parsedUrl.protocol || !parsedUrl.hostname) {
-        throw new Error('Invalid URL format');
-      }
-    } catch (e) {
-      console.error('URL validation error:', e.message);
-      return res.status(400).json({
-        error: 'Invalid URL format',
-        details: e.message,
-        url: url
-      });
-    }
-
-    console.log('Making request to:', {
-      url: parsedUrl.toString(),
-      range: range
-    });
-
-    // 使用 axios 发送请求
-    const response = await axios({
-      method: 'get',
-      url: parsedUrl.toString(),
-      headers: {
-        Range: range
-      },
-      responseType: 'stream'
-    });
-
-    // 转发响应头
-    res.setHeader('Content-Type', response.headers['content-type'] || 'application/octet-stream');
-    res.setHeader('Content-Length', response.headers['content-length']);
-    res.setHeader('Content-Range', response.headers['content-range']);
-    res.setHeader('Accept-Ranges', 'bytes');
-
-    // 流式转发响应体
-    response.data.pipe(res);
-
-  } catch (error) {
-    console.error('Proxy error:', error);
-    if (!res.headersSent) {
-      res.status(500).json({
-        error: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-      });
-    }
-  }
-});
-
-// 错误处理中间件
-app.use((err, req, res, next) => {
-  console.error('Server error:', err);
-  res.status(500).json({ error: 'Internal server error' });
-});
-
-app.post('/logData', (req, res) => {
-  try {
-    const data = req.body;
-    writeLog(data);
-    res.json({ success: true, message: '数据已成功记录' });
-  } catch (error) {
-    console.error('记录日志时出错:', error);
-    res.status(500).json({ success: false, message: '记录日志失败', error: error.message });
-  }
-});
-
-// 静态文件服务
-app.use(express.static(path.join(__dirname, 'dist')));
-
-// 所有其他路由重定向到 index.html（支持 Vue Router 的 history 模式）
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
-
-// 启动服务器
-app.listen(port, () => {
-  console.log(`Proxy server running on port ${port}`);
-});
 
 
 ```
