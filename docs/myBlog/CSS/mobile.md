@@ -48,7 +48,7 @@ tags:
   <div>
     <div class="loading">
       <div class="loadbox">
-        <img src="https://cdn.jsdelivr.net/npm/loading.io/mod/spinners/clock.svg" /> 页面加载中...
+        <img src="./images/loading.gif" /> 页面加载中...
       </div>
     </div>
     <div class="canvas" style="opacity: .2">
