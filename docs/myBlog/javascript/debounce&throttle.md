@@ -38,7 +38,7 @@ tags:
             }, delay);
         }
     }
-    debounce.call(this, function() {
+    fun: debounce.call(this, function() {
         todo...
     }, 500),
 ```
@@ -82,4 +82,25 @@ tags:
             }
         },
     v-throt="{func:methods,delay:50}"
+```
+
+
+## 拖拽排序
+```js
+import Sortable from 'sortablejs'
+
+    const tr = document.querySelector('.applyRegTable .el-table__body-wrapper tbody')
+    Sortable.create(tr, {
+      animation: 180,
+      onEnd: (event) => {
+        const {
+          newIndex,
+          oldIndex
+        } = event
+        const old = this.applyRegList.splice(oldIndex, 1)[0]
+        this.applyRegList.splice(newIndex, 0, old)
+      }
+    })
+
+
 ```

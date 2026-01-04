@@ -272,58 +272,96 @@ apply.bind将Math.max指向了apply，null作为apply第一个参数，后面map
       { id: 1, name: 2, user: { age: 18 } },
       { id: 2, name: 3, user: { age: 20 } }
     ]
-const exportExcel = function p(n = [] as any, m = [] as any, r = '') {
-  let l = [] as any
-  m.forEach((e: any, c: any) => {
-    let x = {}
-    n.forEach(({ key: a }) => {
-      x[a] = a.split('.').reduce((h: { [x: string]: any }, i: string | number) => {
-        try {
-          return h[i]
-        } catch {
-          return
+
+export const exportExcel = function (n = [], m = [], r = '') {
+  return new Promise((resolve, reject) => {
+
+    try {
+      let l = []
+      m.forEach((e) => {
+        let x = {}
+        n.forEach(({ key: a }) => {
+          x[a] = a.split('.').reduce((h, i) => {
+            return h[i]
+          }, e)
+        })
+        l.push(x)
+      })
+
+      let t = '<tr>'
+      // 标题行样式（12号字）
+      for (let e = 0; e < n.length; e++)
+        t += `<th style="
+      font-family:宋体;
+      font-size:12pt;
+      text-align:center;
+      font-weight:bold;
+      color:#fff;
+      background-color:#0078d7;
+      vertical-align:middle;
+    ">${n[e].title + '	'}</th>`
+      t += '</tr>'
+
+      // 数据行样式（11号字）
+      l.forEach((item) => {
+        t += '<tr>'
+        for (let c in item) {
+          t += `<td style="
+        mso-number-format:'@';
+        vertical-align:bottom;
+      ">${(item[c]) + '	'}</td>`
         }
-      }, e)
-    }),
-      l.push(x)
+        t += '</tr>'
+      })
+
+      // 全局表格样式
+      const tableStyle = `
+    font-family: 宋体;
+    border-collapse: collapse;
+    font-size: 11pt;  /* 作为后备字体大小 */
+  `
+
+      const html = `<!DOCTYPE html>
+    <html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:x="urn:schemas-microsoft-com:office:excel"
+      xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <meta charset="UTF-8">
+        <!--[if gte mso 9]>
+        <xml>
+          <x:ExcelWorkbook>
+            <x:ExcelWorksheets>
+              <x:ExcelWorksheet>
+                <x:Name>${r}</x:Name>
+                <x:WorksheetOptions>
+                  <x:DisplayGridlines/>
+                </x:WorksheetOptions>
+              </x:ExcelWorksheet>
+            </x:ExcelWorksheets>
+          </x:ExcelWorkbook>
+        </xml>
+        <![endif]-->
+      </head>
+      <body>
+        <table style="${tableStyle}">${t}</table>
+      </body>
+    </html>`
+
+      const link = document.createElement('a')
+      link.href = 'data:application/vnd.ms-excel;base64,' +
+        btoa(unescape(encodeURIComponent(html)))
+      link.download = (r || '数据') + '.xls'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      resolve(true)
+    } catch (error) {
+      reject(error)
+    }
   })
-  // l 解析column对应key的value
-  // l => {key:value} column: key l 所有的td、依次按顺序排列d
-  let t = '<tr>'
-  for (let e = 0; e < n.length; e++) t += `<td>${n[e].title + '	'}</td>`
-  ;(t += '</tr>'), (t += '<tr>')
-  // tilte
-  for (let e = 0; e < l.length; e++) {
-    // l[e] {key:'value'}
-    // 科学技术法 数字
-    // style="mso-number-format:'@'"
-    for (let c in l[e])
-      t += `<td  style="mso-number-format:'@'">${(l[e][c] ? l[e][c] : '') + '	'}</td>`
-    t += '</tr>'
-  }
-  console.log(t, '12333')
-  var s,
-    d = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:x="urn:schemas-microsoft-com:office:excel"
-    xmlns="http://www.w3.org/TR/REC-html40">
-    <head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
-      <x:Name>${r}</x:Name>
-      <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
-      </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-      </head><body><table>${t}</table></body></html>`,
-    o = document.createElement('a')
-  ;(o.href =
-    'data:application/vnd.ms-excel;base64,' +
-    ((s = d), window.btoa(unescape(encodeURIComponent(s))))),
-    (o.download = r ? r + '.xls' : '数据.xls'),
-    document.body.appendChild(o),
-    (o.innerHTML = '点击下载'),
-    o.click(),
-    document.body.removeChild(o)
 }
 
 ```
-
 ## 复制文本
 ```js
     copyCode (str) {
@@ -348,4 +386,190 @@ xmlns:x="urn:schemas-microsoft-com:office:excel"
         })
       }
     },
+```
+
+## 字节单位转换
+```js
+Vue.prototype.byteConvertImpl = function (bytes, symbols = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']) {
+  if (isNaN(bytes)) {
+    return ['', '']
+  }
+  var exp = Math.floor(Math.log(bytes) / Math.log(2))
+  if (exp < 1) {
+    exp = 0
+  }
+  var i = Math.max(Math.min(Math.floor(exp / 10), symbols.length - 1), 0)
+  bytes = bytes / Math.pow(2, 10 * i)
+  if (bytes.toString().length > bytes.toFixed(2).toString().length) {
+    bytes = bytes.toFixed(2)
+  }
+  return [bytes, symbols[i]]
+}
+
+Vue.prototype.byteConvert = function (bytes, symbols = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']) {
+  bytes = Number(bytes) > 0 ? Number(bytes) : 0
+  return Vue.prototype.byteConvertImpl(bytes, symbols).join(' ')
+}
+
+```
+
+
+## 获取文件类型
+
+```js
+Vue.prototype.getFileType = function (name) {
+  if (!name) return ''
+  const reg = /\.([0-9a-z]+)(?:[\?#]|$)/i
+  const arr = name.match(reg)
+  if (arr && arr.length) {
+    return arr[1]
+  } else {
+    return '/'
+  }
+}
+
+```
+
+## 千分位精度转换
+```js
+export const thousandthSeparator = (value) => {
+  value = value ? value.toString() : ''
+  const reg = /\B(?=(\d{3})+(?!\d))/g
+  return value.replace(reg, ',')
+}
+```
+
+
+## 中文数字转换
+```js
+/**
+ * 格式化数字为中文单位表示（万、亿、兆、京等）
+ * @param {number|string} num - 要格式化的数字
+ * @param {number} decimals - 保留的小数位数，默认1位（仅对非整数有效）
+ * @returns {string} 格式化后的字符串
+ */
+function formatChineseNumber(num, decimals = 1) {
+  // 检查输入并转换为数字
+  if (num === null || num === undefined || isNaN(Number(num))) {
+    return '0';
+  }
+
+  let number = Number(num);
+  const absNum = Math.abs(number);
+  let prefix = number < 0 ? '-' : '';
+
+  // 对于低于1万的数字，直接返回完整数字
+  if (absNum < 10000) {
+    // 检查是否为整数
+    if (Number.isInteger(absNum)) {
+      return prefix + absNum.toString();
+    } else {
+      return prefix + absNum.toFixed(decimals);
+    }
+  }
+
+  // 定义中文数字单位及其对应的量级（从大到小排列）
+  const units = [
+    { value: 1e44, symbol: '载' },       // 10^44
+    { value: 1e40, symbol: '正' },       // 10^40
+    { value: 1e36, symbol: '涧' },       // 10^36
+    { value: 1e32, symbol: '沟' },       // 10^32
+    { value: 1e28, symbol: '穰' },       // 10^28
+    { value: 1e24, symbol: '秭' },       // 10^24
+    { value: 1e20, symbol: '垓' },       // 10^20
+    { value: 1e16, symbol: '京' },       // 10^16
+    { value: 1e12, symbol: '兆' },       // 10^12
+    { value: 1e8, symbol: '亿' },        // 10^8
+    { value: 1e4, symbol: '万' }         // 10^4
+  ];
+
+  // 查找合适的单位
+  for (const unit of units) {
+    if (absNum >= unit.value) {
+      const convertedValue = absNum / unit.value;
+
+      // 检查是否为整数
+      if (Number.isInteger(convertedValue)) {
+        return prefix + convertedValue.toString() + unit.symbol;
+      } else {
+        // 非整数时保留指定小数位数
+        let formatted = convertedValue.toFixed(decimals);
+        // 移除末尾的0和小数点（如果是整数）
+        formatted = parseFloat(formatted).toString();
+        return prefix + formatted + unit.symbol;
+      }
+    }
+  }
+
+  // 对于其他情况，直接返回数字
+  return prefix + absNum.toString();
+}
+
+
+```
+
+
+## 复制文本
+
+```js
+import Vue from 'vue'
+import Clipboard from 'clipboard'
+
+function clipboardSuccess () {
+  Vue.prototype.$msg({
+    type: 'success',
+    text: '已复制',
+    duration: 1500
+  })
+}
+
+function clipboardError () {
+  Vue.prototype.$msg({
+    text: 'Copy failed',
+    type: 'error'
+  })
+}
+
+export default function handleClipboard (text, event) {
+  const clipboard = new Clipboard(event.target, {
+    text: () => text
+  })
+  clipboard.on('success', () => {
+    clipboardSuccess()
+    clipboard.destroy()
+  })
+  clipboard.on('error', () => {
+    clipboardError()
+    clipboard.destroy()
+  })
+  clipboard.onClick(event)
+}
+
+///使用页面引入
+
+import clip from '@/utils/clipboard'
+
+
+
+//methods
+    handleCopy (val, event) {
+      clip(val, event)
+    },
+
+```
+
+
+## 加密解密
+
+```js
+
+import CryptoJS from 'crypto-js'
+
+export const getMd5 = (str) => {
+  const hash = CryptoJS.MD5(str)
+  const encrypto = hash.toString(CryptoJS.enc.Hex)
+  return encrypto
+}
+
+
 ```
