@@ -88,10 +88,10 @@ jQuery(document).ready(function ($) {
 			}
 		)
 	})
-	let div = document.createElement('div')
-	div.id = 'bulin'
-	// bulin.style.display = 'none'
-	document.body.appendChild(div)
+	let bulin = document.createElement('div')
+	bulin.id = 'bulin'
+	bulin.style.display = 'none'
+	document.body.appendChild(bulin)
 	bulin.onclick = function (e) {
 		if (accCount >= 1) {
 			let rocket = $('<span/>').text('🚀')
