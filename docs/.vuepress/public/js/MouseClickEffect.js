@@ -90,7 +90,7 @@ jQuery(document).ready(function ($) {
 	})
 	let bulin = document.createElement('div')
 	bulin.id = 'bulin'
-	bulin.style.display = 'none'
+	// bulin.style.display = 'none'
 	document.body.appendChild(bulin)
 	bulin.onclick = function (e) {
 		if (accCount >= 1) {

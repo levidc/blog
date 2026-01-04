@@ -44,6 +44,8 @@ tags:
 ```
 
 ## 大屏可视化
+
+```js
 <template>
   <div>
     <div class="loading">
@@ -1551,7 +1553,7 @@ body {
   }
 }
 </style>
-
+```
 
 ## 部署
 ```js
