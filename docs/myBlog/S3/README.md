@@ -3880,7 +3880,7 @@ export default {
           // 等待当前请求数量低于最大并发数
           while (this.currentRequests >= this.maxConcurrentRequests) {
             await new Promise(resolve => setTimeout(resolve, 100))
-          }
+          } 
           // 任务队列和展示队列、任务队列没有同步移除、所以执行前需要判断是否存在
           // 获取任务需要正确的截取数组
           // const task = this.downLoadTaskQueue.find(x => x.key === key)

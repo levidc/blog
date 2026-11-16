@@ -1,12 +1,16 @@
 const moment = require('moment')
 const emoj = require('./public/js/emo.json')
 moment.locale('zh-cn')
+// 托管在子路径（GitHub/Gitee 的 /blog/）用默认值；根路径托管（Cloudflare Worker 等）构建时传 VUEPRESS_BASE='/'
+const SITE_BASE = process.env.VUEPRESS_BASE || '/blog/'
 module.exports = {
-	base: '/blog/',
+	base: SITE_BASE,
 	title: 'その日々は夢のように',
 	description: '那些时光就像是一场梦',
 	theme: 'reco',
 	head: [
+		// 看板娘图片地址跟随 base，根路径与 /blog/ 子路径构建都能显示
+		['style', {}, `:root{--bulin-bg:url("${SITE_BASE}assets/img/bulin.png")}`],
 		[
 			'script',
 			{
@@ -51,7 +55,7 @@ module.exports = {
 	},
 	plugins: [
 		[
-			'@vuepressplugin-medium-zoom',
+			'@vuepress/plugin-medium-zoom',
 			{
 				selector: '.page img',
 				delay: 1000,

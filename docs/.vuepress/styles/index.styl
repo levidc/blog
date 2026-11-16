@@ -69,7 +69,8 @@ a.sidebar-link.active {
 }
 
  #bulin {
-  background-image: url('/blog/assets/img/bulin.png');
+  // 用 --bulin-bg 变量，随 base 变化（根路径构建和 /blog/ 子路径构建都能显示）
+  background-image: var(--bulin-bg, none);
   background-repeat: no-repeat;
   animation-name: bulinfly;
   animation-duration: 0.5s;
@@ -82,6 +83,8 @@ a.sidebar-link.active {
   HEIGHT: 8.375rem;
   POSITION: absolute;
   TOP: 43px;
+  // 吉祥物是装饰元素，不要挡住右侧目录等可点击元素
+  pointer-events: none;
 }
 @keyframes bulinfly {
     100% {

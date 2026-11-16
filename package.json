@@ -4,7 +4,7 @@
   "description": "vuePress",
   "main": "index.js",
   "scripts": {
-    "serve": "yarn replace && vuepress dev docs --open --temp .temp",
+    "serve": "yarn replace && vuepress dev docs --host localhost --open --temp .temp",
     "docs:build": "vuepress build docs",
     "deploy": "bash deploy.sh",
     "test": "echo \"Error: no test specified\" && exit 1",
